@@ -69,8 +69,7 @@
   (bknr.datastore:close-store))
 
 (defun path= (a b)
-  (equal (set-difference a b)
-	 (set-difference b a)))
+  (equal a b))
 
 (defun note-has-node (note node)
   (member node (note/path-nodes note)))
@@ -110,7 +109,10 @@
 
 (defun path-from-string (str)
   (let ((sep #\:))
-    (mapcar #'node-from-string (str:split sep str))))
+    (arrow-macros:-<>> (str:split sep str :omit-nulls t)
+      (copy-list)
+      (sort arrow-macros:<> #'string<)
+      (mapcar #'node-from-string))))
 
 (defun all-objects ()
   (bknr.datastore:all-store-objects))
