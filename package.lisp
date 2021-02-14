@@ -1,0 +1,2 @@
+(defpackage :web
+  (:use :cl))
