@@ -145,3 +145,24 @@
 			      :type type
 			      :path-nodes (path-from-string string-path)))))
     (make-links n)))
+
+;;; Here are the functions for transfering from the old facts-based db to the new one
+;;; Just in case there are problems
+;; (defun fact-notes ()
+;;   (let ((notes))
+;;     (facts:with ((?note :is-a :note))
+;;       (push (list ?note
+;; 		  (facts:with ((?note :is-a :note :content ?content))
+;; 		    (return ?content))
+;; 		  (let ((paths))
+;; 		    (facts:with ((?note :is-a :note :has-path ?path))
+;; 		      (push ?path paths))
+;; 		    paths))
+;; 	    notes))
+;;     notes))
+
+;; (defun transfer ()
+;;   (loop for n in (fact-notes)
+;;      for str-path = (str:join #\: (caddr n))
+;;      for content = (cadr n)
+;;      do (new-note content :text/markdown str-path)))
