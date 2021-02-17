@@ -7,7 +7,10 @@
 	       :bknr.datastore 
 	       :ironclad
 	       :babel
-	       :arrow-macros)
+	       :arrow-macros
+	       :parenscript
+	       :closer-mop
+	       :trivia)
   :serial t
   :components ((:file "package")
 	       (:file "util")
