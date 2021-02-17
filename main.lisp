@@ -18,5 +18,3 @@
 (defun load-jquery ()
   (with-open-file (s (make-rel-path "jquery.js"))))
 
-(defun make-rel-path (str)
-  (make-pathname :directory (concatenate 'string *base-path* str)))
