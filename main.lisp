@@ -7,14 +7,9 @@
 (defvar *jquery-file* (make-array 300000 :element-type 'character :adjustable t))
 
 (defun run ()
-  (load-jquery)
   (load-db (make-rel-path "datastore"))
   (setf *handler* (clack:clackup *app*)))
 
 (defun stop ()
   ;; (save-db)
   (clack:stop *handler*))
-
-(defun load-jquery ()
-  (with-open-file (s (make-rel-path "jquery.js"))))
-
