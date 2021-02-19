@@ -41,4 +41,3 @@
 (defun get-param-array (param params)
   (loop for i in (remove param params :test-not #'equal :key #'car)
      collect (cdr i)))
-

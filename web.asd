@@ -1,4 +1,4 @@
-(defsystem :web
+(asdf:defsystem :web
   :depends-on (:clack
 	       :ningle
 	       :str
