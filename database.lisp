@@ -115,7 +115,7 @@
   (labels ((rec (path notes)
 	     (cond
 	       ((null path) notes)
-	       (t (remove-if-not #'(lambda (x) (note-has-node x (car path)))
+	       (t (remove-if-not #λ(note-has-node _0 (car path))
 				 (rec (cdr path) notes))))))
     (rec (cdr path) (notes-with-path-node (car path)))))
 
@@ -151,7 +151,7 @@
     (cl-ppcre:do-register-groups (str)
 	("\\[\\[(.*?)\\]\\]" content)
       (push str links))
-    (mapcar #'(lambda (s) (str:split #\| s)) links)))
+    (mapcar #λ(str:split #\| _0) links)))
 
 (defun make-links (note)
   (loop for l in (find-links (note/content note))
