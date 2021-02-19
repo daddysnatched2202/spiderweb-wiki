@@ -2,7 +2,6 @@
 
 (defparameter *base-path* "home/curtis/Documents/programming/lisp/web2/")
 
-(defvar *app* (make-instance 'ningle:app))
 (defvar *handler*)
 (defvar *jquery-file* (make-array 300000 :element-type 'character :adjustable t))
 
