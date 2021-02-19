@@ -70,13 +70,13 @@
 ;;; doesn't do type check (not a problem since serial->slot does it)
 (defun can-interpret-as-class (ls class-spec)
   (when (class-spec/deserial? class-spec)
-    (let ((all-slots-accounted (every (λ (assoc _0 ls :test #'equalp))
+    (let ((all-slots-accounted (every #λ(assoc _0 ls :test #'equalp)
 				      (mapcar #'slot-spec/key
 					      (class-spec/slot-specs class-spec))))
-	  (all-keys-accounted (every (λ (member _0
-						(mapcar #'slot-spec/key
-							(class-spec/slot-specs class-spec))
-						:test #'equalp))
+	  (all-keys-accounted (every #λ(member _0
+					       (mapcar #'slot-spec/key
+						       (class-spec/slot-specs class-spec))
+					       :test #'equalp)
 				     (mapcar #'car ls))))
       (cond
 	((and all-slots-accounted all-keys-accounted)
@@ -95,7 +95,7 @@
   (if (listp obj)
       (alexandria:if-let ((subclass-specs (arrow-macros:->> class
 					    (closer-mop:class-direct-subclasses)
-					    (mapcar (λ (gethash _0 *class-specs*)))))
+					    (mapcar #λ(gethash _0 *class-specs*))))
 			  (c-spec (gethash class *class-specs*)))
 	(if (and (can-interpret-as-class obj c-spec)
 		 (eq :perfect (can-interpret-as-class obj c-spec)))
@@ -134,9 +134,9 @@
 	 (serial->slot obj correct-spec)))
       ((list :seq a)
        (if (and (listp obj)
-		(every (λ (super-type-check _0 (find-class a)))
+		(every #λ(super-type-check _0 (find-class a))
 		       obj))
-	   (mapcar (λ (serial->obj _0 a))
+	   (mapcar #λ(serial->obj _0 a)
 		   obj)
 	   (error "~a failed type check of def ~a"
 		  obj

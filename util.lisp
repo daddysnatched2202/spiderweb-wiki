@@ -1,6 +1,6 @@
 (in-package :web)
 
-(defmacro λ (&body body)
+(defmacro λ-macro (&body body)
   (alexandria:with-gensyms (args)
     (let ((bindings (loop for i in
 			 (let ((l))
@@ -16,6 +16,13 @@
       `#'(lambda (&rest ,args)
 	   (let (,@bindings)
 	     ,@body)))))
+
+(defun λ-reader (stream subchar arg)
+  (declare (ignore subchar))
+  (declare (ignore arg))
+  `(λ-macro ,(read stream t nil t)))
+
+(set-dispatch-macro-character #\# #\λ #'λ-reader)
 
 (defun make-rel-path (str)
   (make-pathname :directory (concatenate 'string *base-path* str)))
