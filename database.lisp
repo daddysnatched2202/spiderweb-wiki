@@ -73,7 +73,8 @@
 (defun load-db (path)
   (make-instance 'bknr.datastore:mp-store
 		 :directory path
-		 :subsystems (list (make-instance 'bknr.datastore:store-object-subsystem))))
+		 :subsystems (list (make-instance 'bknr.datastore:store-object-subsystem)))
+  (make-serial-specs))
 
 (defun make-serial-specs ()
   (let ((args '((note . (((content "content")
@@ -82,14 +83,14 @@
 			  (links "links" (:seq link)))
 			 :deserial? nil))
 		(node . (((name "name"))
-			 :deserial? t))
+			 :deserial? nil))
 		(breakout-node . (((breakout-path "breakout-path")
 				   (parent "parent"))
-				  :deserial? t))
+				  :deserial? nil))
 		(link . (((text "text")
 			  (to-path "to-path" (:seq node))
 			  (from-path "from-path" (:seq node)))
-			 :deserial? t)))))
+			 :deserial? nil)))))
     (loop for c in '(note node breakout-node link)
        do (closer-mop:ensure-finalized (find-class c))
 	 (apply #'make-class-spec c (cdr (assoc c args))))))
@@ -146,6 +147,9 @@
 (defun all-objects ()
   (bknr.datastore:all-store-objects))
 
+(defun all-notes ()
+  (bknr.datastore:store-objects-with-class 'note))
+
 (defun find-links (content)
   (let ((links))
     (cl-ppcre:do-register-groups (str)
@@ -155,10 +159,14 @@
 
 (defun make-links (note)
   (loop for l in (find-links (note/content note))
-     do (make-instance 'link
-		       :from-path (note/path-nodes note)
-		       :to-path (path-from-string (car l))
-		       :text (cadr l))))
+     for from = (note/path-nodes note)
+     for to = (path-from-string (car l))
+     do (if (intersection (links/with-from from) (links/with-to to))
+	    nil
+	    (make-instance 'link
+			      :from-path from 
+			      :to-path to
+			      :text (cadr l)))))
 
 (defun delete-note (note)
   (bknr.datastore:with-transaction ()
@@ -168,12 +176,15 @@
 
 (defun new-note (content type string-path)
   (let ((n (if (note-with-path (path-from-string string-path))
-	       (error "Note with path already ~a exists" string-path)
+	       (error "Note with path ~a already exists" string-path)
 	       (make-instance 'note
 			      :content content
 			      :type type
 			      :path-nodes (path-from-string string-path)))))
-    (make-links n)))
+    (make-links n)
+    (bknr.datastore:with-transaction
+      ()
+      (setf (note/links n) (links/with-from (path-from-string string-path))))))
 
 ;;; Here are the functions for transfering from the old facts-based db to the new one
 ;;; Just in case there are problems
