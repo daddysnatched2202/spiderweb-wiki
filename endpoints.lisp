@@ -42,4 +42,3 @@
   (loop for i in (remove param params :test-not #'equal :key #'car)
      collect (cdr i)))
 
-;;; Lists all notes in the DB

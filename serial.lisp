@@ -1,6 +1,9 @@
 (in-package :web)
 
 ;;; todo: Optional type declarations in encoded json
+;;; todo: handle types that differ in serialization vs deserialization (symbols)
+;;; todo: custom init functions
+;;; todo: optionally disallow deserializaing
 
 ;;; type-def
 ;;; atomic
@@ -36,7 +39,11 @@
 			  :accessor class-spec/ref)
 			 (slot-specs
 			  :initarg :slot-specs
-			  :accessor class-spec/slot-specs)))
+			  :accessor class-spec/slot-specs)
+			 (deserial?
+			  :initarg :deserial
+			  :accessor class-spec/deserial?
+			  :initform t)))
 
 (defun class->serial (obj)
   (multiple-value-bind (class-spec found) (gethash (class-of obj) *class-specs*)
@@ -62,20 +69,21 @@
 
 ;;; doesn't do type check (not a problem since serial->slot does it)
 (defun can-interpret-as-class (ls class-spec)
-  (let ((all-slots-accounted (every (λ (assoc _0 ls :test #'equalp))
-				    (mapcar #'slot-spec/key
-				     (class-spec/slot-specs class-spec))))
-	(all-keys-accounted (every (λ (member _0
-					      (mapcar #'slot-spec/key
-						      (class-spec/slot-specs class-spec))
-					      :test #'equalp))
-				   (mapcar #'car ls))))
-    (cond
-      ((and all-slots-accounted all-keys-accounted)
-       :perfect)
-      (all-slots-accounted
-       :subclass)
-      (t nil))))
+  (when (class-spec/deserial? class-spec)
+    (let ((all-slots-accounted (every (λ (assoc _0 ls :test #'equalp))
+				      (mapcar #'slot-spec/key
+					      (class-spec/slot-specs class-spec))))
+	  (all-keys-accounted (every (λ (member _0
+						(mapcar #'slot-spec/key
+							(class-spec/slot-specs class-spec))
+						:test #'equalp))
+				     (mapcar #'car ls))))
+      (cond
+	((and all-slots-accounted all-keys-accounted)
+	 :perfect)
+	(all-slots-accounted
+	 :subclass)
+	(t nil)))))
 
 ;;; Determines the most correct class-spec for the object
 ;;; If a class is specified and it has children we have specs for:
@@ -135,7 +143,6 @@
 		  spec)))
       ((list _ _)
        (error "~a is not a valid type definition" spec))
-      
       (a
        (if (super-type-check obj (find-class a))
 	   (serial->obj obj a)
@@ -144,6 +151,8 @@
 		  spec))))))
 
 (defun init-class (class-spec alist)
+  (unless (class-spec/deserial? class-spec)
+    (error "Class-spec ~a is not allowed to be deserialized" class-spec))
   (let* ((ref (class-spec/ref class-spec))
 	 (obj (make-instance ref)))
     (loop for s in (class-spec/slot-specs class-spec)
@@ -178,20 +187,12 @@
 					slot-name
 					class))
 		 :key key
-		 :type-def (cond
-			     ((eq :inherit type)
-			      :inherit)
-			     ((null type)
-			      nil)
-			     ((nth-value 1 (gethash (find-class type) *class-specs*))
-			      type)
-			     (t
-			      (error "Could not find a class-spec for class ~a" type)))
+		 :type-def type
 		 :class-ref class))
 
-(defun make-class-spec (class-sym spec)
+(defun make-class-spec (class-sym spec &key (deserial? t))
   (let* ((c (find-class class-sym))
 	 (ses (loop for s in spec
 		 collect (apply #'make-slot-spec c s))))
     (setf (gethash c *class-specs*)
-	  (make-instance 'class-spec :ref c :slot-specs ses))))
+	  (make-instance 'class-spec :ref c :slot-specs ses :deserial deserial?))))

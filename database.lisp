@@ -3,27 +3,32 @@
 (defclass note (bknr.datastore:store-object)
   ((content
     :accessor note/content
-    :initarg :content)
+    :initarg :content
+    :initform nil)
    (content-type
     :accessor note/content-type
     :initarg :type
+    :initform nil
     :index-type bknr.indices:hash-index
     :index-reader notes/with-type)
    (path-nodes
     :accessor note/path-nodes
     :initarg :path-nodes
+    :initform nil
     :index-type bknr.indices:hash-list-index
     :index-initargs (:test 'equalp)
     :index-reader notes/with-node)
    (links
     :accessor note/links
-    :initarg :links))
+    :initarg :links
+    :initform nil))
   (:metaclass bknr.datastore:persistent-class))
 
 (defclass node (bknr.datastore:store-object)
   ((name
     :accessor node/name
     :initarg :name
+    :initform nil
     :index-type bknr.indices:string-unique-index
     :index-reader node/with-name
     :index-initargs (:test 'equalp)))
@@ -32,25 +37,30 @@
 (defclass breakout-node (node)
   ((breakout-path
     :accessor breakout-node/path
-    :initarg :breakout-path)
+    :initarg :breakout-path
+    :initform nil)
    (parent
     :accessor breakout-node/parent
-    :initarg :parent))
+    :initarg :parent
+    :initform nil))
   (:metaclass bknr.datastore:persistent-class))
 
 (defclass link (bknr.datastore:store-object)
   ((text
     :accessor link/text
-    :initarg :text)
+    :initarg :text
+    :initform nil)
    (to-path
     :accessor link/to
     :initarg :to-path
+    :initform nil
     :index-type bknr.indices:hash-index
     :index-initargs (:test 'equal)
     :index-reader links/with-to)
    (from-path
     :accessor link/from
     :initarg :from-path
+    :initform nil
     :index-type bknr.indices:hash-index
     :index-initargs (:test 'equal)
     :index-reader links/with-from))
@@ -64,6 +74,25 @@
   (make-instance 'bknr.datastore:mp-store
 		 :directory path
 		 :subsystems (list (make-instance 'bknr.datastore:store-object-subsystem))))
+
+(defun make-serial-specs ()
+  (let ((args '((note . (((content "content")
+			  (content-type "content-type")
+			  (path-nodes "path-nodes" (:seq node))
+			  (links "links" (:seq link)))
+			 :deserial? nil))
+		(node . (((name "name"))
+			 :deserial? t))
+		(breakout-node . (((breakout-path "breakout-path")
+				   (parent "parent"))
+				  :deserial? t))
+		(link . (((text "text")
+			  (to-path "to-path" (:seq node))
+			  (from-path "from-path" (:seq node)))
+			 :deserial? t)))))
+    (loop for c in '(note node breakout-node link)
+       do (closer-mop:ensure-finalized (find-class c))
+	 (apply #'make-class-spec c (cdr (assoc c args))))))
 
 (defun close-db ()
   (bknr.datastore:close-store))
