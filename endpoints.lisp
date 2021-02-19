@@ -1,5 +1,7 @@
 (in-package :web)
 
+(defvar *app* (make-instance 'ningle:app))
+
 (defmacro ningle/route ((path &rest keys) (&rest param-list) &body body)
   (alexandria:with-gensyms (params maybe-key)
     (labels ((make-binding (sym)
@@ -41,3 +43,9 @@
 (defun get-param-array (param params)
   (loop for i in (remove param params :test-not #'equal :key #'car)
      collect (cdr i)))
+
+;;; endpoints
+(ningle/route ("/notes") ()
+  (ningle/respond-type "application/json")
+  (jonathan:to-json (mapcar #'class->serial (all-notes))
+		    :from :alist))

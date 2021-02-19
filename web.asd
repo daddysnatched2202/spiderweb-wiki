@@ -2,7 +2,7 @@
   :depends-on (:clack
 	       :ningle
 	       :str
-	       :cl-json
+	       :jonathan
 	       :alexandria
 	       :bknr.datastore 
 	       :ironclad
