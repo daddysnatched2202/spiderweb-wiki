@@ -1,0 +1,3 @@
+* Spiderweb
+  Wiki software built on the idea of creating many interconnecting links between
+  ideas, much like a spiderweb

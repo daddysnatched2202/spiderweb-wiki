@@ -70,4 +70,5 @@
   "Hello There")
 
 (ningle/route ("/licenses") ()
-  (spinneret:))
+  (spinneret:with-html (:h1 "Source Code")
+    ))
