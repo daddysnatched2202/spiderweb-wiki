@@ -68,3 +68,6 @@
 
 (ningle/route ("/") ()
   "Hello There")
+
+(ningle/route ("/licenses") ()
+  (spinneret:))

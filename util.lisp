@@ -45,3 +45,12 @@
 
 (defun make-rel-path (str)
   (make-pathname :directory (concatenate 'string *base-path* str)))
+
+(defmacro html/with-page ((&key title) &body body)
+  `(spinneret:with-html
+     (:doctype)
+     (:html
+      (:head
+       (:title ,title))
+      (:body ,@body)
+      (:footer (:a "License Info" :href "/licenses")))))
