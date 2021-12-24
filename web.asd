@@ -33,6 +33,7 @@
   :serial t
   :components ((:file "package")
 	       (:file "util")
+	       (:file "serial")
 	       (:file "endpoints")
 	       (:file "database")
 	       (:file "main")))
