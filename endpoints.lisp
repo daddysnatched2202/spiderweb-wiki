@@ -67,8 +67,15 @@
 		    :from :alist))
 
 (ningle/route ("/") ()
-  "Hello There")
+  (html/with-page (:title "Welcome")
+    (:p "Hello There")))
 
+;;; TODO: system for different licenses / repos using classes
 (ningle/route ("/licenses") ()
-  (spinneret:with-html (:h1 "Source Code")
-    ))
+  (html/with-page (:title "License Info")
+    (:a :href "https://github.com/daddysnatched2202/spiderweb-wiki" "Source Code")
+    (" for this application is available under the terms of the ")
+    (:a :href "https://www.gnu.org/licenses/gpl-3.0.html" "GNU GPL v3.0")
+    (:p "Content on this website is licensed under the terms of the Creative Commons
+    BY-SA 4.0 license; you can obtain a copy of this license ")
+    (:a :href "https://creativecommons.org/licenses/by-sa/4.0/" "here")))

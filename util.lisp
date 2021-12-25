@@ -46,11 +46,16 @@
 (defun make-rel-path (str)
   (make-pathname :directory (concatenate 'string *base-path* str)))
 
+(defun css/std ()
+  (lass:compile-and-write `(footer :position absolute
+				   :bottom 0px)))
+
 (defmacro html/with-page ((&key title) &body body)
-  `(spinneret:with-html
+  `(spinneret:with-html-string
      (:doctype)
      (:html
       (:head
-       (:title ,title))
+       (:title ,title)
+       (:style ,(css/std)))
       (:body ,@body)
-      (:footer (:a "License Info" :href "/licenses")))))
+      (:footer (:a :href "/licenses" "License Info")))))
