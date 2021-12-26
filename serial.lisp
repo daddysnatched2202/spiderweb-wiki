@@ -144,12 +144,12 @@
 			   (loop named lop
 			      for i in
 				(arrow-macros:->> slot-spec
-						  (slot-spec/class-ref)
-						  (closer-mop:class-direct-superclasses))
-			      if (nth-value 1 (gethash i
-						       *class-specs*))
+				  (slot-spec/class-ref)
+				  (closer-mop:class-direct-superclasses))
+			      if (nth-value 1 (gethash i *class-specs*))
 			      do (return-from lop (gethash i *class-specs*))
-			      finally (error "Could not find class-spec for inherited slot ~a"
+			      finally (error "Could not find class-spec for inherited
+slot ~a"
 					     (slot-spec/key slot-spec))))
 			  (super-specs (arrow-macros:->> first-super
 							 (class-spec/slot-specs)))
@@ -157,7 +157,8 @@
 					   if (closer-mop:slot-definition-name
 					       (slot-spec/ref s))
 					   return s
-					   finally (error "Could not find valid slot spec for ~a"
+					   finally (error "Could not find valid slot
+spec for ~a"
 							  (slot-spec/key slot-spec)))))
 		     (serial->slot obj correct-spec)))
 		  ((list :seq a)
@@ -177,6 +178,7 @@
 		       (error "~a failed type check of def ~a"
 			      obj
 			      spec))))))
+
 (defun init-class (class-spec alist)
   (unless (class-spec/deserial? class-spec)
     (error "Class-spec ~a is not allowed to be deserialized" class-spec))
@@ -188,7 +190,8 @@
        do (if aso
 	      (setf (slot-value obj slot-name)
 		    (serial->slot (cdr aso) s))
-	      (error "Tried to serialize alist ~a into class ~a, but slot ~a was not found"
+	      (error "Tried to serialize alist ~a into class ~a, but slot ~a was not
+found"
 		     alist
 		     ref
 		     slot-name)))

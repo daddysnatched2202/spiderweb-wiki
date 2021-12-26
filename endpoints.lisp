@@ -76,7 +76,7 @@
     (:a :href "https://github.com/daddysnatched2202/spiderweb-wiki" "Source Code")
     (" for this application is available under the terms of the ")
     (:a :href "https://www.gnu.org/licenses/gpl-3.0.html" "GNU GPL v3.0")
-    (:p "Content on this website is licensed under the terms of the ")
+    (:p "Content on this website is licensed under the ")
     (:a :href "https://creativecommons.org/licenses/by-sa/4.0/"
 	"Creative Commons BY-SA 4.0")
     (" license")))
