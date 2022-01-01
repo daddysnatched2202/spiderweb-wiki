@@ -46,7 +46,7 @@
 (defmacro ignoring-let ((&rest bindings) &body body)
   (let* ((bind-syms (mapcar #'car bindings))
 	 (ignores `(declare (ignore ,@bind-syms))))
-    `(let (,bindings)
+    `(let (,@bindings)
        ,ignores
        ,@body)))
 
@@ -59,23 +59,23 @@
      (:html
       (:head
        (:title ,title)
-       (:style ,(css/std)))
+       (:style (css/std)))
       (:body ,@body)
       (:footer (:a :href "/licenses" "License Info")))))
 
 (defmacro css/with-nord-palette (&body body)
-  `(ignoring-let ((nord0 "#2E3440")
-		  (nord1 "#3B4252")
-		  (nord2 "#434C5E")
-		  (nord3 "#4C566A")
+  `(ignoring-let ((nord0  "#2E3440")
+		  (nord1  "#3B4252")
+		  (nord2  "#434C5E")
+		  (nord3  "#4C566A")
 
-		  (nord4 "#D8DEE9")
-		  (nord5 "#E5E9F0")
-		  (nord6 "#ECEFF4")
+		  (nord4  "#D8DEE9")
+		  (nord5  "#E5E9F0")
+		  (nord6  "#ECEFF4")
 
-		  (nord7 "#8FBCBB")
-		  (nord8 "#88C0D0")
-		  (nord9 "#81A1C1")
+		  (nord7  "#8FBCBB")
+		  (nord8  "#88C0D0")
+		  (nord9  "#81A1C1")
 		  (nord10 "#5E81AC")
 
 		  (nord11 "#BF616A")
@@ -88,4 +88,50 @@
 (defun css/std ()
   (css/with-nord-palette
    (lass:compile-and-write `(footer :position absolute
-				    :bottom 0px))))
+				    :bottom 0px
+				    :height 1.5em
+				    :background-color ,nord0)
+			   `(body :background-color ,nord1)
+			   `(p :color ,nord5))))
+
+(defmacro ningle/route ((path &rest keys) (&rest param-list) &body body)
+  (alexandria:with-gensyms (params maybe-key)
+    (labels ((make-binding (sym)
+	       (if (listp sym)
+		   (destructuring-bind (name &key array
+					     (key (ps:symbol-to-js-string name))
+					     default)
+		       sym
+		     (let ((get `(,(if array
+				      'get-param-array
+				      'get-param)
+				   ,key
+				   ,params)))
+		       `(,name
+			 ,(if default
+			      `(alexandria:if-let ((,maybe-key ,get))
+				 ,maybe-key
+				 ,default)
+			      get))))
+		   `(,sym (get-param ,(ps:symbol-to-js-string sym) ,params)))))
+      (let* ((bindings (mapcar #'make-binding param-list)))
+	`(setf (ningle:route *app* ,path ,@keys)
+	       #'(lambda (,params)
+		   (alexandria:if-let ,bindings
+		     (progn ,@body)
+		     (warn "Could not fill params for route ~a, required params ~a, got params ~a"
+			   ,path
+			   ',param-list
+			   ,params))))))))
+
+(defun ningle/respond-type (type)
+  (setf (lack.response:response-headers ningle:*response*)
+	(append (lack.response:response-headers ningle:*response*)
+		(list :content-type type))))
+
+(defun get-param (param params)
+  (cdr (assoc param params :test #'equal)))
+
+(defun get-param-array (param params)
+  (loop for i in (remove param params :test-not #'equal :key #'car)
+     collect (cdr i)))
