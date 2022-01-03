@@ -26,15 +26,19 @@
 
 (ningle/route ("/") ()
   (html/with-page (:title "Welcome")
-    (:p "Hello There")))
+    (:p "Henlo luser")))
 
 ;;; TODO: system for different licenses / repos using classes
 (ningle/route ("/licenses") ()
   (html/with-page (:title "License Info")
-    (:a :href "https://github.com/daddysnatched2202/spiderweb-wiki" "Source Code")
-    (" for this application is available under the terms of the ")
-    (:a :href "https://www.gnu.org/licenses/gpl-3.0.html" "GNU GPL v3.0")
+    (:a :href "https://github.com/daddysnatched2202/spiderweb-wiki" "Source code")
+    (" available under the terms of the ")
+    (:a :href "https://www.gnu.org/licenses/gpl-3.0.html" "GNU GPL version 3")
     (:p "Content on this website is licensed under the ")
     (:a :href "https://creativecommons.org/licenses/by-sa/4.0/"
 	"Creative Commons BY-SA 4.0")
     (" license")))
+
+(ningle/route ("/notes") ()
+  (html/with-page (:title "Note Index")
+    ))
