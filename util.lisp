@@ -28,12 +28,10 @@
     l))
 
 (defmacro λ-macro (&body body)
-  (let ((bindings
-	  (reverse (loop for s in (matching-symbols #'(lambda (sym)
-							(ppcre:scan "_[0-9]+$"
-								    (symbol-name sym)))
-						    body)
-			 collect s))))
+  (let ((bindings (reverse (matching-symbols #'(lambda (sym)
+					 (ppcre:scan "_[0-9]+$"
+						     (symbol-name sym)))
+					     body))))
     `#'(lambda ,bindings ,body)))
 
 (defun λ-reader (stream subchar arg)
