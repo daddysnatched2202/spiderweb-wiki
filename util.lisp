@@ -41,18 +41,6 @@
 
 (set-dispatch-macro-character #\# #\λ #'λ-reader)
 
-(defmacro ignoring-let ((&rest bindings) &body body)
-  (let* ((bind-syms (mapcar #'car bindings))
-	 (used-syms (matching-symbols #'(lambda (x)
-					  (declare (ignore x))
-					  t)
-				      body))
-	 (unused-syms (set-difference bind-syms used-syms))
-	 (ignores `(declare (ignore ,@unused-syms))))
-    `(let ,bindings
-       ,ignores
-       ,@body)))
-
 (defun make-rel-path (str)
   (make-pathname :directory (concatenate 'string *base-path* str)))
 
@@ -93,17 +81,6 @@
 
 (defun css/std ()
   (css/with-nord-palette
-    (declare (ignore nord4
-		     nord6
-		     nord7
-		     nord8
-		     nord9
-		     nord10
-		     nord11
-		     nord12
-		     nord13
-		     nord14
-		     nord15))
    (lass:compile-and-write `(footer :position absolute
 				    :bottom 0px
 				    :left 0px
