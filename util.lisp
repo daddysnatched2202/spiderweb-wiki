@@ -28,17 +28,13 @@
     l))
 
 (defmacro λ-macro (&body body)
-  (alexandria:with-gensyms (args)
-    (let ((bindings
-	    (loop for s in (matching-symbols #'(lambda (sym)
-						 (ppcre:scan "_[0-9]+$"
-							     (symbol-name sym)))
-					     body)
-		  collect `(,s (nth ,(parse-integer (subseq (symbol-name s) 1))
-				    ,args)))))
-      `#'(lambda (&rest ,args)
-	   (let (,@bindings)
-	     ,@body)))))
+  (let ((bindings
+	  (reverse (loop for s in (matching-symbols #'(lambda (sym)
+							(ppcre:scan "_[0-9]+$"
+								    (symbol-name sym)))
+						    body)
+			 collect s))))
+    `#'(lambda ,bindings ,body)))
 
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar
