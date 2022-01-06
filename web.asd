@@ -29,7 +29,8 @@
 	       :trivia
 	       :uiop
 	       :spinneret
-	       :lass)
+	       :lass
+	       :cl-ppcre)
   :serial t
   :components ((:file "package")
 	       (:file "util")

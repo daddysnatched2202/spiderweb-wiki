@@ -16,22 +16,26 @@
 
 (in-package :web)
 
+(defun matching-symbols (test-fun tree)
+  (let ((l))
+    (tree-equal tree tree
+		:test #'(lambda (x y)
+			  (declare (ignore y))
+			  (if (and (symbolp x)
+				   (funcall test-fun x))
+			      (push x l))
+			  x))
+    l))
+
 (defmacro λ-macro (&body body)
   (alexandria:with-gensyms (args)
     (let ((bindings
-	   (loop for i in
-		(let ((l))
-		  (tree-equal body body
-			      :test #'(lambda (x y)
-					(declare (ignore y))
-					(if (and (symbolp x)
+	    (loop for s in (matching-symbols #'(lambda (sym)
 						 (ppcre:scan "_[0-9]+$"
-							     (symbol-name x)))
-					    (push x l))
-					x))
-		  l)
-		 collect `(,i (nth ,(parse-integer (subseq (symbol-name i) 1))
-				   ,args)))))
+							     (symbol-name sym)))
+					     body)
+		  collect `(,s (nth ,(parse-integer (subseq (symbol-name s) 1))
+				    ,args)))))
       `#'(lambda (&rest ,args)
 	   (let (,@bindings)
 	     ,@body)))))
@@ -90,6 +94,17 @@
 
 (defun css/std ()
   (css/with-nord-palette
+    (declare (ignore nord4
+		     nord6
+		     nord7
+		     nord8
+		     nord9
+		     nord10
+		     nord11
+		     nord12
+		     nord13
+		     nord14
+		     nord15))
    (lass:compile-and-write `(footer :position absolute
 				    :bottom 0px
 				    :left 0px
