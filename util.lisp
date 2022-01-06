@@ -23,15 +23,15 @@
 			  (declare (ignore y))
 			  (if (and (symbolp x)
 				   (funcall test-fun x))
-			      (push x l))
+			      (cons x l))
 			  x))
     l))
 
 (defmacro λ-macro (&body body)
-  (let ((bindings (reverse (matching-symbols #'(lambda (sym)
-					 (ppcre:scan "_[0-9]+$"
-						     (symbol-name sym)))
-					     body))))
+  (let ((bindings (matching-symbols #'(lambda (sym)
+					  (ppcre:scan "_[0-9]+$"
+						      (symbol-name sym)))
+				      body)))
     `#'(lambda ,bindings ,body)))
 
 (defun λ-reader (stream subchar arg)
@@ -43,8 +43,13 @@
 
 (defmacro ignoring-let ((&rest bindings) &body body)
   (let* ((bind-syms (mapcar #'car bindings))
-	 (ignores `(declare (ignore ,@bind-syms))))
-    `(let (,@bindings)
+	 (used-syms (matching-symbols #'(lambda (x)
+					  (declare (ignore x))
+					  t)
+				      body))
+	 (unused-syms (set-difference bind-syms used-syms))
+	 (ignores `(declare (ignore ,@unused-syms))))
+    `(let ,bindings
        ,ignores
        ,@body)))
 
