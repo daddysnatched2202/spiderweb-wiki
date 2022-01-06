@@ -21,7 +21,7 @@
 ;;; endpoints
 (ningle/route ("/json/notes") ()
   (ningle/respond-type "application/json")
-  (jonathan:to-json (mapcar #'class->serial (all-notes))
+  (jonathan:to-json (mapcar #'obj->alist (all-notes))
 		    :from :alist))
 
 (ningle/route ("/") ()

@@ -61,7 +61,7 @@
 			  :accessor class-spec/deserial?
 			  :initform t)))
 
-(defun class->serial (obj)
+(defun obj->alist (obj)
   (multiple-value-bind (class-spec found)
       (gethash (class-of obj)
 	       *class-specs*)
@@ -78,7 +78,7 @@
 (defun general->serial (obj)
   (cond
     ((nth-value 1 (gethash (class-of obj) *class-specs*))
-     (class->serial obj))
+     (obj->alist obj))
     ((null obj) nil)
     ((listp obj)
      (cons (general->serial (car obj)) (general->serial (cdr obj))))
