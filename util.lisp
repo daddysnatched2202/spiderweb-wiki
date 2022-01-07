@@ -16,8 +16,6 @@
 
 (in-package :web)
 
-(defparameter *base-path* "")
-
 (defun matching-symbols (test-fun tree)
   (let ((l))
     (tree-equal tree tree

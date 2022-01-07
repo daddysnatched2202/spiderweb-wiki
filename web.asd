@@ -32,7 +32,8 @@
 	       :lass
 	       :cl-ppcre)
   :serial t
-  :components ((:file "package")
+  :components ((:file "conf.lisp")
+	       (:file "package")
 	       (:file "util")
 	       (:file "serial")
 	       (:file "endpoints")
