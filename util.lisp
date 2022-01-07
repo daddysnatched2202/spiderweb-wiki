@@ -16,6 +16,8 @@
 
 (in-package :web)
 
+(defparameter *base-path* "")
+
 (defun matching-symbols (test-fun tree)
   (let ((l))
     (tree-equal tree tree
@@ -23,7 +25,7 @@
 			  (declare (ignore y))
 			  (if (and (symbolp x)
 				   (funcall test-fun x))
-			      (cons x l))
+			      (push x l))
 			  x))
     l))
 
@@ -32,7 +34,7 @@
 					  (ppcre:scan "_[0-9]+$"
 						      (symbol-name sym)))
 				      body)))
-    `#'(lambda ,bindings ,body)))
+    `#'(lambda ,bindings ,@body)))
 
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar
@@ -57,6 +59,7 @@
       (:footer (:a :href "/notes" "Note Index")
 	       (:a :href "/licenses" "Licenses")))))
 
+;;; TODO: have a system where different themes can be slotted in and out
 (defmacro css/with-nord-palette (&body body)
   `(let ((nord0  "#2E3440")
 	 (nord1  "#3B4252")

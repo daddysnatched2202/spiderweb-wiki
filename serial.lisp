@@ -61,7 +61,7 @@
 			  :accessor class-spec/deserial?
 			  :initform t)))
 
-(defun obj->alist (obj)
+(defun obj->serial (obj)
   (multiple-value-bind (class-spec found)
       (gethash (class-of obj)
 	       *class-specs*)
@@ -78,7 +78,7 @@
 (defun general->serial (obj)
   (cond
     ((nth-value 1 (gethash (class-of obj) *class-specs*))
-     (obj->alist obj))
+     (obj->serial obj))
     ((null obj) nil)
     ((listp obj)
      (cons (general->serial (car obj)) (general->serial (cdr obj))))
@@ -89,15 +89,15 @@
 (defun can-interpret-as-class (ls class-spec)
   (when (class-spec/deserial? class-spec)
     (let ((all-slots-accounted
-	   (every #λ(assoc _0 ls :test #'equalp)
-		  (mapcar #'slot-spec/key
-			  (class-spec/slot-specs class-spec))))
+	    (every #λ(assoc _0 ls :test #'equalp)
+		   (mapcar #'slot-spec/key
+			   (class-spec/slot-specs class-spec))))
 	  (all-keys-accounted
-	   (every #λ(member _0
-			    (mapcar #'slot-spec/key
-				    (class-spec/slot-specs class-spec))
-			    :test #'equalp)
-		  (mapcar #'car ls))))
+	    (every #λ(member _0
+			     (mapcar #'slot-spec/key
+				     (class-spec/slot-specs class-spec))
+			     :test #'equalp)
+		   (mapcar #'car ls))))
       (cond
 	((and all-slots-accounted all-keys-accounted)
 	 :perfect)
