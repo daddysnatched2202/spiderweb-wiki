@@ -16,8 +16,6 @@
 
 (in-package :web)
 
-(defparameter *base-path* "/home/curtis/Documents/programming/lisp/web2")
-
 (defvar *handler*)
 (defvar *jquery-file* (make-array 300000 :element-type 'character :adjustable t))
 
