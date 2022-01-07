@@ -68,11 +68,11 @@
     (if found
 	(loop for s in (class-spec/slot-specs class-spec)
 	   collect `(,(slot-spec/key s) .
-		      ,(arrow-macros:->> s
-					 (slot-spec/ref)
-					 (closer-mop:slot-definition-name)
-					 (slot-value obj)
-					 (general->serial))))
+		      ,(a-m:->> s
+			 (slot-spec/ref)
+			 (closer-mop:slot-definition-name)
+			 (slot-value obj)
+			 (general->serial))))
 	(error "No class spec for class ~a" (class-of obj)))))
 
 (defun general->serial (obj)
