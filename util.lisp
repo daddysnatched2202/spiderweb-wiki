@@ -16,7 +16,7 @@
 
 (in-package :web)
 
-(defparameter *base-path* "")
+(defparameter *base-path* "/home/curtis/Documents/programming/lisp/web2")
 
 (defun matching-symbols (test-fun tree)
   (let ((l))
