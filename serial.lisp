@@ -68,11 +68,11 @@
     (if found
 	(loop for s in (class-spec/slot-specs class-spec)
 	   collect `(,(slot-spec/key s) .
-		      ,(arrow-macros:->> s
-					 (slot-spec/ref)
-					 (closer-mop:slot-definition-name)
-					 (slot-value obj)
-					 (general->serial))))
+		      ,(a-m:->> s
+			 (slot-spec/ref)
+			 (closer-mop:slot-definition-name)
+			 (slot-value obj)
+			 (general->serial))))
 	(error "No class spec for class ~a" (class-of obj)))))
 
 (defun general->serial (obj)
@@ -115,7 +115,7 @@
 (defun super-type-check (obj class)
   (if (listp obj)
       (alexandria:if-let ((subclass-specs
-			   (arrow-macros:->>
+			   (a-m:->>
 			    class
 			    (closer-mop:class-direct-subclasses)
 			    (mapcar #λ(gethash _0 *class-specs*))))
@@ -143,7 +143,7 @@
 		   (let* ((first-super
 			   (loop named lop
 			      for i in
-				(arrow-macros:->> slot-spec
+				(a-m:->> slot-spec
 				  (slot-spec/class-ref)
 				  (closer-mop:class-direct-superclasses))
 			      if (nth-value 1 (gethash i *class-specs*))
@@ -151,7 +151,7 @@
 			      finally (error "Could not find class-spec for inherited
 slot ~a"
 					     (slot-spec/key slot-spec))))
-			  (super-specs (arrow-macros:->> first-super
+			  (super-specs (a-m:->> first-super
 							 (class-spec/slot-specs)))
 			  (correct-spec (loop for s in super-specs
 					   if (closer-mop:slot-definition-name
