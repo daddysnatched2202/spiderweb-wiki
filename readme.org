@@ -3,9 +3,7 @@
   ideas, much like a spiderweb
 * Path Setup
   Before the server will run it's neccessary to tell it where the source code is
-  located. Make a file "conf.lisp" with contents like such
+  located. Add a line to "conf.lisp" like such
 #+begin_src 
-(in-package :web)
-
-(defparameter *base-path* "<path to the folder where the source files are located>"
+(defparameter *base-path* "<path to the folder where the source files are located>/")
 #+end_src
