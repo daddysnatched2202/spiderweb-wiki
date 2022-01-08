@@ -1,3 +1,7 @@
 * Spiderweb
   Wiki software built on the idea of creating many interconnecting links between
   ideas, much like a spiderweb
+* Path Setup
+  Before the server will run it's neccessary to tell it where the source code is
+  located. Add a line to "conf.lisp" like such ~(defparameter *base-path* "<path of
+  the folder where the source code is located>")~
