@@ -32,8 +32,8 @@
 	       :lass
 	       :cl-ppcre)
   :serial t
-  :components ((:file "conf")
-	       (:file "package")
+  :components ((:file "package")
+	       (:file "conf")
 	       (:file "util")
 	       (:file "serial")
 	       (:file "endpoints")

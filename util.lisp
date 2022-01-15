@@ -16,6 +16,8 @@
 
 (in-package :web)
 
+;;; matching-symbols makes no guarantees about the order in which symbols are
+;;; returned
 (defun matching-symbols (test-fun tree)
   (let ((l))
     (tree-equal tree tree
@@ -27,16 +29,37 @@
 			  x))
     l))
 
+(defun anon-arg-number (sym)
+  (a-m:-> (symbol-name sym)
+    (parse-integer :start 1)))
+
+(defun anon-arg? (sym)
+  (ppcre:scan "^_[0-9]*$" (symbol-name sym)))
+
+(defun ensure-anon-arg-continuity (bindings)
+  (let* ((nums (mapcar #'anon-arg-number bindings))
+	 (max (reduce #'max nums))
+	 (min (reduce #'min nums)))
+    (loop for x from min upto max
+	  collect (intern (format nil "_~a" x)))))
+
+(defun anon-args-sort (bindings)
+  (sort (copy-list bindings)
+	#'<
+	:key #'anon-arg-number))
+
 (defmacro λ-macro (&body body)
-  (let ((bindings (matching-symbols #'(lambda (sym)
-					  (ppcre:scan "_[0-9]+$"
-						      (symbol-name sym)))
-				      body)))
-    `#'(lambda ,bindings ,@body)))
+  (let* ((bound-in-body (a-m:->> body
+			  (matching-symbols #'anon-arg?)
+			  (anon-args-sort)))
+	 (ensured (ensure-anon-arg-continuity bound-in-body))
+	 (diff (set-difference ensured bound-in-body)))
+    `#'(lambda ,ensured
+	 (declare (ignore ,@diff))
+	 ,@body)))
 
 (defun λ-reader (stream subchar arg)
-  (declare (ignore subchar
-		   arg))
+  (declare (ignore subchar arg))
   `(λ-macro ,(read stream t nil t)))
 
 (set-dispatch-macro-character #\# #\λ #'λ-reader)
@@ -105,27 +128,28 @@
     (labels ((make-binding (sym)
 	       (if (listp sym)
 		   (destructuring-bind (name &key array
-					     (key (ps:symbol-to-js-string name))
-					     default)
+					       (key (ps:symbol-to-js-string name))
+					       default)
 		       sym
-		     (let ((get `(,(if array
-				      'get-param-array
-				      'get-param)
-				   ,key
-				   ,params)))
+		     (let ((getter `(,(if array
+					  'get-param-array
+					  'get-param)
+				     ,key
+				     ,params)))
 		       `(,name
 			 ,(if default
-			      `(alexandria:if-let ((,maybe-key ,get))
+			      `(alexandria:if-let ((,maybe-key ,getter))
 				 ,maybe-key
 				 ,default)
-			      get))))
+			      getter))))
 		   `(,sym (get-param ,(ps:symbol-to-js-string sym) ,params)))))
       (let* ((bindings (mapcar #'make-binding param-list)))
 	`(setf (ningle:route *app* ,path ,@keys)
 	       #'(lambda (,params)
 		   (alexandria:if-let ,bindings
 		     (progn ,@body)
-		     (warn "Could not fill params for route ~a; required params ~a, got params ~a"
+		     (warn "Could not fill params for route ~a; required params ~a, 
+got params ~a"
 			   ,path
 			   ',param-list
 			   ,params))))))))
