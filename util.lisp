@@ -36,11 +36,11 @@
 (defun anon-arg? (sym)
   (ppcre:scan "^_[0-9]*$" (symbol-name sym)))
 
-(defun ensure-anon-arg-continuity (bindings)
-  (let* ((nums (mapcar #'anon-arg-number bindings))
-	 (max (reduce #'max nums))
-	 (min (reduce #'min nums)))
-    (loop for x from min upto max
+(defun ensure-anon-args (bindings)
+  (a-m:-<>> bindings
+    (mapcar #'anon-arg-number)
+    (reduce #'max)
+    (loop for x from 0 upto a-m:<>
 	  collect (intern (format nil "_~a" x)))))
 
 (defun anon-args-sort (bindings)
@@ -52,7 +52,7 @@
   (let* ((bound-in-body (a-m:->> body
 			  (matching-symbols #'anon-arg?)
 			  (anon-args-sort)))
-	 (ensured (ensure-anon-arg-continuity bound-in-body))
+	 (ensured (ensure-anon-args bound-in-body))
 	 (diff (set-difference ensured bound-in-body)))
     `#'(lambda ,ensured
 	 (declare (ignore ,@diff))
