@@ -23,7 +23,8 @@
     (tree-equal tree tree
 		:test #'(lambda (x y)
 			  (declare (ignore y))
-			  (if (and (symbolp x)
+			  (if (and x
+				   (symbolp x)
 				   (funcall test-fun x))
 			      (push x l))
 			  x))
@@ -34,8 +35,10 @@
     (parse-integer :start 1)))
 
 (defun anon-arg? (sym)
-  (ppcre:scan "^_[0-9]*$" (symbol-name sym)))
+  (and (symbolp sym)
+       (ppcre:scan "^_[0-9]*$" (symbol-name sym))))
 
+;;; The list returned by ensure-anon-args will always be in order
 (defun ensure-anon-args (bindings)
   (a-m:-<>> bindings
     (mapcar #'anon-arg-number)
@@ -48,10 +51,10 @@
 	#'<
 	:key #'anon-arg-number))
 
+;;; TODO: handle advanced args (&rest, &key, &optional)
 (defmacro λ-macro (&body body)
   (let* ((bound-in-body (a-m:->> body
-			  (matching-symbols #'anon-arg?)
-			  (anon-args-sort)))
+			  (matching-symbols #'anon-arg?)))
 	 (ensured (ensure-anon-args bound-in-body))
 	 (diff (set-difference ensured bound-in-body)))
     `#'(lambda ,ensured

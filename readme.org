@@ -1,11 +1,24 @@
 * Spiderweb
   Wiki software built on the idea of creating many interconnecting links between
   ideas, much like a spiderweb
-* Path Setup
-  Before the server will run it's neccessary to tell it where the source code is
-  located. Make a file "conf.lisp" with contents like such
-#+begin_src 
+* Setup
+  - Make a file ~conf.lisp~ in the main directory with the rest of the source
+  - Start ~conf.lisp~ with the following contents
+#+begin_src lisp
 (in-package :web)
-
-(defparameter *base-path* "<path to the folder where the source files are located>/")
 #+end_src
+** Setting Up Storage
+*** Local Files
+    - If you can store the files locally (on the same machine the server is running
+      from), the setup is easy: add the following lines to ~conf.lisp~
+  #+begin_src lisp
+  (defparameter *storage-type* :local)
+  (defparameter *base-path* "<path to the folder where the data will be stored>/")
+  #+end_src
+*** S3
+    - If you can't store the files with the server, perhaps because you're using
+      something like Heroku to run the application, you'll need to set it up to use
+      Amazon S3
+      1. Add a line to ~conf.lisp~: ~(defparameter *storage-type* :s3)~
+      2. Save your AWS credentials to a file ~~/.aws~
+      3. That's it!

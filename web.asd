@@ -30,7 +30,8 @@
 	       :uiop
 	       :spinneret
 	       :lass
-	       :cl-ppcre)
+	       :cl-ppcre
+	       :zs3)
   :serial t
   :components ((:file "package")
 	       (:file "conf")

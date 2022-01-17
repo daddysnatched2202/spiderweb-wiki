@@ -143,3 +143,6 @@
 
 (defun all-notes ()
   (bknr.datastore:store-objects-with-class 'note))
+
+(defun load-credentials ()
+  (setf zs3:*credentials* (zs3:file-credentials "~/.aws")))

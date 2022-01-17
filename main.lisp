@@ -24,5 +24,5 @@
   (setf *handler* (clack:clackup *app*)))
 
 (defun stop ()
-  ;; (save-db)
+  (close-db)
   (clack:stop *handler*))
