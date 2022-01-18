@@ -30,6 +30,11 @@
 			  x))
     l))
 
+;;; Returns the first item in ls for which pred returns a true value
+;;; If none of the items in ls match, then otherwise will be used as follows:
+;;; If otherwise is a function, it will be called with no arguments (the primary use
+;;; is to signal an error if there are no matches)
+;;; If otherwise is not a function, then it will be returned as-is
 (defun first-matching (ls pred otherwise)
   (loop for x in ls
 	if (funcall pred x)
