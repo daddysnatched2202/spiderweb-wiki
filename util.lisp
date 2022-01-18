@@ -35,12 +35,15 @@
 ;;; If otherwise is a function, it will be called with no arguments (the primary use
 ;;; is to signal an error if there are no matches)
 ;;; If otherwise is not a function, then it will be returned as-is
-(defun first-matching (ls pred otherwise)
+;;; The call-otherwise arg can be used if otherwise is a function / closure that you
+;;; want to return, not call
+(defun first-matching (ls pred otherwise &optional (call-otherwise t))
   (loop for x in ls
 	if (funcall pred x)
 	  do (return x)
-	finally (if (functionp otherwise)
-		    (funcall otherwise)
+	finally (if (and (functionp otherwise)
+			 call-otherwise)
+		    (return (funcall otherwise))
 		    (return otherwise))))
 
 (defun anon-arg-number (sym)
