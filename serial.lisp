@@ -105,14 +105,6 @@
 	 :subclass)
 	(t nil)))))
 
-(defun first-matching (ls pred otherwise)
-  (loop for x in ls
-	if (funcall pred x)
-	  do (return x)
-	finally (if (functionp otherwise)
-		    (funcall otherwise)
-		    (return otherwise))))
-
 ;;; Determines the most correct class-spec for the object
 ;;; If a class is specified and it has children we have specs for:
 ;;; If the object matches the parent class perfectly (no extra data),

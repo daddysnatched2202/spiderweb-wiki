@@ -30,6 +30,14 @@
 			  x))
     l))
 
+(defun first-matching (ls pred otherwise)
+  (loop for x in ls
+	if (funcall pred x)
+	  do (return x)
+	finally (if (functionp otherwise)
+		    (funcall otherwise)
+		    (return otherwise))))
+
 (defun anon-arg-number (sym)
   (a-m:-> (symbol-name sym)
     (parse-integer :start 1)))
