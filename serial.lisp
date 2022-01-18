@@ -105,6 +105,14 @@
 	 :subclass)
 	(t nil)))))
 
+(defun first-matching-or (ls pred otherwise)
+  (loop for x in ls
+	if (funcall pred x)
+	  do (return x)
+	finally (if (functionp otherwise)
+		    (funcall otherwise)
+		    (return otherwise))))
+
 ;;; Determines the most correct class-spec for the object
 ;;; If a class is specified and it has children we have specs for:
 ;;; If the object matches the parent class perfectly (no extra data),
@@ -120,13 +128,12 @@
 			    (closer-mop:class-direct-subclasses)
 			    (mapcar #λ(gethash _0 *class-specs*))))
 			  (c-spec (gethash class *class-specs*)))
-	  (if (and (can-interpret-as-class obj c-spec)
-		   (eq :perfect (can-interpret-as-class obj c-spec)))
-	      class
-	      (loop for child-class in (closer-mop:class-direct-subclasses class)
-		 if (eq child-class (super-type-check obj child-class))
-		 do (return-from super-type-check child-class)
-		 finally (return-from super-type-check nil)))
+	
+	(if (eq :perfect (can-interpret-as-class obj c-spec))
+	    class
+	    (first-matching-or (closer-mop:class-direct-subclasses class)
+			       #λ(eq _0 (super-type-check obj _0))
+			       nil))
 	(if (can-interpret-as-class obj c-spec)
 	    class))
       (if (closer-mop:subclassp (class-of obj) class)
@@ -141,25 +148,26 @@
 		   obj)
 		  (:inherit
 		   (let* ((first-super
-			   (loop named lop
-			      for i in
-				(a-m:->> slot-spec
-				  (slot-spec/class-ref)
-				  (closer-mop:class-direct-superclasses))
-			      if (nth-value 1 (gethash i *class-specs*))
-			      do (return-from lop (gethash i *class-specs*))
-			      finally (error "Could not find class-spec for inherited
-slot ~a"
-					     (slot-spec/key slot-spec))))
+			    (first-matching-or
+			     (a-m:->> slot-spec
+			       (slot-spec/class-ref)
+			       (closer-mop:class-direct-superclasses))
+			     #λ(nth-value 1 (gethash _0 *class-specs*))
+			     #'(lambda () (error "Could not find class-spec for
+inherited slot ~a"
+					       (slot-spec/key slot-spec)))))
 			  (super-specs (a-m:->> first-super
 							 (class-spec/slot-specs)))
-			  (correct-spec (loop for s in super-specs
-					   if (closer-mop:slot-definition-name
-					       (slot-spec/ref s))
-					   return s
-					   finally (error "Could not find valid slot
-spec for ~a"
-							  (slot-spec/key slot-spec)))))
+			  (correct-spec (first-matching-or
+					 super-specs
+					 #λ(if
+					    (closer-mop:slot-definition-name
+					     (slot-spec/ref _0))
+					    nil)
+					 #'(lambda () (error "Could not find valid
+ slot spec for ~a"
+							     (slot-spec/key
+							      slot-spec))))))
 		     (serial->slot obj correct-spec)))
 		  ((list :seq a)
 		   (if (and (listp obj)
@@ -210,13 +218,14 @@ found"
 ;;; todo: allow inheritance of key
 (defun make-slot-spec (class slot-name key &optional type)
   (make-instance 'slot-spec
-		 :ref (loop for s in (closer-mop:class-slots class)
-			 if (eq (closer-mop:slot-definition-name s)
-				slot-name)
-			 return s
-			 finally (error "No slot found for ~a in class ~a"
-					slot-name
-					class))
+		 :ref (first-matching-or (closer-mop:class-slots class)
+					 #λ(eq (closer-mop:slot-definition-name _0)
+					       slot-name)
+					 #'(lambda ()
+					     (error
+					      "No slot found for ~a in class ~a"
+					      slot-name
+					      class)))
 		 :key key
 		 :type-def type
 		 :class-ref class))
