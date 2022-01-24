@@ -17,7 +17,6 @@
 (in-package :web)
 
 (defvar *handler*)
-(defvar *jquery-file* (make-array 300000 :element-type 'character :adjustable t))
 
 (defun run ()
   (load-db (make-rel-path "datastore"))
