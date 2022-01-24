@@ -15,7 +15,7 @@
   (defparameter *storage-type* :local)
   (defparameter *base-path* "<path to the folder where the data will be stored>/")
   #+end_src
-*** S3
+*** S3 (Not Implemented Yet)
     - If you can't store the files with the server, perhaps because you're using
       something like Heroku to run the application, you'll need to set it up to use
       Amazon S3
