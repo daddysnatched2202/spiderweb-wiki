@@ -22,6 +22,6 @@
       1. Add lines to ~conf.lisp~:
   #+begin_src lisp
   (defparameter *storage-type* :s3)
-  (defparameter *credentials-path* "<path to s3 credentials file>")
+  (defparameter *base-path* "<path to folder containing s3 credentials file>/")
   #+end_src
       2. That's it!
