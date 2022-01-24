@@ -41,13 +41,14 @@
   (loop for x in ls
 	if (funcall pred x)
 	  do (return x)
-	finally (if (and (functionp otherwise)
-			 call-otherwise)
-		    (return (funcall otherwise))
-		    (return otherwise))))
+	finally (return (if (and (functionp otherwise)
+				 call-otherwise)
+			    (funcall otherwise)
+			    otherwise))))
 
 (defun anon-arg-number (sym)
-  (a-m:-> (symbol-name sym)
+  (a-m:-> sym
+    (symbol-name)
     (parse-integer :start 1)))
 
 (defun anon-arg? (sym)
