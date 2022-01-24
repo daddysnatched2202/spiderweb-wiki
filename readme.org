@@ -24,5 +24,4 @@
   (defparameter *storage-type* :s3)
   (defparameter *credentials-path* "<path to s3 credentials file>")
   #+end_src
-      2. Save your AWS credentials to a file ~$HOME/.aws~
-      3. That's it!
+      2. That's it!
