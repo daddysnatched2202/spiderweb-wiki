@@ -19,6 +19,10 @@
     - If you can't store the files with the server, perhaps because you're using
       something like Heroku to run the application, you'll need to set it up to use
       Amazon S3
-      1. Add a line to ~conf.lisp~: ~(defparameter *storage-type* :s3)~
+      1. Add lines to ~conf.lisp~:
+  #+begin_src lisp
+  (defparameter *storage-type* :s3)
+  (defparameter *credentials-path* "<path to s3 credentials file>")
+  #+end_src
       2. Save your AWS credentials to a file ~$HOME/.aws~
       3. That's it!
