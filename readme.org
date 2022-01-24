@@ -20,5 +20,5 @@
       something like Heroku to run the application, you'll need to set it up to use
       Amazon S3
       1. Add a line to ~conf.lisp~: ~(defparameter *storage-type* :s3)~
-      2. Save your AWS credentials to a file ~~/.aws~
+      2. Save your AWS credentials to a file ~$HOME/.aws~
       3. That's it!

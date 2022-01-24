@@ -35,7 +35,7 @@
 ;;; If otherwise is a function, it will be called with no arguments (the primary use
 ;;; is to signal an error if there are no matches)
 ;;; If otherwise is not a function, then it will be returned as-is
-;;; The call-otherwise arg can be used if otherwise is a function / closure that you
+;;; Call-otherwise can be set to nil if otherwise is a function / closure that you
 ;;; want to return, not call
 (defun first-matching (ls pred otherwise &optional (call-otherwise t))
   (loop for x in ls
