@@ -71,7 +71,7 @@
 (defun note-with-path (path)
   (loop for n in (notes-with-node (car path))
 	if (path= (note/path n) path)
-	do (return-from note-with-path n)))
+	  do (return (note-with-path n))))
 
 (defun notes-with-partial-path (path)
   (labels ((rec (path notes)
@@ -109,8 +109,8 @@
   (let ((links))
     (cl-ppcre:do-register-groups (str)
 	("\\[\\[(.*?)\\]\\]" content)
-      (push str links))
-    (mapcar #λ(str:split #\| _0) links)))
+      (push (str:split #\| str) links))
+    links))
 
 (defun new-note (path-str content &key (type :text/markdown))
   (let ((p (path-from-string path-str)))
