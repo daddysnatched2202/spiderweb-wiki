@@ -125,24 +125,24 @@
 (defun delete-note ())
 
 (defun clear-db ()
-  (loop for obj in (bknr.datastore:all-store-objects)
-	do (bknr.datastore:delete-object obj)))
+  (loop for obj in (b.d:all-store-objects)
+	do (b.d:delete-object obj)))
 
 (defun load-db-local (path)
-  (make-instance 'bknr.datastore:mp-store
+  (make-instance 'b.d:mp-store
 		 :directory path
 		 :subsystems (list
 			      (make-instance
-			       'bknr.datastore:store-object-subsystem))))
+			       'b.d:store-object-subsystem))))
 
 (defun close-db ()
-  (bknr.datastore:close-store))
+  (b.d:close-store))
 
 (defun all-objects ()
-  (bknr.datastore:all-store-objects))
+  (b.d:all-store-objects))
 
 (defun all-notes ()
-  (bknr.datastore:store-objects-with-class 'note))
+  (b.d:store-objects-with-class 'note))
 
 (defun load-credentials ()
   (if (eq *storage-type* :s3)
