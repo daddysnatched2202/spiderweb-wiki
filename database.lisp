@@ -122,7 +122,8 @@
 		       :content content
 		       :store-obj nil))))
 
-(defun delete-note ())
+(defun delete-note (path)
+  (b.d:delete-object (note-with-path path)))
 
 (defun clear-db ()
   (loop for obj in (b.d:all-store-objects)
