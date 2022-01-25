@@ -19,7 +19,8 @@
 (defvar *handler*)
 
 (defun run ()
-  (load-db (make-rel-path "datastore"))
+  (if (eq *storage-type* :local)
+      (load-db-local (make-rel-path "datastore")))
   (setf *handler* (clack:clackup *app*)))
 
 (defun stop ()

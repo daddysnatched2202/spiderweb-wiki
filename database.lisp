@@ -128,7 +128,7 @@
   (loop for obj in (bknr.datastore:all-store-objects)
 	do (bknr.datastore:delete-object obj)))
 
-(defun load-db (path)
+(defun load-db-local (path)
   (make-instance 'bknr.datastore:mp-store
 		 :directory path
 		 :subsystems (list
@@ -145,4 +145,6 @@
   (bknr.datastore:store-objects-with-class 'note))
 
 (defun load-credentials ()
-  (setf zs3:*credentials* (zs3:file-credentials "~/.aws")))
+  (if (eq *storage-type* :s3)
+      (setf zs3:*credentials* (zs3:file-credentials *base-path*))
+      (error "Trying to load s3 credentials when *storage-type* is not set for s3")))
