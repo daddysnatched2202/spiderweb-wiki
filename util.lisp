@@ -183,5 +183,6 @@ got params ~a"
   (cdr (assoc param params :test #'equal)))
 
 (defun get-param-array (param params)
-  (loop for i in (remove param params :test-not #'equal :key #'car)
-     collect (cdr i)))
+  (a-m:-<>> params
+    (remove param a-m:<> :test-not #'equal :key #'car)
+    (mapcar #'cdr)))
