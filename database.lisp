@@ -71,7 +71,7 @@
 (defun note-with-path (path)
   (loop for n in (notes-with-node (car path))
 	if (path= (note/path n) path)
-	  do (return (note-with-path n))))
+	  do (return n)))
 
 (defun notes-with-partial-path (path)
   (labels ((rec (path notes)
