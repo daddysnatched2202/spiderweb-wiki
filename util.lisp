@@ -63,11 +63,6 @@
     (loop for x from 0 upto am:<>
 	  collect (intern (format nil "_~a" x)))))
 
-(defun anon-args-sort (bindings)
-  (sort (copy-list bindings)
-	#'<
-	:key #'anon-arg-number))
-
 ;;; TODO: handle advanced args (&rest, &key, &optional)
 (defmacro λ-macro (&body body)
   (let* ((bound-in-body (am:->> body
