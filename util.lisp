@@ -47,7 +47,7 @@
 			    otherwise))))
 
 (defun anon-arg-number (sym)
-  (a-m:-> sym
+  (am:-> sym
     (symbol-name)
     (parse-integer :start 1)))
 
@@ -57,10 +57,10 @@
 
 ;;; The list returned by ensure-anon-args will always be in order
 (defun ensure-anon-args (bindings)
-  (a-m:-<>> bindings
+  (am:-<>> bindings
     (mapcar #'anon-arg-number)
     (reduce #'max)
-    (loop for x from 0 upto a-m:<>
+    (loop for x from 0 upto am:<>
 	  collect (intern (format nil "_~a" x)))))
 
 (defun anon-args-sort (bindings)
@@ -70,7 +70,7 @@
 
 ;;; TODO: handle advanced args (&rest, &key, &optional)
 (defmacro λ-macro (&body body)
-  (let* ((bound-in-body (a-m:->> body
+  (let* ((bound-in-body (am:->> body
 			  (matching-symbols #'anon-arg?)))
 	 (ensured (ensure-anon-args bound-in-body))
 	 (diff (set-difference ensured bound-in-body)))
@@ -183,6 +183,6 @@ got params ~a"
   (cdr (assoc param params :test #'equal)))
 
 (defun get-param-array (param params)
-  (a-m:-<>> params
-    (remove param a-m:<> :test-not #'equal :key #'car)
+  (am:-<>> params
+    (remove param am:<> :test-not #'equal :key #'car)
     (mapcar #'cdr)))

@@ -84,7 +84,7 @@
 (defun node-from-string (str)
   (let* ((space '(" " . "-"))
 	 (breakout #\&)
-	 (conv (a-m:->> str
+	 (conv (am:->> str
 		 (str:replace-all (car space) (cdr space))
 		 (str:downcase)))
 	 (split-conv (str:split breakout conv)))
@@ -100,9 +100,9 @@
 
 (defun path-from-string (str)
   (let ((sep #\:))
-    (a-m:-<>> (str:split sep str :omit-nulls t)
+    (am:-<>> (str:split sep str :omit-nulls t)
       (copy-list)
-      (sort a-m:<> #'string<)
+      (sort am:<> #'string<)
       (mapcar #'node-from-string))))
 
 (defun find-links (content)

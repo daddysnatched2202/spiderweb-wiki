@@ -68,7 +68,7 @@
     (if found
 	(loop for s in (class-spec/slot-specs class-spec)
 	      collect (cons (slot-spec/key s) 
-			    (a-m:->> s
+			    (am:->> s
 			      (slot-spec/ref)
 			      (closer-mop:slot-definition-name)
 			      (slot-value obj)
@@ -115,7 +115,7 @@
 (defun super-type-check (obj class)
   (if (listp obj)
       (alexandria:if-let ((subclass-specs
-			   (a-m:->>
+			   (am:->>
 			    class
 			    (closer-mop:class-direct-subclasses)
 			    (mapcar #λ(gethash _0 *class-specs*))))
@@ -141,14 +141,14 @@
 		  (:inherit
 		   (let* ((first-super
 			    (first-matching
-			     (a-m:->> slot-spec
+			     (am:->> slot-spec
 			       (slot-spec/class-ref)
 			       (closer-mop:class-direct-superclasses))
 			     #λ(nth-value 1 (gethash _0 *class-specs*))
 			     #'(lambda () (error "Could not find class-spec for
 inherited slot ~a"
 					       (slot-spec/key slot-spec)))))
-			  (super-specs (a-m:->> first-super
+			  (super-specs (am:->> first-super
 					 (class-spec/slot-specs)))
 			  (correct-spec (first-matching
 					 super-specs
