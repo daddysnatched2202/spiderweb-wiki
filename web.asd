@@ -35,8 +35,8 @@
   :serial t
   :components ((:file "package")
 	       (:file "conf")
-	       (:file "css")
 	       (:file "util")
+	       (:file "css")
 	       (:file "serial")
 	       (:file "endpoints")
 	       (:file "database")
