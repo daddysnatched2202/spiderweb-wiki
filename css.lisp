@@ -18,13 +18,14 @@
 
 (in-package :web)
 
-(defun nord-sym? (sym)
-  (when (and (symbolp sym)
-	     sym)
-    (am:->> sym
-      (symbol-name)
-      (str:downcase)
-      (ppcre:scan "^nord[0-9]*$"))))
+(eval-when (:load-toplevel :compile-toplevel)
+  (defun nord-sym? (sym)
+    (when (and (symbolp sym)
+	       sym)
+      (am:->> sym
+	(symbol-name)
+	(str:downcase)
+	(ppcre:scan "^nord[0-9]*$")))))
 
 (defmacro css/with-nord-palette (&body body)
   `(let-bound ((nord0  "#2E3440")
@@ -54,29 +55,27 @@
 			      _0)
 			     ((null _0)
 			      nil)
-			     ((listp _0)
-			      (list 'css/nord-list _0))
 			     ((symbolp _0)
 			      (list 'quote _0))
 			     (t _0))
 		     els))))
 
 (defun css/std ()
-  (let ((rules (css/nord-list (footer :position absolute
-				      :bottom 0px
-				      :left 0px
-				      :height 3em
-				      :width 100%
-				      :background-color nord1
-				      (a :bottom -15px
-					 :margin 5px
-					 :position relative))
-			      (body :background-color nord0
-				    :color nord5)
-			      (p :color nord5)
-			      (a :background-color nord2
-				 :color nord5
-				 :text-decoration none
-				 :padding 4px)
-			      ("a:hover" :background-color nord3))))
+  (let ((rules (list (css/nord-list footer :position absolute
+					   :bottom 0px
+					   :left 0px
+					   :height 3em
+					   :width 100%
+					   :background-color nord1
+				    (css/nord-list a :bottom -15px
+						     :margin 5px
+						     :position relative))
+		     (css/nord-list body :background-color nord0
+					 :color nord5)
+		     (css/nord-list p :color nord5)
+		     (css/nord-list a :background-color nord2
+				      :color nord5
+				      :text-decoration none
+				      :padding 4px)
+		     (css/nord-list "a:hover" :background-color nord3))))
     (lass:compile-and-write rules)))
