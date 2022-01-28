@@ -84,13 +84,17 @@
 (set-dispatch-macro-character #\# #\λ #'λ-reader)
 
 (defmacro let-bound ((&rest bindings) &body body)
-  (let* ((bound-in-body (matching-symbols #'(lambda (x)
-					      (member x (mapcar #'car bindings)))
-					  body))
-	 (used-bindings (remove-if-not #'(lambda (x)
-					   (member (car x) bound-in-body))
-				       bindings)))
-    `(let* ,used-bindings ,@body)))
+  (labels ((bound-pred (x)
+	     (member x
+		     (mapcar #'car bindings)))
+	   (used-pred (x bound)
+	     (member (car x) bound)))
+    (let* ((bound-in-body (matching-symbols #'bound-pred
+					    body))
+	   (used-bindings (remove-if-not #'(lambda (x)
+					     (used-pred x bound-in-body))
+					 bindings)))
+      `(let* ,used-bindings ,@body))))
 
 (defun make-rel-path (str)
   (make-pathname :directory (concatenate 'string *base-path* str)))
