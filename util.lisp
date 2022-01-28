@@ -60,7 +60,7 @@
 
 ;;; TODO: handle advanced args (&rest, &key, &optional)
 ;;; Macro to speed up creation of lambdas
-;;; Automatically binds symbols in the body of the form _n : n is an integer to the
+;;; Automatically binds symbols in the body of the form (_n : n ∈ ℤ) to the
 ;;; nth argument of the lambda
 ;;; Even handles discontinuous argument lists !
 (defmacro λ-macro (&body body)
