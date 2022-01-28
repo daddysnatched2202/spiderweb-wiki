@@ -59,6 +59,10 @@
 	  collect (intern (format nil "_~a" x)))))
 
 ;;; TODO: handle advanced args (&rest, &key, &optional)
+;;; Macro to speed up creation of lambdas
+;;; Automatically binds symbols in the body of the form _n : n is an integer to the
+;;; nth argument of the lambda
+;;; Even handles discontinuous argument lists !
 (defmacro λ-macro (&body body)
   (let* ((bound-in-body (am:->> body
 			  (matching-symbols #'anon-arg?)))
