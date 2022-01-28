@@ -19,7 +19,8 @@
 (in-package :web)
 
 (defun nord-sym? (sym)
-  (when (symbolp sym)
+  (when (and (symbolp sym)
+	     sym)
     (am:->> sym
       (symbol-name)
       (str:downcase)
@@ -66,10 +67,10 @@
 				      :left 0px
 				      :height 3em
 				      :width 100%
-				      :background-color nord1)
-			      (a :bottom -15px
-				 :margin 5px
-				 :position relative)
+				      :background-color nord1
+				      (a :bottom -15px
+					 :margin 5px
+					 :position relative))
 			      (body :background-color nord0
 				    :color nord5)
 			      (p :color nord5)
