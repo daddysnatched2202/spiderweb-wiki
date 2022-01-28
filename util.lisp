@@ -16,21 +16,12 @@
 
 (in-package :web)
 
-;;; Paul Graham's flatten
-;;; From "On Lisp," page 49
-(defun flatten (x)
-  (labels ((rec (x acc)
-	     (cond ((null x) acc)
-		   ((atom x) (cons x acc))
-		   (t (rec (car x) (rec (cdr x) acc))))))
-    (rec x nil)))
-
 ;;; matching-symbols makes no guarantees about the order in which symbols are
 ;;; returned, but any given symbol will only be returned once, regardless of how many
 ;;; times it appears in the tree
 (defun matching-symbols (test-fun tree)
   (am:->> tree
-    (flatten)
+    (alexandria:flatten)
     (remove-if-not test-fun)
     (remove-duplicates)))
 
