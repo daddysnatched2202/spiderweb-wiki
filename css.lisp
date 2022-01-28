@@ -52,13 +52,13 @@
 (defmacro css/nord-list (&rest els)
   `(css/with-nord-palette
      ,(mapcar #λ(cond ((nord-sym? _0)
-			_0)
-		       ((null _0)
-			nil)
-		       ((symbolp _0)
-			(list 'quote _0))
-		       (t _0))
-	       els)))
+		       _0)
+		      ((null _0)
+		       nil)
+		      ((symbolp _0)
+		       (list 'quote _0))
+		      (t _0))
+	      els)))
 
 (defun css/std ()
   (let ((rules (list (css/nord-list footer :position absolute
