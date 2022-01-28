@@ -78,4 +78,4 @@
 				      :text-decoration none
 				      :padding 4px)
 		     (css/nord-list "a:hover" :background-color nord3))))
-    (lass:compile-and-write rules)))
+    (apply #'lass:compile-and-write rules)))
