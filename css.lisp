@@ -61,12 +61,12 @@
 		     els))))
 
 (defun css/std ()
-  (let ((rules (css/nord-list footer :position absolute
-				     :bottom 0px
-				     :left 0px
-				     :height 3em
-				     :width 100%
-				     :background-color nord1
+  (let ((rules (css/nord-list (footer :position absolute
+				      :bottom 0px
+				      :left 0px
+				      :height 3em
+				      :width 100%
+				      :background-color nord1)
 			      (a :bottom -15px
 				 :margin 5px
 				 :position relative)
