@@ -83,12 +83,11 @@
   (labels ((bound-pred (x)
 	     (member x
 		     (mapcar #'car bindings)))
-	   (used-pred (x bound)
+	   (used-pred (bound x)
 	     (member (car x) bound)))
     (let* ((bound-in-body (matching-symbols #'bound-pred
 					    body))
-	   (used-bindings (remove-if-not #'(lambda (x)
-					     (used-pred x bound-in-body))
+	   (used-bindings (remove-if-not (alexandria:curry #'used-pred bound-in-body)
 					 bindings)))
       `(let* ,used-bindings ,@body))))
 
