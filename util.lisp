@@ -83,12 +83,13 @@
   (labels ((bound-pred (x)
 	     (member x
 		     (mapcar #'car bindings)))
-	   (used-pred (bound x)
+	   (used-pred (x bound)
 	     (member (car x) bound)))
     (let* ((bound-in-body (matching-symbols #'bound-pred
 					    body))
-	   (used-bindings (remove-if-not (alexandria:curry #'used-pred bound-in-body)
-					 bindings)))
+	   (used-bindings (remove-if-not
+			   (alexandria:rcurry #'used-pred bound-in-body)
+			   bindings)))
       `(let* ,used-bindings ,@body))))
 
 (defun make-rel-path (str)
