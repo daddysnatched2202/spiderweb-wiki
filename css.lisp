@@ -51,31 +51,30 @@
 
 (defmacro css/nord-list (&rest els)
   `(css/with-nord-palette
-     ,(mapcar #λ(cond ((nord-sym? _0)
-		       _0)
-		      ((null _0)
-		       nil)
-		      ((symbolp _0)
-		       (list 'quote _0))
-		      (t _0))
-	      els)))
+     (list ,@(mapcar #λ(cond ((nord-sym? _0)
+			     _0)
+			    ((null _0)
+			     nil)
+			    ((symbolp _0)
+			     (list 'quote _0))
+			    (t _0))
+		    els))))
 
 (defun css/std ()
-  (let ((rules (list (css/nord-list footer :position absolute
-					   :bottom 0px
-					   :left 0px
-					   :height 3em
-					   :width 100%
-					   :background-color nord1
-				    (css/nord-list a :bottom -15px
-						     :margin 5px
-						     :position relative))
-		     (css/nord-list body :background-color nord0
-					 :color nord5)
-		     (css/nord-list p :color nord5)
-		     (css/nord-list a :background-color nord2
-				      :color nord5
-				      :text-decoration none
-				      :padding 4px)
-		     (css/nord-list "a:hover" :background-color nord3))))
-    (apply #'lass:compile-and-write rules)))
+  (lass:compile-and-write (css/nord-list footer :position absolute
+						:bottom 0px
+						:left 0px
+						:height 3em
+						:width 100%
+						:background-color nord1
+						(css/nord-list a :bottom -15px
+								 :margin 5px
+								 :position relative))
+			  (css/nord-list body :background-color nord0
+					      :color nord5)
+			  (css/nord-list p :color nord5)
+			  (css/nord-list a :background-color nord2
+					   :color nord5
+					   :text-decoration none
+					   :padding 4px)
+			  (css/nord-list "a:hover" :background-color nord3)))
