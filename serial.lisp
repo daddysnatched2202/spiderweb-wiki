@@ -156,12 +156,12 @@
 					    (mop:slot-definition-name
 					     (slot-spec/ref _0))
 					    nil)
-					 #'(lambda () (error "Could not find valid
- slot spec for ~a"
-							     (slot-spec/key
-							      slot-spec))))))
+					 #λ(error
+					    "Could not find valid slot spec for ~a"
+					    (slot-spec/key
+					     slot-spec)))))
 		     (serial->slot obj correct-spec)))
-		  ((list :seq a)
+      ((list :seq a)
 		   (if (and (listp obj)
 			    (every #λ(super-type-check _0 (find-class a))
 				   obj))
@@ -190,11 +190,11 @@
        do (if aso
 	      (setf (slot-value obj slot-name)
 		    (serial->slot (cdr aso) s))
-	      (error "Tried to serialize alist ~a into class ~a, but slot ~a was not
-found"
-		     alist
-		     ref
-		     slot-name)))
+	      (error
+	       "Tried to serialize alist ~a into class ~a, but slot ~a was not found"
+	       alist
+	       ref
+	       slot-name)))
     obj))
 
 (defun serial->obj (alist class-sym)
@@ -226,4 +226,7 @@ found"
 	 (ses (loop for s in spec
 		 collect (apply #'make-slot-spec c s))))
     (setf (gethash c *class-specs*)
-	  (make-instance 'class-spec :ref c :slot-specs ses :deserial deserial?))))
+	  (make-instance 'class-spec
+			 :ref c
+			 :slot-specs ses
+			 :deserial deserial?))))
