@@ -70,7 +70,7 @@
 	      collect (cons (slot-spec/key s) 
 			    (am:->> s
 			      (slot-spec/ref)
-			      (closer-mop:slot-definition-name)
+			      (mop:slot-definition-name)
 			      (slot-value obj)
 			      (general->serial))))
 	(error "No class spec for class ~a" (class-of obj)))))
@@ -117,18 +117,18 @@
       (alexandria:if-let ((subclass-specs
 			   (am:->>
 			    class
-			    (closer-mop:class-direct-subclasses)
+			    (mop:class-direct-subclasses)
 			    (mapcar #λ(gethash _0 *class-specs*))))
 			  (c-spec (gethash class *class-specs*)))
 	
 	(if (eq :perfect (can-interpret-as-class obj c-spec))
 	    class
-	    (first-matching (closer-mop:class-direct-subclasses class)
+	    (first-matching (mop:class-direct-subclasses class)
 			    #λ(eq _0 (super-type-check obj _0))
 			    nil))
 	(if (can-interpret-as-class obj c-spec)
 	    class))
-      (if (closer-mop:subclassp (class-of obj) class)
+      (if (mop:subclassp (class-of obj) class)
 	  t)))
 
 ;;; Only supports typedef of first direct superclass (todo: handle inheritance
@@ -143,7 +143,7 @@
 			    (first-matching
 			     (am:->> slot-spec
 			       (slot-spec/class-ref)
-			       (closer-mop:class-direct-superclasses))
+			       (mop:class-direct-superclasses))
 			     #λ(nth-value 1 (gethash _0 *class-specs*))
 			     #'(lambda () (error "Could not find class-spec for
 inherited slot ~a"
@@ -153,7 +153,7 @@ inherited slot ~a"
 			  (correct-spec (first-matching
 					 super-specs
 					 #λ(if
-					    (closer-mop:slot-definition-name
+					    (mop:slot-definition-name
 					     (slot-spec/ref _0))
 					    nil)
 					 #'(lambda () (error "Could not find valid
@@ -185,7 +185,7 @@ inherited slot ~a"
   (let* ((ref (class-spec/ref class-spec))
 	 (obj (make-instance ref)))
     (loop for s in (class-spec/slot-specs class-spec)
-       for slot-name = (closer-mop:slot-definition-name (slot-spec/ref s))
+       for slot-name = (mop:slot-definition-name (slot-spec/ref s))
        for aso = (assoc (slot-spec/key s) alist :test #'equal)
        do (if aso
 	      (setf (slot-value obj slot-name)
@@ -210,8 +210,8 @@ found"
 ;;; todo: allow inheritance of key
 (defun make-slot-spec (class slot-name key &optional type)
   (make-instance 'slot-spec
-		 :ref (first-matching (closer-mop:class-slots class)
-				      #λ(eq (closer-mop:slot-definition-name _0)
+		 :ref (first-matching (mop:class-slots class)
+				      #λ(eq (mop:slot-definition-name _0)
 					    slot-name)
 				      #'(lambda ()
 					  (error

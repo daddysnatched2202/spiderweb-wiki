@@ -17,5 +17,6 @@
 (defpackage :web
   (:local-nicknames (b.d bknr.datastore)
 		    (b.i bknr.indices)
-		    (am arrow-macros))
+		    (am arrow-macros)
+		    (mop closer-mop))
   (:use :cl))
