@@ -145,9 +145,9 @@
 			       (slot-spec/class-ref)
 			       (mop:class-direct-superclasses))
 			     #λ(nth-value 1 (gethash _0 *class-specs*))
-			     #λ(error "Could not find class-spec for 
-inherited slot ~a"
-					(slot-spec/key slot-spec))))
+			     #λ(error
+				"Could not find class-spec for inherited slot ~a"
+				(slot-spec/key slot-spec))))
 			  (super-specs (am:->> first-super
 					 (class-spec/slot-specs)))
 			  (correct-spec (first-matching
