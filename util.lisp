@@ -65,7 +65,7 @@
 ;;; Automatically binds symbols in the body of the form (_n : n ∈ ℤ) to the
 ;;; nth argument of the lambda
 ;;; Example : (λ-macro (+ _1 _2)) -> (lambda (_1 _2) (+ _1 _2))
-;;; Even handles discontinuous argument lists !
+;;; Even handles discontinuous and null argument lists !
 (defmacro λ-macro (&body body)
   (let* ((bound-in-body (am:->> body
 			  (matching-symbols #'anon-arg?)))
@@ -83,8 +83,7 @@
 
 (defmacro let-bound ((&rest bindings) &body body)
   (labels ((bound-pred (x)
-	     (member x
-		     (mapcar #'car bindings)))
+	     (member x (mapcar #'car bindings)))
 	   (used-pred (x bound)
 	     (member (car x) bound)))
     (let* ((bound-in-body (matching-symbols #'bound-pred
