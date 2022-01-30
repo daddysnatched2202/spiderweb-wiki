@@ -52,11 +52,13 @@
 
 ;;; The list returned by ensure-anon-args will always be in order
 (defun ensure-anon-args (bindings)
-  (am:-<>> bindings
-    (mapcar #'anon-arg-number)
-    (reduce #'max)
-    (loop for x from 0 upto am:<>
-	  collect (intern (format nil "_~a" x)))))
+  (if (> (length bindings) 0)
+      (am:-<>> bindings
+	(mapcar #'anon-arg-number)
+	(reduce #'max)
+	(loop for x from 0 upto am:<>
+	      collect (intern (format nil "_~a" x))))
+      nil))
 
 ;;; TODO: handle advanced args (&rest, &key, &optional)
 ;;; Macro to speed up creation of lambdas
