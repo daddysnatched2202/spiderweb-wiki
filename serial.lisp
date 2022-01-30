@@ -136,48 +136,45 @@
 (defun serial->slot (obj slot-spec)
   (let ((spec (slot-spec/type-def slot-spec)))
     (trivia:match spec
-		  (nil
-		   obj)
-		  (:inherit
-		   (let* ((first-super
-			    (first-matching
-			     (am:->> slot-spec
-			       (slot-spec/class-ref)
-			       (mop:class-direct-superclasses))
-			     #λ(nth-value 1 (gethash _0 *class-specs*))
-			     #λ(error
-				"Could not find class-spec for inherited slot ~a"
-				(slot-spec/key slot-spec))))
-			  (super-specs (am:->> first-super
-					 (class-spec/slot-specs)))
-			  (correct-spec (first-matching
-					 super-specs
-					 #λ(if
-					    (mop:slot-definition-name
-					     (slot-spec/ref _0))
-					    nil)
-					 #λ(error
-					    "Could not find valid slot spec for ~a"
-					    (slot-spec/key
-					     slot-spec)))))
-		     (serial->slot obj correct-spec)))
+      (nil
+       obj)
+      (:inherit
+       (let* ((first-super
+		(first-matching
+		 (am:->> slot-spec
+		   (slot-spec/class-ref)
+		   (mop:class-direct-superclasses))
+		 #λ(nth-value 1 (gethash _0 *class-specs*))
+		 #λ(error "Could not find class-spec for inherited slot ~a"
+		    (slot-spec/key slot-spec))))
+	      (super-specs (am:->> first-super
+			     (class-spec/slot-specs)))
+	      (correct-spec (first-matching
+			     super-specs
+			     #λ(if
+				(mop:slot-definition-name
+				 (slot-spec/ref _0))
+				nil)
+			     #λ(error "Could not find valid slot spec for ~a"
+				(slot-spec/key
+				 slot-spec)))))
+	 (serial->slot obj correct-spec)))
       ((list :seq a)
-		   (if (and (listp obj)
-			    (every #λ(super-type-check _0 (find-class a))
-				   obj))
-		       (mapcar #λ(serial->obj _0 a)
-			       obj)
-		       (error "~a failed type check of def ~a"
-			      obj
-			      spec)))
-		  ((list _ _)
-		   (error "~a is not a valid type definition" spec))
-		  (a
-		   (if (super-type-check obj (find-class a))
-		       (serial->obj obj a)
-		       (error "~a failed type check of def ~a"
-			      obj
-			      spec))))))
+       (if (and (listp obj)
+		(every #λ(super-type-check _0 (find-class a))
+		       obj))
+	   (mapcar #λ(serial->obj _0 a)
+		   obj)
+	   (error "~a failed type check of def ~a"
+		  obj
+		  spec)))
+      ((list _ _)
+       (error "~a is not a valid type definition" spec))
+      (a (if (super-type-check obj (find-class a))
+	     (serial->obj obj a)
+	     (error "~a failed type check of def ~a"
+		    obj
+		    spec))))))
 
 (defun init-class (class-spec alist)
   (unless (class-spec/deserial? class-spec)
@@ -185,16 +182,16 @@
   (let* ((ref (class-spec/ref class-spec))
 	 (obj (make-instance ref)))
     (loop for s in (class-spec/slot-specs class-spec)
-       for slot-name = (mop:slot-definition-name (slot-spec/ref s))
-       for aso = (assoc (slot-spec/key s) alist :test #'equal)
-       do (if aso
-	      (setf (slot-value obj slot-name)
-		    (serial->slot (cdr aso) s))
-	      (error
-	       "Tried to serialize alist ~a into class ~a, but slot ~a was not found"
-	       alist
-	       ref
-	       slot-name)))
+	  for slot-name = (mop:slot-definition-name (slot-spec/ref s))
+	  for aso = (assoc (slot-spec/key s) alist :test #'equal)
+	  do (if aso
+		 (setf (slot-value obj slot-name)
+		       (serial->slot (cdr aso) s))
+		 (error
+		  "Tried to serialize alist ~a into class ~a, but slot ~a was not found"
+		  alist
+		  ref
+		  slot-name)))
     obj))
 
 (defun serial->obj (alist class-sym)
@@ -224,7 +221,7 @@
 (defun make-class-spec (class-sym spec &key (deserial? t))
   (let* ((c (find-class class-sym))
 	 (ses (loop for s in spec
-		 collect (apply #'make-slot-spec c s))))
+		    collect (apply #'make-slot-spec c s))))
     (setf (gethash c *class-specs*)
 	  (make-instance 'class-spec
 			 :ref c
