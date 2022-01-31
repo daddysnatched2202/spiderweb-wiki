@@ -56,7 +56,7 @@
 			    ((null _0)
 			     nil)
 			    ((and (symbolp _0)
-				  (not (string= (symbol-package _0)
+				  (not (string= (package-name (symbol-package _0))
 						"KEYWORD")))
 			     (list 'quote _0))
 			    (t _0))
