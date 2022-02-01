@@ -52,15 +52,20 @@
 (defmacro css/nord-list (&rest els)
   `(css/with-nord-palette
      (list ,@(mapcar #λ(cond ((nord-sym? _0)
-			     _0)
-			    ((null _0)
-			     nil)
-			    ((and (symbolp _0)
-				  (not (string= (package-name (symbol-package _0))
-						"KEYWORD")))
-			     (list 'quote _0))
-			    (t _0))
-		    els))))
+			      _0)
+			     ((null _0)
+			      nil)
+			     ((and (listp _0)
+				   (symbolp (car _0))
+				   (string= (symbol-name (car _0))
+					    "LS"))
+			      (cons 'css/nord-list (cdr _0)))
+			     ((and (symbolp _0)
+				   (not (string= (package-name (symbol-package _0))
+						 "KEYWORD")))
+			      (list 'quote _0))
+			     (t _0))
+		     els))))
 
 (defun css/std ()
   (lass:compile-and-write
@@ -70,9 +75,9 @@
 			 :height 3em
 			 :width 100%
 			 :background-color nord1
-			 (css/nord-list a :bottom -15px
-					  :margin 5px
-					  :position relative))
+			 (ls a :bottom -15px
+			       :margin 5px
+			       :position relative))
    (css/nord-list body :background-color nord0
 		       :color nord5)
    (css/nord-list p :color nord5)
