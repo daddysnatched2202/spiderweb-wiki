@@ -66,15 +66,15 @@
 	   (list 'quote el))
 	  (t el))))
 
-(defun css/dispatch-list (els)
+(defun css/make-list (els)
   (cons 'list (mapcar #'css/nord-list-dispatch els)))
 
 (defun css/nord-sub-list (els)
-  (css/dispatch-list els))
+  (css/make-list els))
 
 (defmacro css/nord-list (&rest els)
   (list 'css/with-nord-palette
-	(css/dispatch-list els)))
+	(css/make-list els)))
 
 (defun css/std ()
   (lass:compile-and-write
