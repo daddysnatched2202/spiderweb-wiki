@@ -59,8 +59,8 @@
 		(eq 'ls (car el)))
 	   (css/nord-sub-list (cdr el)))
 	  ((and (symbolp el)
-		(not (equal (symbol-package el)
-			    keyw)))
+		(not (eq (symbol-package el)
+			 keyw)))
 	   (list 'quote el))
 	  (t el))))
 
