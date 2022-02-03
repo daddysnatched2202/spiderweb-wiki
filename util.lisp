@@ -117,18 +117,18 @@
 					       (key (ps:symbol-to-js-string name))
 					       default)
 		       sym
-		     (let ((getter `(,(if array
-					  'get-param-array
-					  'get-param)
-				     ,key
-				     ,params)))
-		       `(,name
-			 ,(if default
-			      `(alexandria:if-let ((,maybe-key ,getter))
-				 ,maybe-key
-				 ,default)
-			      getter))))
-		   `(,sym (get-param ,(ps:symbol-to-js-string sym) ,params)))))
+		     (let ((getter (list (if array
+					     'get-param-array
+					     'get-param)
+					 key
+					 params)))
+		       (list name
+			     (if default
+				 `(alexandria:if-let ((,maybe-key ,getter))
+				    ,maybe-key
+				    ,default)
+				 getter))))
+		   (list sym (get-param (ps:symbol-to-js-string sym) params)))))
       (let* ((bindings (mapcar #'make-binding param-list)))
 	`(setf (ningle:route *app* ,path ,@keys)
 	       #'(lambda (,params)
