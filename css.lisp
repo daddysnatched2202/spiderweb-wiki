@@ -27,6 +27,30 @@
 	(str:downcase)
 	(ppcre:scan "^nord[0-9]*$")))))
 
+(eval-when (:load-toplevel :compile-toplevel)
+  (let ((keyw (find-package "KEYWORD")))
+    (defun css/nord-list-dispatch (el)
+      (cond ((nord-sym? el)
+	     el)
+	    ((null el)
+	     nil)
+	    ((and (listp el)
+		  (eq 'ls (car el)))
+	     (css/nord-sub-list (cdr el)))
+	    ((and (symbolp el)
+		  (not (eq (symbol-package el)
+			   keyw)))
+	     (list 'quote el))
+	    (t el)))))
+
+(eval-when (:load-toplevel :compile-toplevel)
+  (defun css/make-list (els)
+    (cons 'list (mapcar #'css/nord-list-dispatch els))))
+
+(eval-when (:load-toplevel :compile-toplevel)
+  (defun css/nord-sub-list (els)
+    (css/make-list els)))
+
 (defmacro css/with-nord-palette (&body body)
   `(let-bound ((nord0  "#2E3440")
 	       (nord1  "#3B4252")
@@ -48,27 +72,6 @@
 	       (nord14 "#A3BE8C")
 	       (nord15 "#B48EAD"))
      ,@body))
-
-(let ((keyw (find-package "KEYWORD")))
-  (defun css/nord-list-dispatch (el)
-    (cond ((nord-sym? el)
-	   el)
-	  ((null el)
-	   nil)
-	  ((and (listp el)
-		(eq 'ls (car el)))
-	   (css/nord-sub-list (cdr el)))
-	  ((and (symbolp el)
-		(not (eq (symbol-package el)
-			 keyw)))
-	   (list 'quote el))
-	  (t el))))
-
-(defun css/make-list (els)
-  (cons 'list (mapcar #'css/nord-list-dispatch els)))
-
-(defun css/nord-sub-list (els)
-  (css/make-list els))
 
 (defmacro css/nord-list (&rest els)
   (list 'css/with-nord-palette
