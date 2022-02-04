@@ -64,7 +64,7 @@
 ;;; Macro to speed up creation of lambdas
 ;;; Automatically binds symbols in the body of the form (_n : n ∈ ℤ) to the
 ;;; nth argument of the lambda
-;;; Example : (λ-macro (+ _1 _2)) -> (lambda (_1 _2) (+ _1 _2))
+;;; Example : (λ-macro (+ _1 _2)) -> (lambda (_0 _1 _2) (+ _1 _2))
 ;;; Even handles discontinuous and null argument lists !
 (defmacro λ-macro (&body body)
   (let* ((bound-in-body (am:->> body
