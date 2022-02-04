@@ -96,19 +96,6 @@
 (defun make-rel-path (str)
   (make-pathname :directory (concatenate 'string *base-path* str)))
 
-(defmacro html/with-page ((&key title) &body body)
-  `(spinneret:with-html-string
-     (:doctype)
-     (:html
-      (:head
-       (:title ,title)
-       (:style (css/std)))
-      (:body
-       (:script :src "https://code.jquery.com/jquery-3.6.0.min.js")
-       ,@body)
-      (:footer (:a :href "/notes" "Note Index")
-	       (:a :href "/licenses" "Licenses")))))
-
 (defmacro ningle/route ((path &rest keys) (&rest param-list) &body body)
   (alexandria:with-gensyms (params maybe-key)
     (labels ((make-binding (sym)

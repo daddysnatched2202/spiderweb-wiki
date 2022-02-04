@@ -1,4 +1,4 @@
-;; Copyright 2021, 2022 Curtis Klassen
+;; Copyright 2022 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -14,33 +14,18 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Spiderweb Wiki.  If not, see <https://www.gnu.org/licenses/>.
 
-(asdf:defsystem :web
-  :depends-on (:clack
-	       :ningle
-	       :str
-	       :jonathan
-	       :alexandria
-	       :bknr.datastore 
-	       :ironclad
-	       :babel
-	       :arrow-macros
-	       :parenscript
-	       :closer-mop
-	       :trivia
-	       :uiop
-	       :spinneret
-	       :lass
-	       :cl-ppcre
-	       :zs3
-	       :3bmd
-	       :3bmd-ext-wiki-links)
-  :serial t
-  :components ((:file "package")
-	       (:file "conf")
-	       (:file "util")
-	       (:file "css")
-	       (:file "html")
-	       (:file "serial")
-	       (:file "endpoints")
-	       (:file "database")
-	       (:file "main")))
+(in-package :web)
+
+(defmacro html/with-page ((&key title) &body body)
+  `(spinneret:with-html-string
+     (:doctype)
+     (:html
+      (:head
+       (:title ,title)
+       (:style (css/std)))
+      (:body
+       (:script :src "https://code.jquery.com/jquery-3.6.0.min.js")
+       ,@body)
+      (:footer (:a :href "/notes" "Note Index")
+	       (:a :href "/licenses" "Licenses")))))
+
