@@ -81,29 +81,32 @@
 				 (rec (cdr path) notes))))))
     (rec (cdr path) (notes-with-node (car path)))))
 
-(defun node-from-string (str)
-  (let* ((space '(" " . "-"))
-	 (breakout #\&)
-	 (conv (am:->> str
-		 (str:replace-all (car space) (cdr space))
-		 (str:downcase)))
-	 (split-conv (str:split breakout conv)))
-    (if (nth-value 1 (node-with-name conv))
-	(node-with-name conv)
-	(if (> (length split-conv) 1)
-	    (make-instance 'breakout-node
-			   :name conv
-			   :breakout (cdr split-conv)
-			   :parent (car split-conv))
-	    (make-instance 'node
-			   :name conv)))))
+(let ((space '(" " . "-"))
+      (breakout #\&)
+      (sep #\:))
+  (defun string->node (str)
+    (let* ((conv (am:->> str
+		   (str:replace-all (car space) (cdr space))
+		   (str:downcase)))
+	   (split-conv (str:split breakout conv)))
+      (if (nth-value 1 (node-with-name conv))
+	  (node-with-name conv)
+	  (if (> (length split-conv) 1)
+	      (make-instance 'breakout-node
+			     :name conv
+			     :breakout (cdr split-conv)
+			     :parent (car split-conv))
+	      (make-instance 'node
+			     :name conv)))))
 
-(defun path-from-string (str)
-  (let ((sep #\:))
+  (defun string->path (str)
     (am:-<>> (str:split sep str :omit-nulls t)
       (copy-list)
       (sort am:<> #'string<)
-      (mapcar #'node-from-string))))
+      (mapcar #'string->node)))
+
+  (defun path->string (path)
+    (str:join sep path)))
 
 (defun find-links (content)
   (let ((links))
@@ -113,7 +116,7 @@
     links))
 
 (defun new-note (path-str content &key (type :text/markdown))
-  (let ((p (path-from-string path-str)))
+  (let ((p (string->path path-str)))
     (if (note-with-path p)
 	(error "Note already exists: ~a" path-str)
 	(make-instance 'note
