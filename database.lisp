@@ -24,7 +24,7 @@
     :initarg :type
     :reader note/type)
    (path
-    :initarg :type
+    :initarg :path
     :reader note/path
     :index-type b.i:hash-list-index
     :index-reader notes-with-node)
