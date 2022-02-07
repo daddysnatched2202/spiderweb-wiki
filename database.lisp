@@ -82,22 +82,22 @@
     (rec (cdr path) (notes-with-node (car path)))))
 
 (let ((space '(" " . "-"))
-      (breakout #\&)
+      (break-char #\&)
       (sep #\:))
   (defun string->node (str)
-    (let* ((conv (am:->> str
-		   (str:replace-all (car space) (cdr space))
-		   (str:downcase)))
-	   (split-conv (str:split breakout conv)))
-      (if (nth-value 1 (node-with-name conv))
-	  (node-with-name conv)
+    (let* ((rem-space (am:->> str
+			(str:replace-all (car space) (cdr space))
+			(str:downcase)))
+	   (split-conv (str:split break-char rem-space)))
+      (if (nth-value 1 (node-with-name rem-space))
+	  (node-with-name rem-space)
 	  (if (> (length split-conv) 1)
 	      (make-instance 'breakout-node
-			     :name conv
+			     :name rem-space
 			     :breakout (cdr split-conv)
 			     :parent (car split-conv))
 	      (make-instance 'node
-			     :name conv)))))
+			     :name rem-space)))))
 
   (defun string->path (str)
     (am:-<>> (str:split sep str :omit-nulls t)
