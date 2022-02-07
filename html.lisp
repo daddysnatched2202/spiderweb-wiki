@@ -29,3 +29,27 @@
       (:footer (:a :href "/notes" "Note Index")
 	       (:a :href "/licenses" "Licenses")))))
 
+(defclass wiki-parser () ())
+(defmethod 3bmd::process-wiki-link ((parser wiki-parser)
+				    normalized-target
+				    formatted-target
+				    args
+				    stream)
+  (declare (ignore parser
+		   normalized-target
+		   formatted-target
+		   args
+		   stream)))
+
+(setf 3bmd-wiki:*wiki-links* t)
+(setf 3bmd-wiki:*wiki-processor* (make-instance 'wiki-parser))
+
+(defun preview-note (note stream)
+  (let ((spinneret:*html* stream))
+    (spinneret:with-html
+      `(:div.note-preview
+	(:a ,(note/path note)
+	 :href ,(format nil
+			"/notes/render/~a"
+			(note/path note)))
+	(:p ,(note/content note))))))
