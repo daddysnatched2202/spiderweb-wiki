@@ -96,37 +96,36 @@
 (defun make-rel-path (str)
   (make-pathname :directory (concatenate 'string *base-path* str)))
 
-(defun make-binding (sym)
-  (if (listp sym)
-      (destructuring-bind (name &key array
-				  (key (ps:symbol-to-js-string name))
-				  default)
-	  sym
-	(let ((getter (list (if array
-				'get-param-array
-				'get-param)
-			    key
-			    params)))
-	  (list name
-		(if default
-		    `(alexandria:if-let ((,maybe-key ,getter))
-		       ,maybe-key
-		       ,default)
-		    getter))))
-      (list sym (get-param (ps:symbol-to-js-string sym) params))))
-
 (defmacro ningle/route ((path &rest keys) (&rest param-list) &body body)
   (alexandria:with-gensyms (params maybe-key)
-    (let* ((bindings (mapcar #'make-binding param-list)))
-      `(setf (ningle:route *app* ,path ,@keys)
-	     #'(lambda (,params)
-		 (alexandria:if-let ,bindings
-		   (progn ,@body)
-		   (warn "Could not fill params for route ~a; required params ~a, 
-got params ~a"
-			 ,path
-			 ',param-list
-			 ,params)))))))
+    (labels ((make-optional (opt getter)
+	       (if opt
+		   `(alexandria:if-let ((,maybe-key ,getter))
+		      ,maybe-key
+		      ,opt)
+		   getter))
+	     (make-getter (key array ls)
+	       (if array
+		   `(get-param-array ,key ,ls)
+		   `(get-param ,key ,ls)))
+	     (make-binding (sym)
+	       (if (listp sym)
+		   (let* ((plist (cdr sym))
+			  (bind (car sym))
+			  (key (getf plist :key (ps:symbol-to-js-string bind)))
+			  (array (getf plist :array))
+			  (opt (getf plist :optional)))
+		     `(,bind ,(make-optional opt (make-getter key array params))))
+		   `(,sym (get-param ,(ps:symbol-to-js-string sym) ,params)))))
+      (let* ((bindings (mapcar #'make-binding param-list)))
+	`(setf (ningle:route *app* ,path ,@keys)
+	       #'(lambda (,params)
+		   (alexandria:if-let ,bindings
+		     (progn ,@body)
+		     (warn "Could not fill params for route ~a, required params ~a, got params ~a"
+			   ,path
+			   ',param-list
+			   ,params))))))))
 
 (defun ningle/respond-type (type)
   (setf (lack.response:response-headers ningle:*response*)
