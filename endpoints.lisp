@@ -41,4 +41,20 @@
 
 (ningle/route ("/notes") ()
   (html/with-page (:title "Note Index")
-    ))
+    (:h1 "Path Elements")
+    (:div :class "grid-container"
+	  (dolist (n (all-nodes))
+	    (:a :href (format nil "/notes/~a" (node/name n))
+		(node/name n))))
+    (:h1 "Notes")
+    (:div :class "" (dolist (n (all-notes)) (preview-note n spinneret:*html*)))))
+
+(ningle/route ("/notes/:path") ((path :key :path))
+  (let ((n (note-with-path (string->path path))))
+    (html/with-page (:title (am:-> n
+			      (note/path)
+			      (last)))
+      (:h1 (am:-> n
+	     (note/path)
+	     (path->string)))
+      )))

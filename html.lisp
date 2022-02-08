@@ -27,7 +27,17 @@
        (:script :src "https://code.jquery.com/jquery-3.6.0.min.js")
        ,@body)
       (:footer (:a :href "/notes" "Note Index")
-	       (:a :href "/licenses" "Licenses")))))
+	       (:a :href "/licenses" "Licenses")
+	       (:a :href "/make-note" "New Note")
+	       (:a :href "/search" "Search")))))
+
+(defun note-url (note prefix)
+  (ccase prefix
+    (:render (format nil "/notes/~a" (path->string (note/path note))))
+    (:json (format nil "/json/notes/~a" (path->string (note/path note))))))
+
+(defun node-url (node)
+  (format nil "/notes/~a" (node/name node)))
 
 (defclass wiki-parser () ())
 (defmethod 3bmd::process-wiki-link ((parser wiki-parser)
@@ -36,10 +46,17 @@
 				    args
 				    stream)
   (declare (ignore parser
-		   normalized-target
-		   formatted-target
-		   args
-		   stream)))
+		   normalized-target))
+  (let ((link-text (if (car args)
+		       (car args)
+		       (format nil "~{~a~^ ~}" (string->path formatted-target)))))
+    (format stream
+	    "<a href=\"~a\">~a</a>"
+	    (am:-> formatted-target
+	      (string->path)
+	      (note-with-path)
+	      (note-url :render))
+	    link-text)))
 
 (setf 3bmd-wiki:*wiki-links* t)
 (setf 3bmd-wiki:*wiki-processor* (make-instance 'wiki-parser))
@@ -47,9 +64,15 @@
 (defun preview-note (note stream)
   (let ((spinneret:*html* stream))
     (spinneret:with-html
-      `(:div.note-preview
-	(:a ,(note/path note)
-	 :href ,(format nil
-			"/notes/render/~a"
-			(note/path note)))
-	(:p ,(note/content note))))))
+      `(:div :class "note-preview"
+	     (:a ,(path->string (note/path note))
+	      :href ,(note-url note :render))
+	     (:p ,(note/content note))))))
+
+(defun render-note (note stream)
+  (let ((spinneret:*html* stream))
+    (spinneret:with-html
+      `((:h1 ,(path->string (note/path note)))
+	(:div :class "path-elements"
+	 (dolist (n (note/path note))
+	   (:a (node/name n) :href (node-url n))))))))

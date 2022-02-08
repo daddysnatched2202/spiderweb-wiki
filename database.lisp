@@ -157,6 +157,9 @@
 (defun all-notes ()
   (b.d:store-objects-with-class 'note))
 
+(defun all-nodes ()
+  (b.d:store-objects-with-class 'node))
+
 (defun load-credentials ()
   (if (eq *storage-type* :s3)
       (setf zs3:*credentials* (zs3:file-credentials *base-path*))
