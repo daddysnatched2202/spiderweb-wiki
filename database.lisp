@@ -128,6 +128,15 @@
 (defun delete-note (path)
   (b.d:delete-object (note-with-path path)))
 
+(defun move-note (old-path new-path)
+  (let* ((n (note-with-path old-path))
+	 (cont (note/content n))
+	 (type (note/type n)))
+    (b.d:delete-object n)
+    (new-note (path->string new-path)
+	      cont
+	      :type type)))
+
 (defun clear-db ()
   (loop for obj in (b.d:all-store-objects)
 	do (b.d:delete-object obj)))
