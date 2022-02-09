@@ -91,13 +91,14 @@
 	   (split-conv (str:split break-char rem-space)))
       (if (nth-value 1 (node-with-name rem-space))
 	  (node-with-name rem-space)
-	  (if (> (length split-conv) 1)
-	      (make-instance 'breakout-node
-			     :name rem-space
-			     :breakout (cdr split-conv)
-			     :parent (car split-conv))
-	      (make-instance 'node
-			     :name rem-space)))))
+	  (b.d:with-transaction ()
+	    (if (> (length split-conv) 1)
+		(make-instance 'breakout-node
+			       :name rem-space
+			       :breakout (cdr split-conv)
+			       :parent (car split-conv))
+		(make-instance 'node
+			       :name rem-space))))))
 
   (defun string->path (str)
     (am:-<>> (str:split sep str :omit-nulls t)
@@ -126,20 +127,23 @@
 		       :store-obj nil))))
 
 (defun delete-note (path)
-  (b.d:delete-object (note-with-path path)))
+  (b.d:with-transaction ()
+    (b.d:delete-object (note-with-path path))))
 
 (defun move-note (old-path new-path)
   (let* ((n (note-with-path old-path))
 	 (cont (note/content n))
 	 (type (note/type n)))
-    (b.d:delete-object n)
-    (new-note (path->string new-path)
-	      cont
-	      :type type)))
+    (b.d:with-transaction ()
+      (b.d:delete-object n)
+      (new-note (path->string new-path)
+		cont
+		:type type))))
 
 (defun clear-db ()
-  (loop for obj in (b.d:all-store-objects)
-	do (b.d:delete-object obj)))
+  (b.d:with-transaction ()
+      (loop for obj in (b.d:all-store-objects)
+	    do (b.d:delete-object obj))))
 
 (defun load-db-local (path)
   (make-instance 'b.d:mp-store
