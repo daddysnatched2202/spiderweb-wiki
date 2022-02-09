@@ -16,6 +16,9 @@
 
 (in-package :web)
 
+(defvar *nodes* nil)
+(defvar *notes* nil)
+
 (defclass note ()
   ((content
     :initarg :content
@@ -25,30 +28,12 @@
     :reader note/type)
    (path
     :initarg :path
-    :reader note/path
-    :index-type b.i:hash-list-index
-    :index-reader notes-with-node)
-   (store-obj
-    :initarg :store-obj
-    :accessor note/store-obj))
-  (:metaclass b.i:indexed-class))
+    :reader note/path)))
 
 (defclass node ()
   ((name
     :initarg :name
-    :reader node/name
-    :index-type b.i:string-unique-index
-    :index-reader node-with-name))
-  (:metaclass b.i:indexed-class))
-
-(defclass breakout-node ()
-  ((parent
-    :initarg :parent
-    :reader breakout-node/parent)
-   (breakout
-    :initarg :breakout
-    :reader breakout-node/breakout))
-  (:metaclass b.i:indexed-class))
+    :reader node/name)))
 
 (defclass link ()
   ((text
@@ -59,14 +44,18 @@
     :reader link/from)
    (to
     :initarg :to
-    :reader link/to))
-  (:metaclass b.i:indexed-class))
+    :reader link/to)))
 
 (defun path= (a b)
   (equal a b))
 
 (defun note-has-node (note node)
   (member node (note/path note)))
+
+(defun notes-with-node (node)
+  (loop for n in *notes*
+	if (note-has-node n node)
+	  collect n))
 
 (defun note-with-path (path)
   (loop for n in (notes-with-node (car path))
@@ -81,6 +70,9 @@
 				 (rec (cdr path) notes))))))
     (rec (cdr path) (notes-with-node (car path)))))
 
+(defun node-with-name (name)
+  (find name *nodes* :test #'node/name))
+
 (let ((space '(" " . "-"))
       (break-char #\&)
       (sep #\:))
@@ -91,14 +83,13 @@
 	   (split-conv (str:split break-char rem-space)))
       (if (nth-value 1 (node-with-name rem-space))
 	  (node-with-name rem-space)
-	  (b.d:with-transaction ()
-	    (if (> (length split-conv) 1)
-		(make-instance 'breakout-node
-			       :name rem-space
-			       :breakout (cdr split-conv)
-			       :parent (car split-conv))
-		(make-instance 'node
-			       :name rem-space))))))
+	  (if (> (length split-conv) 1)
+	      (make-instance 'breakout-node
+			     :name rem-space
+			     :breakout (cdr split-conv)
+			     :parent (car split-conv))
+	      (make-instance 'node
+			     :name rem-space)))))
 
   (defun string->path (str)
     (am:-<>> (str:split sep str :omit-nulls t)
@@ -152,19 +143,20 @@
 			      (make-instance
 			       'b.d:store-object-subsystem))))
 
-(defun close-db ()
-  (b.d:close-store))
-
-(defun all-objects ()
-  (b.d:all-store-objects))
-
-(defun all-notes ()
-  (b.d:store-objects-with-class 'note))
-
-(defun all-nodes ()
-  (b.d:store-objects-with-class 'node))
-
 (defun load-credentials ()
   (if (eq *storage-type* :s3)
       (setf zs3:*credentials* (zs3:file-credentials *base-path*))
       (error "Trying to load s3 credentials when *storage-type* is not set for s3")))
+
+(defun make-db-specs ()
+  (let ((nt (find-class 'note))
+	(nd (find-class 'node)))
+    (if (or (gethash nt *class-specs*)
+	    (gethash nd *class-specs*))
+	(error "Tried to make db specs twice !")
+	(list (make-class-spec 'note
+			       (list (make-slot-spec nt 'content nil)
+				     (make-slot-spec nt 'type nil)
+				     (make-slot-spec nt 'path nil)))
+	      (make-class-spec 'node
+			       (list (make-slot-spec nd 'name nil)))))))

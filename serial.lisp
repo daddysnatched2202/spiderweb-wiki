@@ -146,7 +146,7 @@
 		   (mop:class-direct-superclasses))
 		 #λ(nth-value 1 (gethash _0 *class-specs*))
 		 #λ(error "Could not find class-spec for inherited slot ~a"
-		    (slot-spec/key slot-spec))))
+			  (slot-spec/key slot-spec))))
 	      (super-specs (am:->> first-super
 			     (class-spec/slot-specs)))
 	      (correct-spec (first-matching
@@ -156,8 +156,8 @@
 				 (slot-spec/ref _0))
 				nil)
 			     #λ(error "Could not find valid slot spec for ~a"
-				(slot-spec/key
-				 slot-spec)))))
+				      (slot-spec/key
+				       slot-spec)))))
 	 (serial->slot obj correct-spec)))
       ((list :seq a)
        (if (and (listp obj)
@@ -200,7 +200,7 @@
     (declare (ignore val))
     (if found
 	(alexandria:if-let ((c (super-type-check alist (find-class class-sym))))
-	    (init-class (gethash c *class-specs*) alist)
+	  (init-class (gethash c *class-specs*) alist)
 	  (error "Could not type check class ~a" class-sym))
 	(error "Could not find class ~a" class-sym))))
 
@@ -218,12 +218,10 @@
 		 :type-def type
 		 :class-ref class))
 
-(defun make-class-spec (class-sym spec &key (deserial? t))
-  (let* ((c (find-class class-sym))
-	 (ses (loop for s in spec
-		    collect (apply #'make-slot-spec c s))))
+(defun make-class-spec (class-sym specs &key (deserial? t))
+  (let* ((c (find-class class-sym)))
     (setf (gethash c *class-specs*)
 	  (make-instance 'class-spec
 			 :ref c
-			 :slot-specs ses
+			 :slot-specs specs
 			 :deserial deserial?))))
