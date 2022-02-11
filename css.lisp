@@ -95,4 +95,9 @@
 		    :color nord5
 		    :text-decoration none
 		    :padding 4px)
-   (css/nord-list "a:hover" :background-color nord3)))
+   (css/nord-list "a:hover" :background-color nord3)
+   '(.grid-container
+     :display "grid"
+     :grid-template-columns 25% 25% 25% 25%
+     :grid-column-gap 1em
+     :grid-row-gap 1em)))

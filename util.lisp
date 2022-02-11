@@ -28,7 +28,7 @@
 ;;; Returns the first item in ls for which pred returns a true value
 ;;; If none of the items in ls match, then otherwise will be used as follows:
 ;;; If otherwise is a function, it will be called with no arguments (the primary use
-;;; is to signal an error if there are no matches)
+;;; is to signal a condition if there are no matches)
 ;;; If otherwise is not a function, then it will be returned as-is
 ;;; Call-otherwise can be set to nil if otherwise is a function / closure that you
 ;;; want to return, not call
@@ -72,7 +72,8 @@
 	 (ensured (ensure-anon-args bound-in-body))
 	 (diff (set-difference ensured bound-in-body)))
     `#'(lambda ,ensured
-	 (declare (ignore ,@diff))
+	 ,(if diff
+	     `(declare (ignore ,@diff)))
 	 ,@body)))
 
 (defun λ-reader (stream subchar arg)
