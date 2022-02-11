@@ -20,10 +20,11 @@
 ;;; returned, but any given symbol will only be returned once, regardless of how many
 ;;; times it appears in the tree
 (defun matching-symbols (test-fun tree)
-  (am:->> tree
-    (alexandria:flatten)
-    (remove-if-not test-fun)
-    (remove-duplicates)))
+  (let ((pred (alexandria:compose #'symbolp test-fun)))
+    (am:->> tree
+      (alexandria:flatten)
+      (remove-if-not pred)
+      (remove-duplicates))))
 
 ;;; Returns the first item in ls for which pred returns a true value
 ;;; If none of the items in ls match, then otherwise will be used as follows:
