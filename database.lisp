@@ -53,9 +53,7 @@
   (member node (note/path note)))
 
 (defun notes-with-node (node)
-  (loop for n in *notes*
-	if (note-has-node n node)
-	  collect n))
+  (remove-if-not #λ(member node (note/path _0)) *notes*))
 
 (defun note-with-path (path)
   (loop for n in (notes-with-node (car path))
@@ -83,13 +81,15 @@
 	   (split-conv (str:split break-char rem-space)))
       (if (nth-value 1 (node-with-name rem-space))
 	  (node-with-name rem-space)
-	  (if (> (length split-conv) 1)
-	      (make-instance 'breakout-node
-			     :name rem-space
-			     :breakout (cdr split-conv)
-			     :parent (car split-conv))
-	      (make-instance 'node
-			     :name rem-space)))))
+	  (let ((node (if (> (length split-conv) 1)
+			  (make-instance 'breakout-node
+					 :name rem-space
+					 :breakout (cdr split-conv)
+					 :parent (car split-conv))
+			  (make-instance 'node
+					 :name rem-space))))
+	    (push node *nodes*)
+	    node))))
 
   (defun string->path (str)
     (am:-<>> (str:split sep str :omit-nulls t)
@@ -98,7 +98,9 @@
       (mapcar #'string->node)))
 
   (defun path->string (path)
-    (str:join sep path)))
+    (am:->> path
+      (mapcar #'node/name)
+      (str:join sep))))
 
 (defun find-links (content)
   (let ((links))
@@ -111,30 +113,26 @@
   (let ((p (string->path path-str)))
     (if (note-with-path p)
 	(error "Note already exists: ~a" path-str)
-	(make-instance 'note
-		       :path p
-		       :type type
-		       :content content
-		       :store-obj nil))))
+	(push (make-instance 'note
+			     :path p
+			     :type type
+			     :content content)
+	      *notes*))))
 
 (defun delete-note (path)
-  (b.d:with-transaction ()
-    (b.d:delete-object (note-with-path path))))
+  (setf *notes* (remove (note-with-path path) *notes*)))
 
 (defun move-note (old-path new-path)
   (let* ((n (note-with-path old-path))
 	 (cont (note/content n))
 	 (type (note/type n)))
-    (b.d:with-transaction ()
-      (b.d:delete-object n)
-      (new-note (path->string new-path)
-		cont
-		:type type))))
+    (delete-note old-path)
+    (new-note (path->string new-path)
+	      cont
+	      :type type)))
 
 (defun clear-db ()
-  (b.d:with-transaction ()
-      (loop for obj in (b.d:all-store-objects)
-	    do (b.d:delete-object obj))))
+  (setf *notes* nil))
 
 (defun load-db-local (path)
   (make-instance 'b.d:mp-store
@@ -149,14 +147,7 @@
       (error "Trying to load s3 credentials when *storage-type* is not set for s3")))
 
 (defun make-db-specs ()
-  (let ((nt (find-class 'note))
-	(nd (find-class 'node)))
-    (if (or (gethash nt *class-specs*)
-	    (gethash nd *class-specs*))
-	(error "Tried to make db specs twice !")
-	(list (make-class-spec 'note
-			       (list (make-slot-spec nt 'content nil)
-				     (make-slot-spec nt 'type nil)
-				     (make-slot-spec nt 'path nil)))
-	      (make-class-spec 'node
-			       (list (make-slot-spec nd 'name nil)))))))
+  (list (make-class-spec 'note (list (list 'content nil)
+				     (list 'type nil)
+				     (list 'path nil)))
+	(make-class-spec 'node (list (list 'name nil)))))

@@ -218,10 +218,13 @@
 		 :type-def type
 		 :class-ref class))
 
-(defun make-class-spec (class-sym specs &key (deserial? t))
+(defun make-class-spec (class-sym spec &key (deserial? t))
   (let* ((c (find-class class-sym)))
-    (setf (gethash c *class-specs*)
-	  (make-instance 'class-spec
-			 :ref c
-			 :slot-specs specs
-			 :deserial deserial?))))
+    (if (gethash c *class-specs*)
+	(error "Class ~a already has a spec" c)
+	(setf (gethash c *class-specs*)
+	      (make-instance 'class-spec
+			     :ref c
+			     :slot-specs (mapcar #λ(apply #'make-slot-spec c _0)
+						 spec)
+			     :deserial deserial?)))))

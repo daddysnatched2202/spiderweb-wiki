@@ -21,7 +21,7 @@
 ;;; endpoints
 (ningle/route ("/json/notes") ()
   (ningle/respond-type "application/json")
-  (jonathan:to-json (mapcar #'obj->serial (all-notes))
+  (jonathan:to-json (mapcar #'obj->serial *notes*)
 		    :from :alist))
 
 (ningle/route ("/") ()
@@ -43,11 +43,11 @@
   (html/with-page (:title "Note Index")
     (:h1 "Path Elements")
     (:div :class "grid-container"
-	  (dolist (n (all-nodes))
+	  (dolist (n *nodes*)
 	    (:a :href (format nil "/notes/~a" (node/name n))
 		(node/name n))))
     (:h1 "Notes")
-    (:div :class "" (dolist (n (all-notes)) (preview-note n spinneret:*html*)))))
+    (:div :class "" (dolist (n *notes*) (preview-note n spinneret:*html*)))))
 
 (ningle/route ("/notes/:path") ((path :key :path))
   (let ((n (note-with-path (string->path path))))
