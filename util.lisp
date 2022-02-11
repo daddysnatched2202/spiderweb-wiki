@@ -20,7 +20,7 @@
 ;;; returned, but any given symbol will only be returned once, regardless of how many
 ;;; times it appears in the tree
 (defun matching-symbols (test-fun tree)
-  (let ((pred (alexandria:compose #'symbolp test-fun)))
+  (let ((pred (alexandria:compose test-fun #'symbolp)))
     (am:->> tree
       (alexandria:flatten)
       (remove-if-not pred)
