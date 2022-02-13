@@ -137,9 +137,7 @@
 (defun load-db-local (path)
   (make-instance 'b.d:mp-store
 		 :directory path
-		 :subsystems (list
-			      (make-instance
-			       'b.d:store-object-subsystem))))
+		 :subsystems (list (make-instance 'b.d:store-object-subsystem))))
 
 (defun load-credentials ()
   (if (eq *storage-type* :s3)

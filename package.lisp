@@ -18,5 +18,6 @@
   (:local-nicknames (b.d bknr.datastore)
 		    (b.i bknr.indices)
 		    (am arrow-macros)
-		    (mop closer-mop))
+		    (mop closer-mop)
+		    (ana anaphora))
   (:use :cl))

@@ -20,6 +20,7 @@
 	       :str
 	       :jonathan
 	       :alexandria
+	       :anaphora
 	       :bknr.datastore 
 	       :ironclad
 	       :babel
