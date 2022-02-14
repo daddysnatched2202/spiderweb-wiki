@@ -64,7 +64,7 @@
   (labels ((rec (path notes)
 	     (cond
 	       ((null path) notes)
-	       (t (remove-if-not #λ(note-has-node _0 (car path))
+	       (t (remove-if-not (alexandria:rcurry #'note-has-node (car path))
 				 (rec (cdr path) notes))))))
     (rec (cdr path) (notes-with-node (car path)))))
 
