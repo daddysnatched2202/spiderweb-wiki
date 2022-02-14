@@ -14,6 +14,8 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Spiderweb Wiki.  If not, see <https://www.gnu.org/licenses/>.
 
+;;; TODO: put specs inside classes rather than storing them separately
+
 (in-package :web)
 
 (defvar *nodes* nil)
