@@ -31,12 +31,12 @@
 	       (:a :href "/make-note" "New Note")
 	       (:a :href "/search" "Search")))))
 
-(defun note-url (note prefix)
+(defun note/url (note prefix)
   (ccase prefix
     (:render (format nil "/notes/~a" (path->string (note/path note))))
     (:json (format nil "/json/notes/~a" (path->string (note/path note))))))
 
-(defun node-url (node)
+(defun node/url (node)
   (format nil "/notes/~a" (node/name node)))
 
 (defclass wiki-parser () ())
@@ -47,15 +47,15 @@
 				    stream)
   (declare (ignore parser
 		   normalized-target))
-  (let ((link-text (if (car args)
-		       (car args)
+  (let ((link-text (ana:aif (car args)
+		       ana:it
 		       (format nil "~{~a~^ ~}" (string->path formatted-target)))))
     (format stream
 	    "<a href=\"~a\">~a</a>"
 	    (am:-> formatted-target
 	      (string->path)
 	      (note-with-path)
-	      (note-url :render))
+	      (note/url :render))
 	    link-text)))
 
 (setf 3bmd-wiki:*wiki-links* t)
@@ -66,7 +66,7 @@
     (spinneret:with-html
       `(:div :class "note-preview"
 	     (:a ,(path->string (note/path note))
-	      :href ,(note-url note :render))
+	      :href ,(note/url note :render))
 	     (:p ,(note/content note))))))
 
 (defun render-note (note stream)
@@ -75,4 +75,4 @@
       `((:h1 ,(path->string (note/path note)))
 	(:div :class "path-elements"
 	 (dolist (n (note/path note))
-	   (:a (node/name n) :href (node-url n))))))))
+	   (:a (node/name n) :href (node/url n))))))))

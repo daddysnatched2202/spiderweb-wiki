@@ -33,7 +33,7 @@
 ;;; If otherwise is not a function, then it will be returned as-is
 ;;; Call-otherwise can be set to nil if otherwise is a function / closure that you
 ;;; want to return, not call
-(defun first-matching (ls pred otherwise &optional (call-otherwise t))
+(defun first-matching (ls pred otherwise &key (call-otherwise t))
   (loop for x in ls
 	if (funcall pred x)
 	  do (return x)
