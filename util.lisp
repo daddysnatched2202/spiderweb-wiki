@@ -75,7 +75,7 @@
     `#'(lambda ,ensured
 	 ,@(if diff
 	       `((declare (ignore ,@diff))
-		 ,body)
+		 ,@body)
 	       body))))
 
 (defun λ-reader (stream subchar arg)
