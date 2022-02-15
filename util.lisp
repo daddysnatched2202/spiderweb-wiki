@@ -73,10 +73,9 @@
 	 (ensured (ensure-anon-args bound-in-body))
 	 (diff (set-difference ensured bound-in-body)))
     `#'(lambda ,ensured
-	 ,@(if diff
-	      `((declare (ignore ,@diff))
-		,body)
-	      body))))
+	 ,(if diff
+	     `(declare (ignore ,@diff)))
+	 ,@body)))
 
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar arg))
