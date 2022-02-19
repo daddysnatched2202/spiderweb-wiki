@@ -70,13 +70,10 @@
 (defmacro λ-macro (&body body)
   (let* ((bound-in-body (am:->> body
 			  (matching-symbols #'anon-arg?)))
-	 (ensured (ensure-anon-args bound-in-body))
-	 (diff (set-difference ensured bound-in-body)))
+	 (ensured (ensure-anon-args bound-in-body)))
     `#'(lambda ,ensured
-	 ,@(if diff
-	       `((declare (ignore ,@diff))
-		 ,@body)
-	       body))))
+	 (declare (ignorable ,@ensured))
+	 ,@body)))
 
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar arg))
