@@ -16,6 +16,15 @@
 
 (in-package :web)
 
+;;; matching-symbols makes no guarantees about the order in which symbols are
+;;; returned, but any given symbol will only be returned once, regardless of how many
+;;; times it appears in the tree
+(defun matching-symbols (test-fun tree)
+  (am:->> tree
+    (alexandria:flatten)
+    (remove-if-not test-fun)
+    (remove-duplicates)))
+
 (defun anon-arg-number (sym)
   (am:-> sym
     (symbol-name)
