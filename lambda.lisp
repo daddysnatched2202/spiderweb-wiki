@@ -53,7 +53,8 @@
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar arg))
   (let ((form (read stream t nil t)))
-    (if (listp (car form))
+    (if (and (listp form)
+	     (listp (car form)))
 	`(λ-macro ,@form)
 	`(λ-macro ,form))))
 
