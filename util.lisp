@@ -74,7 +74,8 @@
 		   (declare (ignorable ,params))
 		   (alexandria:if-let ,bindings
 		     (progn ,@body)
-		     (warn "Could not fill params for route ~a, required params ~a, got params ~a"
+		     (warn "Could not fill params for route ~a, required params ~a, 
+got params ~a"
 			   ,path
 			   ',param-list
 			   ,params))))))))
