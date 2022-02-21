@@ -49,6 +49,7 @@
 	 (declare (ignorable ,@ensured))
 	 ,@body)))
 
+;;; If λ-reader reads a list of lists, all statements get passed to λ-macro
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar arg))
   (let ((form (read stream t nil t)))
