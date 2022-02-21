@@ -123,7 +123,7 @@
 
 (defun delete-note (path)
   (setf *notes* (remove-if #λ(path= (note/path _0) path)
-			*notes*)))
+			   *notes*)))
 
 (defun move-note (old-path new-path)
   (let* ((n (note-with-path old-path))

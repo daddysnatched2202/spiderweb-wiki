@@ -16,16 +16,6 @@
 
 (in-package :web)
 
-;;; matching-symbols makes no guarantees about the order in which symbols are
-;;; returned, but any given symbol will only be returned once, regardless of how many
-;;; times it appears in the tree
-(defun matching-symbols (test-fun tree)
-  (am:->> tree
-    (alexandria:flatten)
-    (remove-if-not (lambda (x) (and (symbolp x)
-				    (funcall test-fun x))))
-    (remove-duplicates)))
-
 ;;; Returns the first item in ls for which pred returns a true value
 ;;; If none of the items in ls match, then otherwise will be used as follows:
 ;;; If otherwise is a function, it will be called with no arguments (the primary use
@@ -41,48 +31,6 @@
 				 call-otherwise)
 			    (funcall otherwise)
 			    otherwise))))
-
-(defun anon-arg-number (sym)
-  (am:-> sym
-    (symbol-name)
-    (parse-integer :start 1)))
-
-(defun anon-arg? (sym)
-  (and (symbolp sym)
-       (ppcre:scan "^_[0-9]*$" (symbol-name sym))))
-
-;;; The list returned by ensure-anon-args will always be in order
-(defun ensure-anon-args (bindings)
-  (if (> (length bindings) 0)
-      (am:-<>> bindings
-	(mapcar #'anon-arg-number)
-	(reduce #'max)
-	(loop for x from 0 upto am:<>
-	      collect (intern (format nil "_~a" x))))
-      nil))
-
-;;; TODO: handle advanced args (&rest, &key, &optional)
-;;; Macro to speed up creation of lambdas
-;;; Automatically binds symbols in the body of the form (_n : n ∈ ℤ) to the
-;;; nth argument of the lambda
-;;; Example : (λ-macro (+ _1 _2)) -> (lambda (_0 _1 _2) (+ _1 _2))
-;;; Even handles discontinuous and null argument lists !
-(defmacro λ-macro (&body body)
-  (let* ((bound-in-body (am:->> body
-			  (matching-symbols #'anon-arg?)))
-	 (ensured (ensure-anon-args bound-in-body)))
-    `#'(lambda ,ensured
-	 (declare (ignorable ,@ensured))
-	 ,@body)))
-
-(defun λ-reader (stream subchar arg)
-  (declare (ignore subchar arg))
-  (let ((form (read stream t nil t)))
-    (if (listp (car form))
-	`(λ-macro ,@form)
-	`(λ-macro ,form))))
-
-(set-dispatch-macro-character #\# #\λ #'λ-reader)
 
 (defmacro let-bound ((&rest bindings) &body body)
   (labels ((bound-pred (x)

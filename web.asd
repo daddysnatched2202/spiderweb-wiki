@@ -37,6 +37,7 @@
 	       :3bmd-ext-wiki-links)
   :serial t
   :components ((:file "package")
+	       (:file "lambda")
 	       (:file "conf")
 	       (:file "database")
 	       (:file "util")
