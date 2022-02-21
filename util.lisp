@@ -123,6 +123,7 @@
       (let* ((bindings (mapcar #'make-binding param-list)))
 	`(setf (ningle:route *app* ,path ,@keys)
 	       #'(lambda (,params)
+		   (declare (ignorable ,params))
 		   (alexandria:if-let ,bindings
 		     (progn ,@body)
 		     (warn "Could not fill params for route ~a, required params ~a, got params ~a"
