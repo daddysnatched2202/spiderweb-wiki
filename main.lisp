@@ -20,7 +20,7 @@
 
 (defun run ()
   (if (eq *storage-type* :local)
-      (load-db-local (make-rel-path "datastore"))
+      (db/load-local (make-rel-path "datastore"))
       (error "Only local storage is supported for now"))
   (setf *handler* (clack:clackup *app*)))
 

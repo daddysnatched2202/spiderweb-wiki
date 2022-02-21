@@ -54,7 +54,7 @@
 	    "<a href=\"~a\">~a</a>"
 	    (am:-> formatted-target
 	      (string->path)
-	      (note-with-path)
+	      (note/with-path)
 	      (note/url :render))
 	    link-text)))
 
@@ -64,10 +64,10 @@
 (defun preview-note (note stream)
   (let ((spinneret:*html* stream))
     (spinneret:with-html
-      `(:div :class "note-preview"
-	     (:a ,(path->string (note/path note))
-	      :href ,(note/url note :render))
-	     (:p ,(note/content note))))))
+      (list :div :class "note-preview"
+	     (list :a (path->string (note/path note))
+	      :href (note/url note :render))
+	     (list :p (note/content note))))))
 
 (defun render-note (note stream)
   (let ((spinneret:*html* stream))

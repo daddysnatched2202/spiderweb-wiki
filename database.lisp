@@ -51,26 +51,26 @@
 (defun path= (a b)
   (equal a b))
 
-(defun note-has-node (note node)
+(defun note/has-node? (note node)
   (member node (note/path note)))
 
-(defun notes-with-node (node)
-  (remove-if-not #λ(note-has-node _0 node) *notes*))
+(defun note/all-with-node (node)
+  (remove-if-not #λ(note/has-node? _0 node) *notes*))
 
-(defun note-with-path (path)
-  (loop for n in (notes-with-node (car path))
+(defun note/with-path (path)
+  (loop for n in (note/all-with-node (car path))
 	if (path= (note/path n) path)
 	  do (return n)))
 
-(defun notes-with-partial-path (path)
+(defun note/all-with-partial-path (path)
   (labels ((rec (path notes)
 	     (if path
-		 (remove-if-not (alexandria:rcurry #'note-has-node (car path))
+		 (remove-if-not (alexandria:rcurry #'note/has-node? (car path))
 				(rec (cdr path) notes))
 		 notes)))
-    (rec (cdr path) (notes-with-node (car path)))))
+    (rec (cdr path) (note/all-with-node (car path)))))
 
-(defun node-with-name (name)
+(defun node/find-with-name (name)
   (find name *nodes* :key #'node/name :test #'string=))
 
 (let ((space '(" " . "-"))
@@ -81,8 +81,8 @@
 			(str:replace-all (car space) (cdr space))
 			(str:downcase)))
 	   (split-conv (str:split break-char rem-space)))
-      (if (nth-value 1 (node-with-name rem-space))
-	  (node-with-name rem-space)
+      (if (nth-value 1 (node/find-with-name rem-space))
+	  (node/find-with-name rem-space)
 	  (let ((node (if (> (length split-conv) 1)
 			  (make-instance 'breakout-node
 					 :name rem-space
@@ -111,9 +111,9 @@
       (push (str:split #\| str) links))
     links))
 
-(defun new-note (path-str content &key (type :text/markdown))
+(defun note/new (path-str content &key (type :text/markdown))
   (let ((p (string->path path-str)))
-    (if (note-with-path p)
+    (if (note/with-path p)
 	(error "Note already exists: ~a" path-str)
 	(push (make-instance 'note
 			     :path p
@@ -121,33 +121,33 @@
 			     :content content)
 	      *notes*))))
 
-(defun delete-note (path)
+(defun note/delete (path)
   (setf *notes* (remove-if #λ(path= (note/path _0) path)
 			   *notes*)))
 
-(defun move-note (old-path new-path)
-  (let* ((n (note-with-path old-path))
+(defun note/move (old-path new-path)
+  (let* ((n (note/with-path old-path))
 	 (cont (note/content n))
 	 (type (note/type n)))
-    (delete-note old-path)
-    (new-note (path->string new-path)
+    (note/delete old-path)
+    (note/new (path->string new-path)
 	      cont
 	      :type type)))
 
-(defun clear-db ()
+(defun db/clear ()
   (setf *notes* nil))
 
-(defun load-db-local (path)
+(defun db/load-local (path)
   (make-instance 'b.d:mp-store
 		 :directory path
 		 :subsystems (list (make-instance 'b.d:store-object-subsystem))))
 
-(defun load-credentials ()
+(defun db/load-credentials ()
   (if (eq *storage-type* :s3)
       (setf zs3:*credentials* (zs3:file-credentials *base-path*))
       (error "Trying to load s3 credentials when *storage-type* is not set for s3")))
 
-(defun make-db-specs ()
+(defun db/make-specs ()
   (list (make-class-spec 'note (list (list 'content nil)
 				     (list 'type nil)
 				     (list 'path nil)))

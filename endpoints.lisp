@@ -50,7 +50,7 @@
     (:div :class "" (dolist (n *notes*) (preview-note n spinneret:*html*)))))
 
 (ningle/route ("/notes/:path") ((path :key :path))
-  (let ((n (note-with-path (string->path path))))
+  (let ((n (note/with-path (string->path path))))
     (cond
       ((= (length path) 1)
        (let ((name (node/name (car path))))
