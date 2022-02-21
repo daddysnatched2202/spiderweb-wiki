@@ -1,4 +1,4 @@
-;; Copyright 2021, 2022 Curtis Klassen
+;; Copyright 2022 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
