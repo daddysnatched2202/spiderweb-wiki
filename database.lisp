@@ -55,7 +55,7 @@
   (member node (note/path note)))
 
 (defun notes-with-node (node)
-  (remove-if-not #λ(member node (note/path _0)) *notes*))
+  (remove-if-not #λ(note-has-node _0 node) *notes*))
 
 (defun note-with-path (path)
   (loop for n in (notes-with-node (car path))
