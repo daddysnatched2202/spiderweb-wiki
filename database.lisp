@@ -64,14 +64,14 @@
 
 (defun notes-with-partial-path (path)
   (labels ((rec (path notes)
-	     (cond
-	       ((null path) notes)
-	       (t (remove-if-not (alexandria:rcurry #'note-has-node (car path))
-				 (rec (cdr path) notes))))))
+	     (if path
+		 (remove-if-not (alexandria:rcurry #'note-has-node (car path))
+				(rec (cdr path) notes))
+		 notes)))
     (rec (cdr path) (notes-with-node (car path)))))
 
 (defun node-with-name (name)
-  (find name *nodes* :test #'node/name))
+  (find name *nodes* :key #'node/name :test #'string=))
 
 (let ((space '(" " . "-"))
       (break-char #\&)
