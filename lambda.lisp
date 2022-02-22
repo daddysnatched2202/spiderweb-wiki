@@ -58,7 +58,8 @@
 	 (declare (ignorable ,@ensured))
 	 ,@body)))
 
-;;; If λ-reader reads a list of lists, all statements get passed to λ-macro
+;;; If the car of the sexp read by λ-reader is :progn, all subsequent statements get
+;;; passed to λ-macro
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar arg))
   (let ((form (read stream t nil t)))
