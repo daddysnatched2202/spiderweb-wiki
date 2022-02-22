@@ -45,7 +45,7 @@
       `(let* ,used-bindings ,@body))))
 
 (defun make-rel-path (str)
-  (make-pathname :directory (concatenate 'string *base-path* str)))
+  (make-pathname :directory *base-path* :name str))
 
 (defmacro ningle/route ((path &rest keys) (&rest param-list) &body body)
   (alexandria:with-gensyms (params maybe-key)
