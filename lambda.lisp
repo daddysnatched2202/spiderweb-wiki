@@ -63,8 +63,8 @@
   (declare (ignore subchar arg))
   (let ((form (read stream t nil t)))
     (if (and (listp form)
-	     (listp (car form)))
-	`(λ-macro ,@form)
+	     (eq :progn (car form)))
+	`(λ-macro ,@(cdr form))
 	`(λ-macro ,form))))
 
 (set-dispatch-macro-character #\# #\λ #'λ-reader)
