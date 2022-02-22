@@ -51,12 +51,12 @@
 ;;; Example : (λ-macro (+ _1 _2)) -> (lambda (_0 _1 _2) (+ _1 _2))
 ;;; Even handles discontinuous and null argument lists !
 (defmacro λ-macro (&body body)
-  (let* ((bound-in-body (am:->> body
-			  (matching-symbols #'anon-arg?)))
-	 (ensured (ensure-anon-args bound-in-body)))
-    `#'(lambda ,ensured
-	 (declare (ignorable ,@ensured))
-	 ,@body)))
+  (am:-<>> body
+    (matching-symbols #'anon-arg?)
+    (ensure-anon-args)
+    `#'(lambda ,am:<>
+	(declare (ignorable ,@am:<>))
+	,@body)))
 
 ;;; If the car of the sexp read by λ-reader is :progn, all subsequent statements get
 ;;; passed to λ-macro
