@@ -1,4 +1,4 @@
-;; Copyright 2022 Curtis Klassen
+;; Copyright 2021, 2022 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -54,12 +54,16 @@
   (am:-<>> body
     (matching-symbols #'anon-arg?)
     (ensure-anon-args)
-    `#'(lambda ,am:<>
-	(declare (ignorable ,@am:<>))
-	,@body)))
+    (let ((args am:<>))
+      `#'(lambda ,args
+	   (declare (ignorable ,@args))
+	   ,@body))))
 
 ;;; If the car of the sexp read by λ-reader is :progn, all subsequent statements get
-;;; passed to λ-macro
+;;; passed to λ-macro (it's :progn instead of progn so that it could be separated
+;;; into its own package without the symbol needing to be interned into other
+;;; packages, and to keep away from the bad style of rebinding symbols defined by the
+;;; standard)
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar arg))
   (let ((form (read stream t nil t)))
