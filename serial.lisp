@@ -120,7 +120,6 @@
 			    (mop:class-direct-subclasses)
 			    (mapcar #λ(gethash _0 *class-specs*))))
 			  (c-spec (gethash class *class-specs*)))
-	
 	(if (eq :perfect (can-interpret-as-class obj c-spec))
 	    class
 	    (first-matching (mop:class-direct-subclasses class)

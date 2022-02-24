@@ -22,7 +22,7 @@
 (defun matching-symbols (test-fun tree)
   (am:->> tree
     (alexandria:flatten)
-    (remove-if-not test-fun)
+    (remove-if-not (alexandria:conjoin #'symbolp test-fun))
     (remove-duplicates)))
 
 (defun anon-arg-number (sym)

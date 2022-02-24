@@ -138,10 +138,23 @@
 (defun db/clear ()
   (setf *notes* nil))
 
+(defun file-contents (path)
+  (with-open-file (stream path :direction :input)
+    (let ((contents (make-string (file-length stream))))
+      (read-sequence contents stream)
+      contents)))
+
 (defun db/load-local (path)
-  (make-instance 'b.d:mp-store
-		 :directory path
-		 :subsystems (list (make-instance 'b.d:store-object-subsystem))))
+  (am:-> path
+    (file-contents)
+    (jonathan:parse)))
+
+(defun db/save-local (path)
+  (with-open-file (stream path :direction :output :if-exists :supersede)
+    (am:->> *notes*
+      (general->serial)
+      (jonathan:to-json)
+      (format stream "~a"))))
 
 (defun db/load-credentials ()
   (if (eq *storage-type* :s3)
