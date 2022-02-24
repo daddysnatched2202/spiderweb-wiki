@@ -62,8 +62,8 @@
 ;;; If the car of the sexp read by λ-reader is :progn, all subsequent statements get
 ;;; passed to λ-macro (it's :progn instead of progn so that it could be separated
 ;;; into its own package without the symbol needing to be interned into other
-;;; packages, and to keep away from the bad style of rebinding symbols defined by the
-;;; standard)
+;;; packages, and to avoid rebinding symbols defined by the standard, because it's
+;;; bad style)
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar arg))
   (let ((form (read stream t nil t)))
