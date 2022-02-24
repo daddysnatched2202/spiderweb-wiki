@@ -49,7 +49,8 @@
     :reader link/to)))
 
 (defun path= (a b)
-  (equal a b))
+  (string= (path->string a)
+	   (path->string b)))
 
 (defun note/has-node? (note node)
   (member node (note/path note)))
