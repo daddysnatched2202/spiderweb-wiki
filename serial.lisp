@@ -31,59 +31,61 @@
 ;;; t, t : class
 ;;; (:seq t), t : class
 
-(defvar *class-specs* (make-hash-table))
+(defclass serializable ()
+  ((class-spec
+    :accessor serializable/class-spec)))
 
-(defclass test-class () ((content :initarg :content)))
-(defclass test-sub (test-class) ((morc :initarg :morc)))
-(defclass test-cont-class () ((name :initarg :name)))
+(defclass slot-spec ()
+  ((ref
+    :initarg :ref
+    :accessor slot-spec/ref)
+   (type-def
+    :initarg :type-def
+    :accessor slot-spec/type-def)
+   (key
+    :initarg :key
+    :accessor slot-spec/key)
+   (class-ref
+    :initarg :class-ref
+    :accessor slot-spec/class-ref)))
 
-(defclass slot-spec () ((ref
-			 :initarg :ref
-			 :accessor slot-spec/ref)
-			(type-def
-			 :initarg :type-def
-			 :accessor slot-spec/type-def)
-			(key
-			 :initarg :key
-			 :accessor slot-spec/key)
-			(class-ref
-			 :initarg :class-ref
-			 :accessor slot-spec/class-ref)))
+(defclass class-spec ()
+  ((ref
+    :initarg :ref
+    :accessor class-spec/ref)
+   (slot-specs
+    :initarg :slot-specs
+    :accessor class-spec/slot-specs)
+   (deserial?
+    :initarg :deserial
+    :accessor class-spec/deserial?
+    :initform t)))
 
-(defclass class-spec () ((ref
-			  :initarg :ref
-			  :accessor class-spec/ref)
-			 (slot-specs
-			  :initarg :slot-specs
-			  :accessor class-spec/slot-specs)
-			 (deserial?
-			  :initarg :deserial
-			  :accessor class-spec/deserial?
-			  :initform t)))
+(defun serializable? (obj)
+  (mop:subclassp (class-of obj) (find-class 'serializable)))
+
+(defun class-serializable? (sym)
+  (mop:subclassp (find-class sym) (find-class 'serializable)))
 
 (defun obj->serial (obj)
-  (multiple-value-bind (class-spec found)
-      (gethash (class-of obj)
-	       *class-specs*)
-    (if found
-	(loop for s in (class-spec/slot-specs class-spec)
-	      collect (cons (slot-spec/key s) 
-			    (am:->> s
-			      (slot-spec/ref)
-			      (mop:slot-definition-name)
-			      (slot-value obj)
-			      (general->serial))))
-	(error "No class spec for class ~a" (class-of obj)))))
+  (if (serializable? obj)
+      (mapcar #λ(cons (slot-spec/key _0)
+		      (am:->> _0
+			(slot-spec/ref)
+			(mop:slot-definition-name)
+			(slot-value obj)
+			(general->serial)))
+	      (class-spec/slot-specs (serializable/class-spec obj)))
+      (error "No class spec for class ~a" (class-of obj))))
 
 (defun general->serial (obj)
   (cond
-    ((nth-value 1 (gethash (class-of obj) *class-specs*))
-     (obj->serial obj))
     ((null obj) nil)
+    ((serializable? obj)
+     (obj->serial obj))
     ((listp obj)
      (cons (general->serial (car obj)) (general->serial (cdr obj))))
-    (t
-     obj)))
+    (t obj)))
 
 ;;; doesn't do type check (not a problem since serial->slot does it)
 (defun can-interpret-as-class (ls class-spec)
@@ -118,8 +120,8 @@
 			   (am:->>
 			    class
 			    (mop:class-direct-subclasses)
-			    (mapcar #λ(gethash _0 *class-specs*))))
-			  (c-spec (gethash class *class-specs*)))
+			    (mapcar #λ(serializable/class-spec _0))))
+			  (c-spec))
 	(if (eq :perfect (can-interpret-as-class obj c-spec))
 	    class
 	    (first-matching (mop:class-direct-subclasses class)
@@ -139,13 +141,14 @@
        obj)
       (:inherit
        (let* ((first-super
-		(first-matching
-		 (am:->> slot-spec
-		   (slot-spec/class-ref)
-		   (mop:class-direct-superclasses))
-		 #λ(nth-value 1 (gethash _0 *class-specs*))
-		 #λ(error "Could not find class-spec for inherited slot ~a"
-			  (slot-spec/key slot-spec))))
+		(serializable/class-spec
+		 (first-matching
+		  (am:->> slot-spec
+		    (slot-spec/class-ref)
+		    (mop:class-direct-superclasses))
+		  #'serializable?
+		  #λ(error "Could not find class-spec for inherited slot ~a"
+			   (slot-spec/key slot-spec)))))
 	      (super-specs (am:->> first-super
 			     (class-spec/slot-specs)))
 	      (correct-spec (first-matching
@@ -194,14 +197,11 @@
     obj))
 
 (defun serial->obj (alist class-sym)
-  (multiple-value-bind (val found) (gethash (find-class class-sym)
-					    *class-specs*)
-    (declare (ignore val))
-    (if found
-	(alexandria:if-let ((c (super-type-check alist (find-class class-sym))))
-	  (init-class (gethash c *class-specs*) alist)
-	  (error "Could not type check class ~a" class-sym))
-	(error "Could not find class ~a" class-sym))))
+  (if (class-serializable? class-sym)
+      (alexandria:if-let ((c (super-type-check alist (find-class class-sym))))
+	(init-class (serializable/class-spec (make-instance class-sym)) alist)
+	(error "Could not type check class ~a" class-sym))
+      (error "Could not find class ~a" class-sym)))
 
 ;;; todo: allow inheritance of key
 (defun make-slot-spec (class slot-name key &optional type)
@@ -216,14 +216,3 @@
 		 :key key
 		 :type-def type
 		 :class-ref class))
-
-(defun make-class-spec (class-sym spec &key (deserial? t))
-  (let* ((c (find-class class-sym)))
-    (if (gethash c *class-specs*)
-	(error "Class ~a already has a spec" c)
-	(setf (gethash c *class-specs*)
-	      (make-instance 'class-spec
-			     :ref c
-			     :slot-specs (mapcar #λ(apply #'make-slot-spec c _0)
-						 spec)
-			     :deserial deserial?)))))

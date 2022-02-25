@@ -14,14 +14,13 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with Spiderweb Wiki.  If not, see <https://www.gnu.org/licenses/>.
 
-;;; TODO: put specs inside classes rather than storing them separately
-
 (in-package :web)
 
 (defvar *nodes* nil)
 (defvar *notes* nil)
+(defvar *links* nil)
 
-(defclass note ()
+(defclass note (serializable)
   ((content
     :initarg :content
     :reader note/content)
@@ -30,12 +29,33 @@
     :reader note/type)
    (path
     :initarg :path
-    :reader note/path)))
+    :reader note/path)
+   (class-spec
+    :initform (let ((n (find-class 'note)))
+		(make-instance 'class-spec
+			       :ref n
+			       :slot-specs (list
+					    (make-slot-spec n
+							    'content
+							    nil)
+					    (make-slot-spec n
+							    'type
+							    nil)
+					    (make-slot-spec n
+							    'path
+							    nil)))))))
 
-(defclass node ()
+(defclass node (serializable)
   ((name
     :initarg :name
-    :reader node/name)))
+    :reader node/name)
+   (class-spec
+    :initform (let ((n (find-class 'node)))
+		(make-instance 'class-spec
+			       :ref n
+			       :slot-specs (list (make-slot-spec n
+								 'name
+								 nil)))))))
 
 (defclass link ()
   ((text
@@ -51,6 +71,12 @@
 (defun path= (a b)
   (string= (path->string a)
 	   (path->string b)))
+
+(defun link= (a b)
+  (and (path= (link/from a)
+	      (link/from b))
+       (path= (link/to a)
+	      (link/to b))))
 
 (defun note/has-node? (note node)
   (member node (note/path note)))
@@ -112,15 +138,35 @@
       (push (str:split #\| str) links))
     links))
 
+(defun link/new (from to text)
+  (let* ((l (make-instance 'link
+			  :from from
+			  :to to
+			  :text text)))
+    (if (find l *links* :test #'link=)
+	(progn
+	  (link/delete l)
+	  (push l *links*))
+	(push l *links*))))
+
+(defun link/delete (l)
+  (setq *links* (delete l *links* :test #'link=)))
+
 (defun note/new (path-str content &key (type :text/markdown))
   (let ((p (string->path path-str)))
     (if (note/with-path p)
 	(error "Note already exists: ~a" path-str)
-	(push (make-instance 'note
-			     :path p
-			     :type type
-			     :content content)
-	      *notes*))))
+	(progn (push (make-instance 'note
+				    :path p
+				    :type type
+				    :content content)
+		     *notes*)
+	       (mapcar #λ(link/new (car _0)
+				   (cadr _0)
+				   (ana:aif (caddr _0)
+					    ana:it
+					    (car _0)))
+		       (find-links content))))))
 
 (defun note/delete (path)
   (setf *notes* (remove-if #λ(path= (note/path _0) path)
@@ -160,9 +206,3 @@
   (if (eq *storage-type* :s3)
       (setf zs3:*credentials* (zs3:file-credentials (make-rel-path "s3")))
       (error "Trying to load s3 credentials when *storage-type* is not set for s3")))
-
-(defun db/make-specs ()
-  (list (make-class-spec 'note (list (list 'content nil)
-				     (list 'type nil)
-				     (list 'path nil)))
-	(make-class-spec 'node (list (list 'name nil)))))
