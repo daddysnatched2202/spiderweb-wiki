@@ -140,14 +140,12 @@
 
 (defun link/new (from to text)
   (let* ((l (make-instance 'link
-			  :from from
-			  :to to
-			  :text text)))
-    (if (find l *links* :test #'link=)
-	(progn
-	  (link/delete l)
-	  (push l *links*))
-	(push l *links*))))
+			   :from from
+			   :to to
+			   :text text)))
+    (when (find l *links* :test #'link=)
+      (link/delete l))
+    (push l *links*)))
 
 (defun link/delete (l)
   (setq *links* (delete l *links* :test #'link=)))
