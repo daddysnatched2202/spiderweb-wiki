@@ -56,16 +56,15 @@
    (slot-specs
     :initarg :slot-specs
     :accessor class-spec/slot-specs)
-   (deserial?
+   (deserial
     :initarg :deserial
     :accessor class-spec/deserial?
     :initform t)))
 
 (defun serializable? (obj)
-  (mop:subclassp (class-of obj) (find-class 'serializable)))
-
-(defun class-serializable? (sym)
-  (mop:subclassp (find-class sym) (find-class 'serializable)))
+  (if (symbolp obj)
+      (mop:subclassp (find-class obj) (find-class 'serializable))
+      (mop:subclassp (class-of obj) (find-class 'serializable))))
 
 (defun obj->serial (obj)
   (if (serializable? obj)
@@ -197,7 +196,7 @@
     obj))
 
 (defun serial->obj (alist class-sym)
-  (if (class-serializable? class-sym)
+  (if (serializable? class-sym)
       (alexandria:if-let ((c (super-type-check alist (find-class class-sym))))
 	(init-class (serializable/class-spec (make-instance class-sym)) alist)
 	(error "Could not type check class ~a" class-sym))
