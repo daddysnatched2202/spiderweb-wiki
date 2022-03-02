@@ -68,13 +68,16 @@
 
 (defun obj->serial (obj)
   (if (serializable? obj)
-      (mapcar #λ(cons (slot-spec/key _0)
-		      (am:->> _0
-			(slot-spec/ref)
-			(mop:slot-definition-name)
-			(slot-value obj)
-			(general->serial)))
-	      (class-spec/slot-specs (serializable/class-spec obj)))
+      (cons (am:-> obj
+	      (class-of)
+	      (class-name))
+	    (mapcar #λ(cons (slot-spec/key _0)
+			    (am:->> _0
+			      (slot-spec/ref)
+			      (mop:slot-definition-name)
+			      (slot-value obj)
+			      (general->serial)))
+		    (class-spec/slot-specs (serializable/class-spec obj))))
       (error "No class spec for class ~a" (class-of obj))))
 
 (defun general->serial (obj)
@@ -152,9 +155,7 @@
 			     (class-spec/slot-specs)))
 	      (correct-spec (first-matching
 			     super-specs
-			     #λ(if
-				(mop:slot-definition-name
-				 (slot-spec/ref _0))
+			     #λ(if (mop:slot-definition-name (slot-spec/ref _0))
 				nil)
 			     #λ(error "Could not find valid slot spec for ~a"
 				      (slot-spec/key

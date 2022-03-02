@@ -108,8 +108,8 @@
 			(str:replace-all (car space) (cdr space))
 			(str:downcase)))
 	   (split-conv (str:split break-char rem-space)))
-      (if (nth-value 1 (node/find-with-name rem-space))
-	  (node/find-with-name rem-space)
+      (ana:aif (node/find-with-name rem-space)
+	  ana:it
 	  (let ((node (if (> (length split-conv) 1)
 			  (make-instance 'breakout-node
 					 :name rem-space
@@ -154,17 +154,18 @@
   (let ((p (string->path path-str)))
     (if (note/with-path p)
 	(error "Note already exists: ~a" path-str)
-	(progn (push (make-instance 'note
-				    :path p
-				    :type type
-				    :content content)
-		     *notes*)
-	       (mapcar #λ(link/new (car _0)
-				   (cadr _0)
-				   (ana:aif (caddr _0)
-					    ana:it
-					    (car _0)))
-		       (find-links content))))))
+	(let ((n (make-instance 'note
+				:path p
+				:type type
+				:content content)))
+	  (push n *notes*)
+	  (mapcar #λ(link/new (car _0)
+			      (cadr _0)
+			      (ana:aif (caddr _0)
+				       ana:it
+				       (car _0)))
+		  (find-links content))
+	  n))))
 
 (defun note/delete (path)
   (setf *notes* (remove-if #λ(path= (note/path _0) path)
