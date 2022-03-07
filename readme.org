@@ -7,7 +7,7 @@
 #+begin_src lisp
 (in-package :web)
 #+end_src
-** Setting Up Storage
+** Storage
 *** Local Files
     - If you can store the files locally (on the same machine the server is running
       from), the setup is easy: add the following lines to ~conf.lisp~
@@ -15,11 +15,25 @@
   (defparameter *storage-type* :local)
   (defparameter *base-path* "<path to the folder where the data will be stored>/")
   #+end_src
-*** S3 (Not Implemented Yet)
-    - If you can't store the files with the server, perhaps because you're using
-      something like Heroku to run the application, you'll need to set it up to use
-      Amazon S3; add the following lines to ~conf.lisp~
-  #+begin_src lisp
-  (defparameter *storage-type* :s3)
-  (defparameter *base-path* "<path to s3 credentials file>")
+*** S3
+    - Not implemented yet
+** Proxy
+   - Spiderweb wiki is designed to be run behind a reverse-proxy, like nginx
+   - The following is a sample nginx configuration
+  #+begin_src conf
+  http {
+       upstream hunchentoot {
+         server 127.0.0.1:5000;
+       }
+
+       server {
+         listen 80;
+	 listen [::]:80;
+	 server_name wiki.example.com;
+
+	 location / {
+	          proxy_pass http://hunchentoot;
+         }
+       }
+  }
   #+end_src

@@ -19,17 +19,17 @@
 (defvar *app* (make-instance 'ningle:app))
 
 ;;; endpoints
-(ningle/route ("/json/notes") ()
+(ningle/route ("/wiki/json/notes") ()
   (ningle/respond-type "application/json")
   (jonathan:to-json (mapcar #'obj->serial *notes*)
 		    :from :alist))
 
-(ningle/route ("/") ()
+(ningle/route ("/wiki") ()
   (html/with-page (:title "Welcome")
     (:p "Henlo luser")))
 
 ;;; TODO: system for different licenses / repos using classes
-(ningle/route ("/licenses") ()
+(ningle/route ("/wiki/licenses") ()
   (html/with-page (:title "License Info")
     (:a :href "https://github.com/daddysnatched2202/spiderweb-wiki" "Source code")
     (" available under the terms of the ")
@@ -39,7 +39,7 @@
 	"Creative Commons BY-SA 4.0")
     (" license")))
 
-(ningle/route ("/notes") ()
+(ningle/route ("/wiki/notes") ()
   (html/with-page (:title "Note Index")
     (:h1 "Path Elements")
     (:div :class "grid-container"
@@ -49,7 +49,7 @@
     (:h1 "Notes")
     (:div :class "" (dolist (n *notes*) (preview-note n spinneret:*html*)))))
 
-(ningle/route ("/notes/:path") ((path :key :path))
+(ningle/route ("/wiki/notes/:path") ((path :key :path))
   (let ((n (note/with-path (string->path path))))
     (cond
       ((= (length path) 1)
@@ -65,3 +65,7 @@
 		(path->string)))))
       (t (html/with-page (:title (path->string path))
 	   (:p "Note does not exist"))))))
+
+(ningle/route ("/wiki") ()
+  (html/with-page ()
+    "Probably you want to click on the 'Note Index' button …"))

@@ -26,10 +26,10 @@
       (:body
        (:script :src "https://code.jquery.com/jquery-3.6.0.min.js")
        ,@body)
-      (:footer (:a :href "/notes" "Note Index")
-	       (:a :href "/licenses" "Licenses")
-	       (:a :href "/make-note" "New Note")
-	       (:a :href "/search" "Search")))))
+      (:footer (:a :href "/wiki/notes" "Note Index")
+	       (:a :href "/wiki/licenses" "Licenses")
+	       (:a :href "/wiki/make-note" "New Note")
+	       (:a :href "/wiki/search" "Search")))))
 
 (defun note/url (note prefix)
   (ccase prefix
