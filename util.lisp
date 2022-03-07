@@ -80,10 +80,8 @@
 				,params)))))
 	`(progn (setf (ningle:route *app* ,path ,@keys ,page))
 		(setf (ningle:route *app*
-				    ,(if (char= (elt path (length path)) #\/)
-					 (str:substring 0
-							(1- (length path))
-							path)
+				    ,(if (string= (str:s-last path) "/")
+					 (str:substring 0 -1 path)
 					 (str:concat path "/"))
 				    ,@keys
 				    ,page)))))))
