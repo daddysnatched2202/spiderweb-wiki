@@ -21,12 +21,8 @@
 ;;; endpoints
 (ningle/route ("/wiki/json/notes") ()
   (ningle/respond-type "application/json")
-  (jonathan:to-json (mapcar #'obj->serial *notes*)
+  (jonathan:to-json (mapcar #'obj->serial (db/all-notes))
 		    :from :alist))
-
-(ningle/route ("/wiki") ()
-  (html/with-page (:title "Welcome")
-    (:p "Henlo luser")))
 
 ;;; TODO: system for different licenses / repos using classes
 (ningle/route ("/wiki/licenses") ()
@@ -43,11 +39,12 @@
   (html/with-page (:title "Note Index")
     (:h1 "Path Elements")
     (:div :class "grid-container"
-	  (dolist (n *nodes*)
+	  (dolist (n (db/all-nodes))
 	    (:a :href (format nil "/notes/~a" (node/name n))
 		(node/name n))))
     (:h1 "Notes")
-    (:div :class "" (dolist (n *notes*) (preview-note n spinneret:*html*)))))
+    (:div :class "" (dolist (n (db/all-notes))
+		      (preview-note n spinneret:*html*)))))
 
 (ningle/route ("/wiki/notes/:path") ((path :key :path))
   (let ((n (note/with-path (string->path path))))
@@ -56,13 +53,12 @@
        (let ((name (node/name (car path))))
 	 (html/with-page (:title name)
 	   (:h1 (format nil "Category Page: ~a" name)))))
-      (n
-       (html/with-page (:title (am:-> n
-				 (note/path)
-				 (last)))
-	 (:h1 (am:-> n
-		(note/path)
-		(path->string)))))
+      (n (html/with-page (:title (am:-> n
+				   (note/path)
+				   (last)))
+	   (:h1 (am:-> n
+		  (note/path)
+		  (path->string)))))
       (t (html/with-page (:title (path->string path))
 	   (:p "Note does not exist"))))))
 

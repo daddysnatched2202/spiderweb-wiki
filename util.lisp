@@ -45,7 +45,7 @@
       `(let* ,used-bindings ,@body))))
 
 (defun make-rel-path (str)
-  (make-pathname :directory *base-path* :name str))
+  (concatenate 'string *base-path* str))
 
 (defmacro ningle/route ((path &rest keys) (&rest param-list) &body body)
   (alexandria:with-gensyms (params maybe-key)
@@ -78,13 +78,13 @@
 				,path
 				',param-list
 				,params)))))
-	`(progn (setf (ningle:route *app* ,path ,@keys ,page))
+	`(progn (setf (ningle:route *app* ,path ,@keys) ,page)
 		(setf (ningle:route *app*
 				    ,(if (string= (str:s-last path) "/")
 					 (str:substring 0 -1 path)
 					 (str:concat path "/"))
-				    ,@keys
-				    ,page)))))))
+				    ,@keys)
+		      ,page))))))
 
 (defun ningle/respond-type (type)
   (setf (lack.response:response-headers ningle:*response*)

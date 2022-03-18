@@ -28,8 +28,8 @@
 
        server {
          listen 80;
-	 listen [::]:80;
-	 server_name wiki.example.com;
+         listen [::]:80;
+         server_name wiki.example.com;
 
 	 location / {
 	          proxy_pass http://hunchentoot;
