@@ -25,4 +25,5 @@
   (setf *handler* (clack:clackup *app*)))
 
 (defun stop ()
+  (b.d:close-store)
   (clack:stop *handler*))

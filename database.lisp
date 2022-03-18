@@ -172,7 +172,7 @@
 
 (defun note/delete (path)
   (b.d:with-transaction ()
-    ;; delete links
+    (mapcar #'link/delete (db/links-from path))
     (b.d:delete-object (note/with-path path))))
 
 (defun note/move (old-path new-path)
@@ -213,3 +213,11 @@
 
 (defun db/all-nodes ()
   (db/store-objects-of-classes 'node 'breakout-node))
+
+(defun db/links-to (path)
+  (remove-if-not #λ(path= (link/to _0) path)
+		 (db/all-links)))
+
+(defun db/links-from (path)
+  (remove-if-not #λ(path= (link/from _0) path)
+		 (db/all-links)))

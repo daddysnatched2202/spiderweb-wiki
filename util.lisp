@@ -17,19 +17,16 @@
 (in-package :web)
 
 ;;; Returns the first item in ls for which pred returns a true value
-;;; If none of the items in ls match, then otherwise will be used as follows:
-;;; If otherwise is a function, it will be called with no arguments (the primary use
-;;; is to signal a condition if there are no matches)
-;;; If otherwise is not a function, then it will be returned as-is
-;;; Call-otherwise can be set to nil if otherwise is a function / closure that you
-;;; want to return, not call
-(defun first-matching (ls pred otherwise &key (call-otherwise t))
+;;; If none of the items in ls match, then 'otherwise' will be used as follows :
+;;; If 'otherwise' is a condition, then it will be signalled, otherwise it will just
+;;; be returned as-is
+(defun first-matching (ls pred &key (otherwise nil))
   (loop for x in ls
 	if (funcall pred x)
 	  do (return x)
-	finally (return (if (and (functionp otherwise)
-				 call-otherwise)
-			    (funcall otherwise)
+	finally (return (if (mop:subclassp (class-of otherwise)
+					   (find-class 'condition))
+			    (signal otherwise)
 			    otherwise))))
 
 (defmacro let-bound ((&rest bindings) &body body)
