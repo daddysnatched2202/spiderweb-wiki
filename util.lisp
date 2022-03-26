@@ -24,9 +24,10 @@
   (loop for x in ls
 	if (funcall pred x)
 	  do (return x)
-	finally (return (if (and (mop:subclassp (class-of otherwise)
-						(find-class 'condition))
-				 signal-it)
+	finally (return (if (and otherwise
+				 signal-it
+				 (mop:subclassp (class-of otherwise)
+						(find-class 'condition)))
 			    (signal otherwise)
 			    otherwise))))
 
