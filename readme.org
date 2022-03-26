@@ -1,6 +1,30 @@
 * Spiderweb
   Wiki software built on the idea of creating many interconnecting links between
   ideas, much like a spiderweb
+* Why
+  When fantastic tools like Emacs' org-mode already exist for keeping notes, why
+  create a new one? There are three primary ways that the spiderweb differs from
+  org-mode
+** Inter-connectivity
+   - The spiderweb wiki is designed to function more like a wiki, so that information
+     can easily be accessed by users other than the writer
+   - This is especially useful if you wanted to run a pen-and-paper RPG for your
+     friends and have an easy way to share and collaborate information with your
+     players
+** Hierarchy
+   - From "CLOSOS, Specification of a Lisp operating system" by Robert Strandh :
+     "most things are not naturally hierarchical. A hierarchical organization imposes
+     an artificial order between names. Whether a document is called
+     ~Lisp/Programs/2013/stuff~, ~Programs/Lisp/2013/stuff~, or something else like
+     ~2013/Programs/Lisp/Stuff~, is usually not important."
+   - Using org-mode headings to organize information, as most people are wont to do
+     when keeping information in org-mode, a hierarchical structure is enforced when
+     it likely isn't the best fit for your information
+** Relations
+   - Org-mode does not necessarily make it easy to find information that is related
+     to what you are currently looking at
+   - If it's placed under the same heading, sure, it's easy to find. But what if it's
+     somewhere else?
 * Setup
   - Make a file ~conf.lisp~ in the main directory with the rest of the source
   - Start ~conf.lisp~ with the following contents
