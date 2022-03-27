@@ -11,15 +11,6 @@
    - This is especially useful if you wanted to run a pen-and-paper RPG for your
      friends and have an easy way to share and collaborate information with your
      players
-*** Web Technology
-    - If you're anything like me, having lived your whole life with atrocious rural
-      "internet," then the proliferation of "web apps" over native software is likely
-      to be distasteful
-    - However, for this use case, I believe the benefits (easy cross-platform
-      operation, the ability to work on a project away from home or on your phone
-      without needing to carry around multiple copies of an org document and keep
-      them in sync, the ability to run the software "in the cloud," etc.) outweigh
-      the drawbacks
 ** Hierarchy
    - From "CLOSOS Specification of a Lisp operating system" by Robert Strandh : "most
      things are not naturally hierarchical. A hierarchical organization imposes an
@@ -34,6 +25,16 @@
      to what you are currently looking at
    - If it's placed under the same heading, sure, it's easy to find. But what if it's
      somewhere else?
+* Justification
+** Web Technology
+   - If you're anything like me, having lived your whole life with atrocious rural
+     "internet," then the proliferation of "web apps" over native software is likely
+     to be distasteful
+   - However, for this use case, I believe the benefits (easy cross-platform
+     operation, the ability to work on a project away from home or on your phone
+     without needing to carry around multiple copies of an org document and keep
+     them in sync, the ability to run the software "in the cloud," etc.) outweigh
+     the drawbacks
 ** Lisp
    - Why is this application written in Common Lisp, a language that no one has cared
      about for 25 years?
