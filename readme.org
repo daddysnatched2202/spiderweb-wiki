@@ -25,7 +25,6 @@
      to what you are currently looking at
    - If it's placed under the same heading, sure, it's easy to find. But what if it's
      somewhere else?
-* Justification
 ** Web Technology
    - If you're anything like me, having lived your whole life with atrocious rural
      "internet," then the proliferation of "web apps" over native software is likely
