@@ -18,8 +18,8 @@
      ~Lisp/Programs/2013/stuff~, ~Programs/Lisp/2013/stuff~, or something else like
      ~2013/Programs/Lisp/Stuff~, is usually not important."
    - Using org-mode headings to organize information, as most people are wont to do
-     when keeping information in org-mode, a hierarchical structure is enforced when
-     it likely isn't the best fit for your information
+     when writing in org-mode, a hierarchical structure is enforced when it likely
+     isn't the best fit for your information
 ** Relations
    - Org-mode does not necessarily make it easy to find information that is related
      to what you are currently looking at
