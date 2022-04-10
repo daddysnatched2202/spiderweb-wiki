@@ -87,9 +87,8 @@
   (member node (note/path note)))
 
 (defun note/with-path (path)
-  (loop for n in (note/all-with-node (car path))
-	if (path= (note/path n) path)
-	  do (return n)))
+  (first-matching (note/all-with-node (car path))
+		  #λ(path= (note/path _0) path)))
 
 (defun note/all-with-partial-path (path)
   (labels ((rec (path notes)
