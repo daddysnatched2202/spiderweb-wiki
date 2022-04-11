@@ -213,6 +213,9 @@
 (defun db/all-nodes ()
   (db/store-objects-of-classes 'node 'breakout-node))
 
+(defun db/all-links ()
+  (b.d:store-objects-with-class 'link))
+
 (defun db/links-to (path)
   (remove-if-not #λ(path= (link/to _0) path)
 		 (db/all-links)))
