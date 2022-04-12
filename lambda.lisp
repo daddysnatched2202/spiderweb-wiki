@@ -53,9 +53,9 @@
       (matching-symbols #'anon-arg?)
       (ensure-anon-args)
       (let ((args am:<>))
-	`#'(lambda ,args
-	     (declare (ignorable ,@args))
-	     ,@body)))))
+	`(lambda ,args
+	   (declare (ignorable ,@args))
+	   ,@body)))))
 
 ;;; If the car of the sexp read by λ-reader is :progn, all subsequent statements get
 ;;; passed to λ-macro (it's :progn instead of progn so that the macro could be
