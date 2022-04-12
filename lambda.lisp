@@ -34,16 +34,6 @@
   (and (symbolp sym)
        (ppcre:scan "^_[0-9]*$" (symbol-name sym))))
 
-;;; The list returned by ensure-anon-args will always be in order
-(defun ensure-anon-args (bindings)
-  (if (> (length bindings) 0)
-      (am:-<>> bindings
-	(mapcar #'anon-arg-number)
-	(reduce #'max)
-	(loop for x from 0 upto am:<>
-	      collect (intern (format nil "_~a" x))))
-      nil))
-
 ;;; TODO: handle advanced args (&rest, &key, &optional)
 ;;; Macro to speed up creation of lambdas
 ;;; Automatically binds symbols in the body of the form (_n : n ∈ ℤ) to the nth
@@ -51,13 +41,21 @@
 ;;; Example : (λ-macro (+ _1 _2)) -> (lambda (_0 _1 _2) (+ _1 _2))
 ;;; Even handles discontinuous and null argument lists !
 (defmacro λ-macro (&body body)
-  (am:-<>> body
-    (matching-symbols #'anon-arg?)
-    (ensure-anon-args)
-    (let ((args am:<>))
-      `#'(lambda ,args
-	   (declare (ignorable ,@args))
-	   ,@body))))
+  (labels ((ensure-anon-args (bindings)
+	     (if (> (length bindings) 0)
+		 (am:-<>> bindings
+		   (mapcar #'anon-arg-number)
+		   (reduce #'max)
+		   (loop for x from 0 upto am:<>
+			 collect (intern (format nil "_~a" x))))
+		 nil)))
+    (am:-<>> body
+      (matching-symbols #'anon-arg?)
+      (ensure-anon-args)
+      (let ((args am:<>))
+	`#'(lambda ,args
+	     (declare (ignorable ,@args))
+	     ,@body)))))
 
 ;;; If the car of the sexp read by λ-reader is :progn, all subsequent statements get
 ;;; passed to λ-macro (it's :progn instead of progn so that the macro could be
