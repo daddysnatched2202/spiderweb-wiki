@@ -34,10 +34,10 @@
   (and (symbolp sym)
        (ppcre:scan "^_[0-9]*$" (symbol-name sym))))
 
-;;; TODO: handle advanced args (&rest, &key, &optional)
-;;; Macro to speed up creation of lambdas
-;;; Automatically binds symbols in the body of the form (_n : n ∈ ℤ) to the nth
-;;; argument of the lambda
+;;; TODO: handle advanced args (&rest, &key, &optional) Macro to speed up creation of
+;;; lambdas
+;;; Automatically binds symbols in the body of the form (_n : n ∈ (ℤ >= 0))
+;;; to the nth argument of the lambda
 ;;; Example : (λ-macro (+ _1 _2)) -> (lambda (_0 _1 _2) (+ _1 _2))
 ;;; Even handles discontinuous and null argument lists !
 (defmacro λ-macro (&body body)
