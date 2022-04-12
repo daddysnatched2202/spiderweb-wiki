@@ -20,15 +20,13 @@
 ;;; If none of the items in ls match, then 'otherwise' will be used as follows :
 ;;; If 'otherwise' is a condition and 'signal-it' is true, then it will be signalled,
 ;;; otherwise it will just be returned as-is
-(defun first-matching (ls pred &key (otherwise nil) (signal-it t))
+(defun first-matching (ls pred &key (otherwise nil) (err nil))
   (loop for x in ls
 	if (funcall pred x)
 	  do (return x)
-	finally (return (if (and otherwise
-				 signal-it
-				 (mop:subclassp (class-of otherwise)
-						(find-class 'condition)))
-			    (signal otherwise)
+	finally (return (if (and err
+				 (not otherwise))
+			    (apply #'error err)
 			    otherwise))))
 
 (defmacro let-bound ((&rest bindings) &body body)

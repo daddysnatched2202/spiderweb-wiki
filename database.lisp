@@ -88,7 +88,8 @@
 
 (defun note/with-path (path)
   (first-matching (note/all-with-node (car path))
-		  #λ(path= (note/path _0) path)))
+		  #λ(path= (note/path _0) path)
+		  :err (list "No note with path '~a'" path)))
 
 (defun note/all-with-partial-path (path)
   (labels ((rec (path notes)

@@ -128,7 +128,7 @@
 	    class
 	    (first-matching (mop:class-direct-subclasses class)
 			    #λ(eq _0 (super-type-check obj _0))
-			    nil))
+			    :otherwise nil))
 	(if (can-interpret-as-class obj c-spec)
 	    class))
       (if (mop:subclassp (class-of obj) class)
@@ -149,17 +149,16 @@
 		    (slot-spec/class-ref)
 		    (mop:class-direct-superclasses))
 		  #'serializable?
-		  #λ(error "Could not find class-spec for inherited slot ~a"
-			   (slot-spec/key slot-spec)))))
+		  :err (list "Could not find class-spec for inherited slot ~a"
+			     (slot-spec/key slot-spec)))))
 	      (super-specs (am:->> first-super
 			     (class-spec/slot-specs)))
 	      (correct-spec (first-matching
 			     super-specs
 			     #λ(if (mop:slot-definition-name (slot-spec/ref _0))
-				nil)
-			     #λ(error "Could not find valid slot spec for ~a"
-				      (slot-spec/key
-				       slot-spec)))))
+				   nil)
+			     :err (list "Could not find valid slot spec for ~a"
+					(slot-spec/key slot-spec)))))
 	 (serial->slot obj correct-spec)))
       ((list :seq a)
        (if (and (listp obj)
@@ -209,10 +208,9 @@
 		 :ref (first-matching (mop:class-slots class)
 				      #λ(eq (mop:slot-definition-name _0)
 					    slot-name)
-				      #λ(error
-					 "No slot found for ~a in class ~a"
-					 slot-name
-					 class))
+				      :err (list "No slot found for ~a in class ~a"
+						 slot-name
+						 class))
 		 :key key
 		 :type-def type
 		 :class-ref class))
