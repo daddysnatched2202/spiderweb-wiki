@@ -18,8 +18,8 @@
 
 ;;; Returns the first item in ls for which pred returns a true value
 ;;; If none of the items in ls match, then 'otherwise' will be used as follows :
-;;; If 'otherwise' is a condition and 'signal-it' is true, then it will be signalled,
-;;; otherwise it will just be returned as-is
+;;; If 'err' is not nil, then it should be a list which is the arguments that will be
+;;; passed to 'error' if there is no match
 (defun first-matching (ls pred &key (otherwise nil) (err nil))
   (loop for x in ls
 	if (funcall pred x)
