@@ -32,7 +32,6 @@
 	       :spinneret
 	       :lass
 	       :cl-ppcre
-	       :zs3
 	       :3bmd
 	       :3bmd-ext-wiki-links)
   :serial t
