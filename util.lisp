@@ -17,7 +17,7 @@
 (in-package :web)
 
 ;;; Returns the first item in ls for which pred returns a true value
-;;; If none of the items in ls match, then 'otherwise' will be used as follows :
+;;; If none of the items in ls match, then 'otherwise' will be returned
 ;;; If 'err' is not nil, then it should be a list which is the arguments that will be
 ;;; passed to 'error' if there is no match
 (defun first-matching (ls pred &key (otherwise nil) (err nil))
