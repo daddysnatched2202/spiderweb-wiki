@@ -62,16 +62,27 @@
     :accessor link/to))
   (:metaclass b.d:persistent-class))
 
-(defun note/all ()
+(defun db/all-notes ()
   (b.d:store-objects-with-class 'note))
 
-(defun link/all ()
+(defun db/all-nodes ()
+  (db/store-objects-of-classes 'node 'breakout-node))
+
+(defun db/all-links ()
   (b.d:store-objects-with-class 'link))
+
+(defun db/links-to (path)
+  (remove-if-not #λ(path= (link/to _0) path)
+		 (db/all-links)))
+
+(defun db/links-from (path)
+  (remove-if-not #λ(path= (link/from _0) path)
+		 (db/all-links)))
 
 (defun link/exists? (from to)
   (find-if #λ(and (path= from (link/from _0))
 		  (path= to (link/to _0)))
-	   (link/all)))
+	   (db/all-links)))
 
 (defun path= (a b)
   (string= (path->string a)
@@ -137,17 +148,15 @@
     links))
 
 (defun link/new (from to text)
-  (labels ((maker ()
-	     (ana:aif (link/exists? from to)
-		      (setf (link/from ana:it) from
-			    (link/to ana:it) to
-			    (link/text ana:it) text)
-		      (make-instance 'link
-				     :from from
-				     :to to
-				     :text text))))
-    (b.d:with-transaction ()
-      (maker))))
+  (b.d:with-transaction ()
+    (ana:aif (link/exists? from to)
+	     (setf (link/from ana:it) from
+		   (link/to ana:it) to
+		   (link/text ana:it) text)
+	     (make-instance 'link
+			    :from from
+			    :to to
+			    :text text))))
 
 (defun link/delete (l)
   (b.d:with-transaction ()
@@ -207,20 +216,3 @@
 
 (defun db/close ()
   (b.d:close-store))
-
-(defun db/all-notes ()
-  (b.d:store-objects-with-class 'note))
-
-(defun db/all-nodes ()
-  (db/store-objects-of-classes 'node 'breakout-node))
-
-(defun db/all-links ()
-  (b.d:store-objects-with-class 'link))
-
-(defun db/links-to (path)
-  (remove-if-not #λ(path= (link/to _0) path)
-		 (db/all-links)))
-
-(defun db/links-from (path)
-  (remove-if-not #λ(path= (link/from _0) path)
-		 (db/all-links)))
