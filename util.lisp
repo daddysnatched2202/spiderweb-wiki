@@ -18,15 +18,20 @@
 
 ;;; Returns the first item in ls for which pred returns a true value
 ;;; If none of the items in ls match, then 'otherwise' will be returned
-;;; If 'err' is not nil, then it should be a list which is the arguments that will be
-;;; passed to 'error' if there is no match
+;;; If 'err' is not nil, then it should be either
+;;; 1. A list which is the arguments that will be passed to 'error' if there is
+;;; no match
+;;; 2. A function that will be called with no arguments if there is no match
 (defun first-matching (ls pred &key (otherwise nil) (err nil))
   (loop for x in ls
 	if (funcall pred x)
 	  do (return x)
 	finally (return (if (and err
 				 (not otherwise))
-			    (apply #'error err)
+			    (cond ((listp err)
+				   (apply #'error err))
+				  ((functionp err)
+				   (funcall err)))
 			    otherwise))))
 
 (defmacro let-bound ((&rest bindings) &body body)
