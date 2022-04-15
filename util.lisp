@@ -32,8 +32,9 @@
 				   (apply #'error err))
 				  ((functionp err)
 				   (funcall err))
-				  (t (error (format nil "The value of 'err' in call ~
-to 'first-matching' must be either a list or a function; it in fact has the value ~
+				  (t (error (format nil
+						    "The value of 'err' in call to ~
+'first-matching' must be either a list or a function; it in fact has the value ~
 '~a', which is of type '~a'"
 						    err
 						    (type-of err)))))
