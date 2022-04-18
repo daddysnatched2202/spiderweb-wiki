@@ -17,6 +17,8 @@
 (in-package :web)
 
 (defparameter *jquery-url* "/wiki/jquery.js")
+(defvar *jquery-file*)
+(defvar *jquery-hash*)
 
 (defmacro html/with-page ((&key title) &body body)
   `(spinneret:with-html-string

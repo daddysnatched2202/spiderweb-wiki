@@ -17,8 +17,6 @@
 (in-package :web)
 
 (defvar *handler*)
-(defvar *jquery-file*)
-(defvar *jquery-hash*)
 
 (defun load-jquery ()
   (setf *jquery-file*
