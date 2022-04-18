@@ -70,8 +70,21 @@
 (setf (ningle/app:route *app* *jquery-url*)
       (lambda (params)
 	(declare (ignore params))
-	(ningle/respond-type "text/javascript")
-	(ningle/add-response-header "Cache-Control" "public")
-	(ningle/add-response-header "ETag" *jquery-hash*)
-	(ningle/set-response-status 304)
-	*jquery-file*))
+	(let* ((req (lack.request:request-headers ningle:*request*))
+	       (str (gethash "if-none-match" req))
+	       (str-len (length str)))
+	  (if (string= (if (> str-len 0)
+			   (subseq str 1 (1- str-len))
+			   str)
+		       *jquery-hash*)
+	      (progn
+		(ningle/set-response-status 304)
+		"Cache up-to-date")
+	      (progn
+		(ningle/respond-type "text/javascript")
+		(ningle/add-response-header "Cache-Control" "must-revalidate")
+		(ningle/add-response-header "ETag" (format nil
+							   "\"~a\""
+							   *jquery-hash*))
+		(ningle/set-response-status 200)
+		*jquery-file*)))))
