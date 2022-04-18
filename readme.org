@@ -92,12 +92,12 @@
   - After setting up ~conf.lisp~, you can run the application in the terminal by
     using the following commands
     #+begin_src eshell
-    cd <source directory>
-    <lisp command> --load "web.asd"
+    $ cd <source directory>
+    $ <lisp command> --load "web.asd"
     #+end_src
   - Inside the REPL
     #+begin_src lisp
-    (asdf:load-system "web")
-    (web:run)
+    > (asdf:load-system "web")
+    > (web:run)
     #+end_src
   - Once it's running, you can start Nginx to redirect HTTP traffic to the server
