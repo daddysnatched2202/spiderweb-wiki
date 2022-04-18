@@ -20,6 +20,8 @@
    - Using org-mode headings to organize information, as most people are wont to do
      when writing in org-mode, a hierarchical structure is enforced when it likely
      isn't the best fit for your information
+   - So the Spiderweb takes the opposite approach, preferring to link between notes
+     with an orderless categorization system
 ** Relations
    - Org-mode does not necessarily make it easy to find information that is related
      to what you are currently looking at
