@@ -78,3 +78,24 @@
        }
   }
   #+end_src
+* Compatibility
+** Lisp Implementations
+   - Spiderweb Wiki is written using portable Common Lisp, so it should run on any
+     standard-conforming implementation
+   - But it's developed on CCL and SBCL, so they should run best
+** Operating Systems
+   - Spiderweb Wiki is written on Ubuntu 21.10, but it should run fine on any Linux
+     distribution
+   - Other operating systems are untested, but they might work
+* Running the Program
+  - After setting up ~conf.lisp~, you can run the application in the terminal by
+    using the following commands
+    #+begin_src eshell
+    cd <source directory>
+    <lisp command> --load "web.asd"
+    #+end_src
+  - Inside the REPL
+    #+begin_src lisp
+    (asdf:load-system "web")
+    (web:run)
+    #+end_src
