@@ -1,17 +1,17 @@
 * Spiderweb
   Wiki software built on the idea of creating many interconnecting links between
   ideas, much like a spiderweb
-* Justification
+* Org Mode
   When fantastic tools like Emacs' org-mode already exist for keeping notes, why
   create a new one? There are three primary ways that the spiderweb differs from
-  org-mode : inter-connectivity, orderless categorization, and related information
+  org-mode : inter-connectivity, orderless organization, and related information
 ** Inter-connectivity
    - The spiderweb wiki is designed to function more like a wiki, so that information
      can easily be accessed by users other than the writer
    - This is especially useful if you wanted to run a pen-and-paper RPG for your
      friends and have an easy way to share and collaborate information with your
      players
-** Orderless Categorization
+** Orderless Organization
    - From "CLOSOS - Specification of a Lisp operating system" by Robert Strandh :
      "most things are not naturally hierarchical. A hierarchical organization imposes
      an artificial order between names. Whether a document is called
@@ -27,6 +27,7 @@
      to what you are currently looking at
    - If it's placed under the same heading, sure, it's easy to find. But what if it's
      somewhere else?
+* Justification
 ** Web Technology
    - If you're anything like me, having lived your whole life with atrocious rural
      "internet," then the proliferation of "web apps" over native software is likely
