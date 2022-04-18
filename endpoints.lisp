@@ -65,3 +65,13 @@
 (ningle/route ("/wiki") ()
   (html/with-page ()
     "Probably you want to click on the 'Note Index' button …"))
+
+;;; maybe we should use nginx for the cache instead ??
+(setf (ningle/app:route *app* *jquery-url*)
+      (lambda (params)
+	(declare (ignore params))
+	(ningle/respond-type "text/javascript")
+	(ningle/add-response-header "Cache-Control" "public")
+	(ningle/add-response-header "ETag" *jquery-hash*)
+	(ningle/set-response-status 304)
+	*jquery-file*))

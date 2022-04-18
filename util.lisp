@@ -92,10 +92,20 @@
 				    ,@keys)
 		      ,page))))))
 
-(defun ningle/respond-type (type)
+(defun ningle/push-response (response)
   (setf (lack.response:response-headers ningle:*response*)
 	(append (lack.response:response-headers ningle:*response*)
-		(list :content-type type))))
+		response)))
+
+(defun ningle/add-response-header (key val)
+  (ningle/push-response (list key val)))
+
+(defun ningle/respond-type (type)
+  (ningle/add-response-header :content-type type))
+
+(defun ningle/set-response-status (code)
+  (setf (lack.response:response-status ningle:*response*)
+	code))
 
 (defun get-param (param params)
   (cdr (assoc param params :test #'equal)))

@@ -24,7 +24,7 @@
        (:title ,title)
        (:style (css/std)))
       (:body
-       (:script :src "https://code.jquery.com/jquery-3.6.0.min.js")
+       (:script :src *jquery-url*)
        ,@body)
       (:footer (:a :href "/wiki/notes" "Note Index")
 	       (:a :href "/wiki/licenses" "Licenses")

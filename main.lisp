@@ -17,12 +17,28 @@
 (in-package :web)
 
 (defvar *handler*)
+(defvar *jquery-file*)
+(defvar *jquery-hash*)
+(defparameter *jquery-url* "/wiki/jquery.js")
+
+(defun load-jquery ()
+  (setf *jquery-file*
+	(multiple-value-bind
+	      (data code hash quri res)
+	    (dex:get "https://code.jquery.com/jquery-3.6.0.min.js")
+	  (declare (ignore code hash quri res))
+	  data)
+	*jquery-hash* (am:->> *jquery-file*
+			(babel:string-to-octets)
+			(ironclad:digest-sequence :sha256)
+			(ironclad:byte-array-to-hex-string))))
 
 (defun run ()
   (if (eq *storage-type* :local)
       (db/load-local (make-rel-path "datastore/"))
       (error "Only local storage is supported for now"))
-  (setf *handler* (clack:clackup *app*)))
+  (setf *handler* (clack:clackup *app*))
+  (load-jquery))
 
 (defun stop ()
   (b.d:close-store)

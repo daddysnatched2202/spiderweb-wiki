@@ -33,7 +33,9 @@
 	       :lass
 	       :cl-ppcre
 	       :3bmd
-	       :3bmd-ext-wiki-links)
+	       :3bmd-ext-wiki-links
+	       :ironclad
+	       :babel)
   :serial t
   :components ((:file "package")
 	       (:file "lambda")
