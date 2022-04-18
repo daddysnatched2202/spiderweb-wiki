@@ -46,7 +46,7 @@
 ** Lisp Implementations
    - Spiderweb Wiki is written using portable Common Lisp, so it should run on any
      standard-conforming implementation
-   - But it's developed on CCL and SBCL, so they should run best
+   - But it's developed on CCL and SBCL, so they should work best
 ** Operating Systems
    - Spiderweb Wiki is written on Ubuntu 21.10, but it should run fine on any Linux
      distribution
