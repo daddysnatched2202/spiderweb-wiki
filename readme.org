@@ -42,6 +42,15 @@
    - Because it's the language that I prefer, I'm the one who wrote this software,
      and I wrote it primarily for my own use; if others can find it useful, then
      please use it! But mass adoption isn't really the goal
+* Compatibility
+** Lisp Implementations
+   - Spiderweb Wiki is written using portable Common Lisp, so it should run on any
+     standard-conforming implementation
+   - But it's developed on CCL and SBCL, so they should run best
+** Operating Systems
+   - Spiderweb Wiki is written on Ubuntu 21.10, but it should run fine on any Linux
+     distribution
+   - Other operating systems are untested, but they might work
 * Setup
   - Make a file ~conf.lisp~ in the main directory with the rest of the source
   - Start ~conf.lisp~ with the following contents
@@ -78,15 +87,6 @@
        }
   }
   #+end_src
-* Compatibility
-** Lisp Implementations
-   - Spiderweb Wiki is written using portable Common Lisp, so it should run on any
-     standard-conforming implementation
-   - But it's developed on CCL and SBCL, so they should run best
-** Operating Systems
-   - Spiderweb Wiki is written on Ubuntu 21.10, but it should run fine on any Linux
-     distribution
-   - Other operating systems are untested, but they might work
 * Running the Program
   - After setting up ~conf.lisp~, you can run the application in the terminal by
     using the following commands
