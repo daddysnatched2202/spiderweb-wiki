@@ -4,14 +4,14 @@
 * Justification
   When fantastic tools like Emacs' org-mode already exist for keeping notes, why
   create a new one? There are three primary ways that the spiderweb differs from
-  org-mode : inter-connectivity, linking vs. hierarchy, and relations
+  org-mode : inter-connectivity, orderless categorization, and relations
 ** Inter-connectivity
    - The spiderweb wiki is designed to function more like a wiki, so that information
      can easily be accessed by users other than the writer
    - This is especially useful if you wanted to run a pen-and-paper RPG for your
      friends and have an easy way to share and collaborate information with your
      players
-** Linking vs. Hierarchy
+** Orderless Categorization
    - From "CLOSOS - Specification of a Lisp operating system" by Robert Strandh :
      "most things are not naturally hierarchical. A hierarchical organization imposes
      an artificial order between names. Whether a document is called
