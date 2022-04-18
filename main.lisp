@@ -19,7 +19,6 @@
 (defvar *handler*)
 (defvar *jquery-file*)
 (defvar *jquery-hash*)
-(defparameter *jquery-url* "/wiki/jquery.js")
 
 (defun load-jquery ()
   (setf *jquery-file*
