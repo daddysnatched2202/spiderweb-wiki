@@ -35,7 +35,8 @@
 	       :3bmd
 	       :3bmd-ext-wiki-links
 	       :ironclad
-	       :babel)
+	       :babel
+	       :zs3)
   :serial t
   :components ((:file "package")
 	       (:file "lambda")
