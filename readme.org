@@ -4,7 +4,7 @@
 * Justification
   When fantastic tools like Emacs' org-mode already exist for keeping notes, why
   create a new one? There are three primary ways that the spiderweb differs from
-  org-mode : inter-connectivity, orderless categorization, and relations
+  org-mode : inter-connectivity, orderless categorization, and related information
 ** Inter-connectivity
    - The spiderweb wiki is designed to function more like a wiki, so that information
      can easily be accessed by users other than the writer
@@ -22,7 +22,7 @@
      isn't the best fit for your information
    - So the Spiderweb takes the opposite approach, preferring to link between notes
      with an orderless categorization system
-** Relations
+** Relatives
    - Org-mode does not necessarily make it easy to find information that is related
      to what you are currently looking at
    - If it's placed under the same heading, sure, it's easy to find. But what if it's
