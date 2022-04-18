@@ -99,3 +99,4 @@
     (asdf:load-system "web")
     (web:run)
     #+end_src
+  - Once it's running, you can start Nginx to redirect HTTP traffic to the server
