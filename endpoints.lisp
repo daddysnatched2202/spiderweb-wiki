@@ -18,6 +18,26 @@
 
 (defvar *app* (make-instance 'ningle:app))
 
+(defun ningle/cache-file (file hash)
+  (lambda (params)
+    (declare (ignore params))
+    (let* ((req (lack.request:request-headers ningle:*request*))
+	   (str (gethash "if-none-match" req)))
+      (if (string= str
+		   hash)
+	  (progn
+	    (ningle/set-response-status 304)
+	    "Cache up-to-date")
+	  (labels ((as-printed (obj)
+		     (with-output-to-string (str)
+		       (princ obj str))))
+	    (progn
+	      (ningle/respond-type "text/javascript")
+	      (ningle/add-response-header "Cache-Control" "must-revalidate")
+	      (ningle/add-response-header "ETag" (as-printed hash))
+	      (ningle/set-response-status 200)
+	      file))))))
+
 ;;; endpoints
 (ningle/route ("/wiki/json/notes") ()
   (ningle/respond-type "application/json")
@@ -68,22 +88,4 @@
 
 ;;; maybe we should use nginx for the cache instead ??
 (setf (ningle/app:route *app* *jquery-url*)
-      (lambda (params)
-	(declare (ignore params))
-	(let* ((req (lack.request:request-headers ningle:*request*))
-	       (str (gethash "if-none-match" req)))
-	  (if (string= (if (> (length str) 0)
-			   (str:substring 1 -1 str)
-			   str)
-		       *jquery-hash*)
-	      (progn
-		(ningle/set-response-status 304)
-		"Cache up-to-date")
-	      (progn
-		(ningle/respond-type "text/javascript")
-		(ningle/add-response-header "Cache-Control" "must-revalidate")
-		(ningle/add-response-header "ETag" (format nil
-							   "\"~a\""
-							   *jquery-hash*))
-		(ningle/set-response-status 200)
-		*jquery-file*)))))
+      (ningle/cache-file *jquery-file* *jquery-hash*))
