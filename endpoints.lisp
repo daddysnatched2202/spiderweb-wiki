@@ -71,10 +71,9 @@
       (lambda (params)
 	(declare (ignore params))
 	(let* ((req (lack.request:request-headers ningle:*request*))
-	       (str (gethash "if-none-match" req))
-	       (str-len (length str)))
-	  (if (string= (if (> str-len 0)
-			   (subseq str 1 (1- str-len))
+	       (str (gethash "if-none-match" req)))
+	  (if (string= (if (> (length str) 0)
+			   (str:substring 1 -1 str)
 			   str)
 		       *jquery-hash*)
 	      (progn
