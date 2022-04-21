@@ -32,7 +32,6 @@
 		     (with-output-to-string (str)
 		       (princ obj str))))
 	    (progn
-	      (ningle/respond-type "text/javascript")
 	      (ningle/add-response-header "Cache-Control" "must-revalidate")
 	      (ningle/add-response-header "ETag" (as-printed hash))
 	      (ningle/set-response-status 200)
@@ -88,4 +87,7 @@
 
 ;;; maybe we should use nginx for the cache instead ??
 (setf (ningle/app:route *app* *jquery-url*)
-      (ningle/cache-file *jquery-file* *jquery-hash*))
+      (lambda (params)
+	(declare (ignore params))
+	(ningle/respond-type "text/javascript")
+	(ningle/cache-file *jquery-file* *jquery-hash*)))
