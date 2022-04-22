@@ -18,7 +18,7 @@
 
 (defvar *app* (make-instance 'ningle:app))
 
-(defun ningle/cache-file (file hash)
+(defun ningle/cache-file (file hash &key (file-type nil))
   (lambda (params)
     (declare (ignore params))
     (let* ((req (lack.request:request-headers ningle:*request*))
@@ -32,6 +32,8 @@
 		     (with-output-to-string (str)
 		       (princ obj str))))
 	    (progn
+	      (if file-type
+		  (ningle/respond-type file-type))
 	      (ningle/add-response-header "Cache-Control" "must-revalidate")
 	      (ningle/add-response-header "ETag" (as-printed hash))
 	      (ningle/set-response-status 200)
@@ -89,5 +91,6 @@
 (setf (ningle/app:route *app* *jquery-url*)
       (lambda (params)
 	(declare (ignore params))
-	(ningle/respond-type "text/javascript")
-	(ningle/cache-file *jquery-file* *jquery-hash*)))
+	(ningle/cache-file *jquery-file*
+			   *jquery-hash*
+			   :file-type "text/javascript")))
