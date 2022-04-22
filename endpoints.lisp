@@ -18,6 +18,9 @@
 
 (defvar *app* (make-instance 'ningle:app))
 
+;;; returns a function that can be used in an end point for caching static files on
+;;; the client
+;;; file-type should be a string which will be passed to ningle/respond-type, or nil
 (defun ningle/cache-file (file hash &key (file-type nil))
   (lambda (params)
     (declare (ignore params))
