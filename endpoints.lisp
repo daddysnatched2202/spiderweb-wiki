@@ -34,13 +34,12 @@
 	  (labels ((as-printed (obj)
 		     (with-output-to-string (str)
 		       (princ obj str))))
-	    (progn
-	      (if file-type
-		  (ningle/respond-type file-type))
-	      (ningle/add-response-header "Cache-Control" "must-revalidate")
-	      (ningle/add-response-header "ETag" (as-printed hash))
-	      (ningle/set-response-status 200)
-	      file))))))
+	    (if file-type
+		(ningle/respond-type file-type))
+	    (ningle/add-response-header "Cache-Control" "must-revalidate")
+	    (ningle/add-response-header "ETag" (as-printed hash))
+	    (ningle/set-response-status 200)
+	    file)))))
 
 ;;; endpoints
 (ningle/route ("/wiki/json/notes") ()
