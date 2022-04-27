@@ -88,6 +88,18 @@
        }
   }
   #+end_src
+** Jquery
+   - If you want Spiderweb Wiki to automatically download and use the latest version
+     of jquery, add the following to ~conf.lisp~
+     #+begin_src lisp
+     (defparameter *jquery-source* :web)
+     (defparameter *jquery-path* nil)
+     #+end_src
+   - If you want to serve a local copy, add the following instead :
+     #+begin_src lisp
+     (defparameter *jquery-source* :local)
+     (defparameter *jquery-path* "<path to the jquery file.js>")
+     #+end_src
 * Running the Program
   - After setting up ~conf.lisp~, you can run the application in the terminal by
     using the following commands

@@ -20,11 +20,16 @@
 
 (defun load-jquery ()
   (setf *jquery-file*
-	(multiple-value-bind
-	      (data code hash quri res)
-	    (dex:get "https://code.jquery.com/jquery-3.6.0.min.js")
-	  (declare (ignore code hash quri res))
-	  data)
+	(cond ((eq *jquery-source* :web)
+	       (multiple-value-bind (data code hash quri res)
+		   (dex:get "https://code.jquery.com/jquery-3.6.0.min.js")
+		 (declare (ignore code hash quri res))
+		 data))
+	      ((eq *jquery-source* :local)
+	       (uiop:read-file-string *jquery-path*))
+	      (t (error "Jquery source must be either `:local` or `:web`, it is in ~
+                        fact `~a`"
+			*jquery-source*)))
 	*jquery-hash* (am:->> *jquery-file*
 			(babel:string-to-octets)
 			(ironclad:digest-sequence :sha256)
