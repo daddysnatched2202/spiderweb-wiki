@@ -49,7 +49,7 @@
      standard-conforming implementation
    - But it's developed on CCL and SBCL, so they'll likely work best
 ** Operating Systems
-   - Spiderweb Wiki is written on Ubuntu 21.10, but it should run fine on any Linux
+   - Spiderweb Wiki is written on Ubuntu 21.10, but it should work fine on any Linux
      distribution
    - Other operating systems are untested, but they might work
 * Setup
