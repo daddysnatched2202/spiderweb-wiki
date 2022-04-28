@@ -49,8 +49,8 @@
      standard-conforming implementation
    - But it's developed on CCL and SBCL, so they'll likely work best
 ** Operating Systems
-   - Spiderweb Wiki is written on Ubuntu 21.10, but it should work fine on any Linux
-     distribution
+   - Spiderweb Wiki is written on Ubuntu 21.10, but any Linux distribution should be
+     fine
    - Other operating systems are untested, but they might work
 * Setup
   - Make a file ~conf.lisp~ in the main directory with the rest of the source
