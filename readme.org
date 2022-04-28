@@ -8,9 +8,9 @@
 ** Inter-connectivity
    - The spiderweb wiki is designed to function more like a wiki, so that information
      can easily be accessed by users other than the writer
-   - This is especially useful if you wanted to run a pen-and-paper RPG for your
+   - This is especially useful if you want to run a pen-and-paper RPG for your
      friends and have an easy way to share and collaborate information with your
-     players
+     players (which is why I wrote the application)
 ** Orderless Organization
    - From "CLOSOS - Specification of a Lisp operating system" by Robert Strandh :
      "most things are not naturally hierarchical. A hierarchical organization imposes
@@ -47,7 +47,7 @@
 ** Lisp Implementations
    - Spiderweb Wiki is written using portable Common Lisp, so it should run on any
      standard-conforming implementation
-   - But it's developed on CCL and SBCL, so they should work best
+   - But it's developed on CCL and SBCL, so they'll likely work best
 ** Operating Systems
    - Spiderweb Wiki is written on Ubuntu 21.10, but it should run fine on any Linux
      distribution
@@ -69,7 +69,7 @@
 *** S3
     - Not implemented yet
 ** Proxy
-   - Spiderweb wiki is designed to be run behind a reverse-proxy, like nginx
+   - Spiderweb wiki is designed to be run behind a reverse-proxy, like Nginx
    - The following is a sample nginx configuration
   #+begin_src conf
   http {
@@ -89,7 +89,7 @@
   }
   #+end_src
 ** Jquery
-   - If you want Spiderweb Wiki to automatically download and use the latest version
+   - If you want Spiderweb Wiki to automatically download and use the correct version
      of jquery, add the following to ~conf.lisp~
      #+begin_src lisp
      (defparameter *jquery-source* :web)
