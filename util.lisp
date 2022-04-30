@@ -112,5 +112,8 @@ params '~a', got params '~a'"
 
 (defun get-param-array (param params)
   (am:-<>> params
-    (remove param am:<> :test-not #'equal :key #'car)
+    (remove param
+	    am:<>
+	    :test-not #'equal
+	    :key #'car)
     (mapcar #'cdr)))

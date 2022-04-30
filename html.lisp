@@ -70,7 +70,7 @@
     (spinneret:with-html
       (list :div :class "note-preview"
 	     (list :a (path->string (note/path note))
-	      :href (note/url note :render))
+		   :href (note/url note :render))
 	     (list :p (note/content note))))))
 
 (defun render-note (note stream)
