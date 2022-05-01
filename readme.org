@@ -63,54 +63,54 @@
 *** Local Files
     - If you can store the files locally (on the same machine the server is running
       from), the setup is easy: add the following lines to ~conf.lisp~
-  #+begin_src lisp
-  (defparameter *storage-type* :local)
-  (defparameter *base-path* "<path to the folder where the data will be stored>/")
-  #+end_src
+#+begin_src lisp
+(defparameter *storage-type* :local)
+(defparameter *base-path* "<path to the folder where the data will be stored>/")
+#+end_src
 *** S3
     - Not implemented yet
 ** Proxy
    - Spiderweb wiki is designed to be run behind a reverse-proxy, like Nginx
    - The following is a sample nginx configuration
-  #+begin_src conf
-  http {
-       upstream hunchentoot {
-         server 127.0.0.1:5000;
-       }
+#+begin_src conf
+http {
+     upstream hunchentoot {
+       server 127.0.0.1:5000;
+     }
 
-       server {
-         listen 80;
-         listen [::]:80;
-         server_name wiki.example.com;
+     server {
+       listen 80;
+       listen [::]:80;
+       server_name wiki.example.com;
 
-	 location / {
-	          proxy_pass http://hunchentoot;
-         }
+       location / {
+         proxy_pass http://hunchentoot;
        }
-  }
-  #+end_src
+     }
+}
+#+end_src
 ** Jquery
    - If you want Spiderweb Wiki to automatically download and use the correct version
      of jquery, add the following to ~conf.lisp~
-     #+begin_src lisp
-     (defparameter *jquery-source* :web)
-     (defparameter *jquery-path* nil)
-     #+end_src
+#+begin_src lisp
+(defparameter *jquery-source* :web)
+(defparameter *jquery-path* nil)
+#+end_src
    - If you want to serve a local copy, add the following instead :
-     #+begin_src lisp
-     (defparameter *jquery-source* :local)
-     (defparameter *jquery-path* "<path to the jquery file.js>")
-     #+end_src
+#+begin_src lisp
+(defparameter *jquery-source* :local)
+(defparameter *jquery-path* "<path to the jquery file.js>")
+#+end_src
 * Running the Program
   - After setting up ~conf.lisp~, you can run the application in the terminal by
     using the following commands
-    #+begin_src eshell
-    $ cd <source directory>
-    $ <lisp command> --load "web.asd"
-    #+end_src
+#+begin_src eshell
+$ cd <source directory>
+$ <lisp command> --load "web.asd"
+#+end_src
   - Inside the REPL
-    #+begin_src lisp
-    > (asdf:load-system "web")
-    > (web:run)
-    #+end_src
+#+begin_src lisp
+> (asdf:load-system "web")
+> (web:run)
+#+end_src
   - Once it's running, you can start Nginx to redirect HTTP traffic to the server
