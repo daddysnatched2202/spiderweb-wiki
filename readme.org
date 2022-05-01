@@ -34,9 +34,10 @@
      to be distasteful
    - However, for this use case, I believe the benefits (easy cross-platform
      operation, the ability to work on a project away from home or on your phone
-     without needing to carry around multiple copies of an org document and keep
-     them in sync, the ability to run the software "in the cloud," etc.) outweigh
-     the drawbacks
+     without needing to carry around multiple copies of an org document and keep them
+     in sync, the ability to run the software "in the cloud," the ability to easily
+     share information with others without making them download a text document,
+     etc.) outweigh the drawbacks
 ** Lisp
    - Why is this application written in Common Lisp, a language that no one has cared
      about for 25 years?
