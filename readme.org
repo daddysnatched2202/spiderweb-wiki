@@ -102,6 +102,12 @@ http {
 (defparameter *jquery-source* :local)
 (defparameter *jquery-path* "<path to the jquery file.js>")
 #+end_src
+   - If you have /extremely/ limited resources on the server, you could use an
+     external CDN to serve the file
+#+begin_src lisp
+(defparameter *jquery-source* :cdn)
+(defparameter *jquery-path* "<jquery url>")
+#+end_src
 * Running the Program
   - After setting up ~conf.lisp~, you can run the application in the terminal by
     using the following commands

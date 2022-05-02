@@ -22,24 +22,22 @@
 ;;; the client
 ;;; file-type should be a string which will be passed to ningle/respond-type, or nil
 (defun ningle/cache-file (file hash &key (file-type nil))
-  (lambda (params)
-    (declare (ignore params))
-    (let* ((req (lack.request:request-headers ningle:*request*))
-	   (str (gethash "if-none-match" req)))
-      (if (string= str
-		   hash)
-	  (progn
-	    (ningle/set-response-status 304)
-	    "Cache up-to-date")
-	  (labels ((as-printed (obj)
-		     (with-output-to-string (str)
-		       (princ obj str))))
-	    (if file-type
-		(ningle/respond-type file-type))
-	    (ningle/add-response-header "Cache-Control" "must-revalidate")
-	    (ningle/add-response-header "ETag" (as-printed hash))
-	    (ningle/set-response-status 200)
-	    file)))))
+  (let* ((req (lack.request:request-headers ningle:*request*))
+	 (str (gethash "if-none-match" req)))
+    (if (string= str
+		 hash)
+	(progn
+	  (ningle/set-response-status 304)
+	  "Cache up to-date")
+	(labels ((as-printed (obj)
+		   (with-output-to-string (str)
+		     (princ obj str))))
+	  (if file-type
+	      (ningle/respond-type file-type))
+	  (ningle/add-response-header "Cache-Control" "must-revalidate")
+	  (ningle/add-response-header "ETag" (as-printed hash))
+	  (ningle/set-response-status 200)
+	  file))))
 
 ;;; endpoints
 (ningle/route ("/wiki/json/notes") ()
@@ -93,6 +91,8 @@
 (setf (ningle/app:route *app* *jquery-url*)
       (lambda (params)
 	(declare (ignore params))
-	(ningle/cache-file *jquery-file*
-			   *jquery-hash*
-			   :file-type "text/javascript")))
+	(if (eq *jquery-source* :cdn)
+	    (warn "Requested jquery URL when wiki is set to use an external CDN")
+	    (ningle/cache-file *jquery-file*
+			       *jquery-hash*
+			       :file-type "text/javascript"))))

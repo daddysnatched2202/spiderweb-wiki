@@ -29,13 +29,17 @@
 		 data))
 	      ((eq *jquery-source* :local)
 	       (uiop:read-file-string *jquery-path*))
+	      ((eq *jquery-source* :cdn)
+	       nil)
 	      (t (error "Jquery source must be either `:local` or `:web`, it is in ~
                         fact `~a`"
 			*jquery-source*)))
-	*jquery-hash* (am:->> *jquery-file*
-			(babel:string-to-octets)
-			(ironclad:digest-sequence :sha256)
-			(ironclad:byte-array-to-hex-string))))
+	*jquery-hash* (if (eq *jquery-source* :cdn)
+			  nil
+			  (am:->> *jquery-file*
+			    (babel:string-to-octets)
+			    (ironclad:digest-sequence :sha256)
+			    (ironclad:byte-array-to-hex-string)))))
 
 (defun run ()
   (if (eq *storage-type* :local)
