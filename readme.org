@@ -39,7 +39,7 @@
      share information with others without making them download a text document,
      etc.) outweigh the drawbacks
 ** Lisp
-   - Why is this application written in Common Lisp, a language that no one has cared
+   - Why is this software written in Common Lisp, a language that no one has cared
      about for 25 years?
    - Because it's the language that I prefer, I'm the one who wrote this software,
      and I wrote it primarily for my own use; if others can find it useful, then
