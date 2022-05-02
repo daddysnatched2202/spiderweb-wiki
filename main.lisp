@@ -22,7 +22,9 @@
   (setf *jquery-file*
 	(cond ((eq *jquery-source* :web)
 	       (multiple-value-bind (data code hash quri res)
-		   (dex:get "https://code.jquery.com/jquery-3.6.0.min.js")
+		   (dex:get (ana:aif *jquery-path*
+				     ana:it
+				     "https://code.jquery.com/jquery-3.6.0.min.js"))
 		 (declare (ignore code hash quri res))
 		 data))
 	      ((eq *jquery-source* :local)

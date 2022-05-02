@@ -93,8 +93,9 @@ http {
    - If you want Spiderweb Wiki to automatically download and use the correct version
      of jquery, add the following to ~conf.lisp~
 #+begin_src lisp
-(defparameter *jquery-source* :web)
-(defparameter *jquery-path* nil)
+  (defparameter *jquery-source* :web)
+  (defparameter *jquery-path* nil) ; this variable can be set to an URL if you want 
+				   ; to use a different version
 #+end_src
    - If you want to serve a local copy, add the following instead :
 #+begin_src lisp
