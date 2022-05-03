@@ -28,7 +28,7 @@
 		 hash)
 	(progn
 	  (ningle/set-response-status 304)
-	  "Cache up to-date")
+	  "Cache up to date")
 	(labels ((as-printed (obj)
 		   (with-output-to-string (str)
 		     (princ obj str))))

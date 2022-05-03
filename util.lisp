@@ -84,7 +84,8 @@ params '~a', got params '~a'"
 				,path
 				',param-list
 				,params)))))
-	`(progn (setf (ningle:route *app* ,path ,@keys) ,page)
+	`(progn (setf (ningle:route *app* ,path ,@keys)
+		      ,page)
 		(setf (ningle:route *app*
 				    ,(if (string= (str:s-last path) "/")
 					 (str:substring 0 -1 path)
