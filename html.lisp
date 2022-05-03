@@ -39,11 +39,11 @@
 
 (defun note/url (note prefix)
   (ccase prefix
-    (:render (format nil "/notes/~a" (path->string (note/path note))))
-    (:json (format nil "/json/notes/~a" (path->string (note/path note))))))
+    (:render (format nil "/wiki/notes/~a" (path->string (note/path note))))
+    (:json (format nil "/wiki/json/notes/~a" (path->string (note/path note))))))
 
 (defun node/url (node)
-  (format nil "/notes/~a" (node/name node)))
+  (format nil "/wiki/notes/~a" (node/name node)))
 
 (defclass wiki-parser () ())
 (defmethod 3bmd::process-wiki-link ((parser wiki-parser)
