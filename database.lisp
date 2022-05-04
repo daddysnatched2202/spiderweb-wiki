@@ -121,13 +121,13 @@
       (ana:aif (node/with-name rem-space)
 	       ana:it
 	       (b.d:with-transaction ()
-		   (if (> (length split-conv) 1)
-		       (make-instance 'breakout-node
-				      :name rem-space
-				      :breakout (cdr split-conv)
-				      :parent (car split-conv))
-		       (make-instance 'node
-				      :name rem-space))))))
+                 (if (> (length split-conv) 1)
+                     (make-instance 'breakout-node
+                                    :name rem-space
+                                    :breakout (cdr split-conv)
+                                    :parent (car split-conv))
+                     (make-instance 'node
+                                    :name rem-space))))))
 
   (defun string->path (str)
     (am:-<>> (str:split sep str :omit-nulls t)
@@ -172,10 +172,10 @@
 				:content content)))
 	  (b.d:with-transaction ()
 	    (mapcar #λ(link/new (car _0)
-			      (cadr _0)
-			      (ana:aif (caddr _0)
-				       ana:it
-				       (car _0)))
+			        (cadr _0)
+			        (ana:aif (caddr _0)
+				         ana:it
+				         (car _0)))
 		    (find-links content)))
 	  n))))
 
@@ -186,18 +186,18 @@
 
 (defun note/move (old-path new-path)
   (let* ((n (note/with-path old-path))
-	 (cont (note/content n))
+         (cont (note/content n))
 	 (type (note/type n)))
     (b.d:with-transaction ()
       (note/delete old-path)
       (note/new (path->string new-path)
-		cont
-		:type type))))
+                cont
+                :type type))))
 
 (defun db/clear ()
   (b.d:with-transaction ()
     (loop for obj in (b.d:all-store-objects)
-	  do (b.d:delete-object obj))))
+          do (b.d:delete-object obj))))
 
 (defun db/load-credentials ()
   (if (eq *storage-type* :s3)
@@ -206,8 +206,8 @@
 
 (defun db/load-local (path)
   (make-instance 'b.d:mp-store
-		 :directory path
-		 :subsystems (list (make-instance 'b.d:store-object-subsystem))))
+                 :directory path
+                 :subsystems (list (make-instance 'b.d:store-object-subsystem))))
 
 (defun db/store-objects-of-classes (&rest classes)
   (am:->> classes
