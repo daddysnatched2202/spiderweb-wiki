@@ -39,8 +39,12 @@
 
 (defun note/url (note prefix)
   (ccase prefix
-    (:render (format nil "/wiki/notes/~a" (path->string (note/path note))))
-    (:json (format nil "/wiki/json/notes/~a" (path->string (note/path note))))))
+    (:render (format nil
+                     "/wiki/notes/~a"
+                     (path->string (note/path note))))
+    (:json (format nil
+                   "/wiki/json/notes/~a"
+                   (path->string (note/path note))))))
 
 (defun node/url (node)
   (format nil "/wiki/notes/~a" (node/name node)))
@@ -54,8 +58,10 @@
   (declare (ignore parser
 		   normalized-target))
   (let ((link-text (ana:aif (car args)
-		       ana:it
-		       (format nil "~{~a~^ ~}" (string->path formatted-target)))))
+                            ana:it
+                            (format nil
+                                    "~{~a~^ ~}"
+                                    (string->path formatted-target)))))
     (format stream
 	    "<a href=\"~a\">~a</a>"
 	    (am:-> formatted-target
@@ -67,18 +73,14 @@
 (setf 3bmd-wiki:*wiki-links* t)
 (setf 3bmd-wiki:*wiki-processor* (make-instance 'wiki-parser))
 
-(defun preview-note (note stream)
-  (let ((spinneret:*html* stream))
-    (spinneret:with-html
-      (list :div :class "note-preview"
-	     (list :a (path->string (note/path note))
-		   :href (note/url note :render))
-	     (list :p (note/content note))))))
+(defun html/preview-note (note)
+  (list :div :class "note-preview"
+        (list :a (path->string (note/path note))
+              :href (note/url note :render))
+        (list :p (note/content note))))
 
-(defun render-note (note stream)
-  (let ((spinneret:*html* stream))
-    (spinneret:with-html
-      `((:h1 ,(path->string (note/path note)))
-	(:div :class "path-elements"
-	 (dolist (n (note/path note))
-	   (:a (node/name n) :href (node/url n))))))))
+(defun html/render-note (note)
+  (list (list :h1 (path->string (note/path note)))
+        (list :div :class "path-elements"
+              (list 'dolist (list 'n (note/path note))
+                    (list :a (list 'node/name 'n) :href (list 'node/url 'n))))))

@@ -98,9 +98,12 @@
   (member node (note/path note)))
 
 (defun note/with-path (path)
-  (first-matching (note/all-with-node (car path))
-		  #λ(path= (note/path _0) path)
-		  :err (list "No note with path '~a'" path)))
+  (let ((converted-path (typecase path
+                          (list path)
+                          (string (string->path path)))))
+    (first-matching (note/all-with-node (car converted-path))
+                    #λ(path= (note/path _0) converted-path)
+                    :err (list "No note with path '~a'" path))))
 
 (defun note/all-with-partial-path (path)
   (labels ((rec (path notes)
@@ -131,6 +134,10 @@
 
   (defun string->path (str)
     (am:-<>> (str:split sep str :omit-nulls t)
+      (mapcar #λ(if (= 0 (length _0))
+                    (error "Path string `~a` contains 0-length path elements, ~
+                            which are not allowed"
+                           str)))
       (copy-list)
       (sort am:<> #'string<)
       (mapcar #'string->node)))
@@ -162,10 +169,12 @@
   (b.d:with-transaction ()
     (b.d:delete-object l)))
 
-(defun note/new (path-str content &key (type :text/markdown))
-  (let ((p (string->path path-str)))
+(defun note/new (path content &key (type :text/markdown))
+  (let ((p (typecase path
+             (list path)
+             (string (string->path path)))))
     (if (note/with-path p)
-	(error "Note already exists: ~a" path-str)
+	(error "Note already exists: `~a`" path)
 	(let ((n (make-instance 'note
 				:path p
 				:type type

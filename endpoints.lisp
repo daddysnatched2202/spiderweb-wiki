@@ -67,6 +67,28 @@
     (:div :class "" (dolist (n (db/all-notes))
 		      (preview-note n spinneret:*html*)))))
 
+(ningle/route ("/wiki/make-note") ()
+  (html/with-page (:title "New Note")
+    (:h1 "New Note")
+    (html/edit-box)))
+
+(ningle/route ("/wiki/make-note" :method :post) (path content)
+  (ana:aif (note/with-path path)
+           (format nil
+                   "Could not create note `~a` as a note with that path already~
+                    exists"
+                   path)
+           (handler-case (note/new path content)
+             (error (e)
+               (format nil
+                       "Encountered an error when trying to create note `~a`: ~a"
+                       path
+                       e))
+             (no-error ()
+               (format nil
+                       "Made note `~a` successfully"
+                       path)))))
+
 (ningle/route ("/wiki/notes/:path") ((path :key :path))
   (let ((n (note/with-path (string->path path))))
     (cond
