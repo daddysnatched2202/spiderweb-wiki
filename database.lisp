@@ -194,13 +194,11 @@
     (b.d:delete-object (note/with-path path))))
 
 (defun note/move (old-path new-path)
-  (let* ((n (note/with-path old-path))
-         (cont (note/content n))
-	 (type (note/type n)))
-    (b.d:with-transaction ()
+  (b.d:with-transaction ()
+    (with-slots (content type) (note/with-path old-path)
       (note/delete old-path)
       (note/new (path->string new-path)
-                cont
+                content
                 :type type))))
 
 (defun db/clear ()
