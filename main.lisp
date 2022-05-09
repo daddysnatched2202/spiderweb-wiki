@@ -32,7 +32,8 @@
 	      ((eq *jquery-source* :cdn)
 	       nil)
 	      (t (error "Jquery source must be `:local`, `:web`, or `:cdn`; it is ~
-                        in fact `~a`" *jquery-source*)))
+                        in fact `~a`"
+                        *jquery-source*)))
 	*jquery-hash*
 	(if (eq *jquery-source* :cdn) nil
 	    (am:->> *jquery-file*
