@@ -93,8 +93,8 @@ http {
 #+end_src
 ** Jquery
 *** Automatic (Recommended) 
-    - If you want Spiderweb Wiki to automatically download and use the correct version
-      of jquery, add the following to ~conf.lisp~
+    - If you want Spiderweb Wiki to automatically download and use the correct
+      version of jquery, add the following to ~conf.lisp~
 #+begin_src lisp
   (defparameter *jquery-source* :web)
   (defparameter *jquery-path* nil) ; this variable can be set to an URL if you want
@@ -110,8 +110,8 @@ http {
 *** External CDN
     - If you have /extremely/ limited resources on the server, you could use an
       external CDN to serve the file
-    - Note that the wiki will cache jquery on clients, so it shouldn't be necessary to
-      use a CDN because of slow internet
+    - Note that the wiki will cache jquery on clients, so it shouldn't be necessary
+      to use a CDN because of slow internet connections
 #+begin_src lisp
 (defparameter *jquery-source* :cdn)
 (defparameter *jquery-path* "<jquery url>")
