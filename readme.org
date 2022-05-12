@@ -52,8 +52,8 @@
      standard-conforming implementation
    - But it's developed on CCL and SBCL, so they'll likely work best
 ** Operating Systems
-   - Spiderweb Wiki is written on Ubuntu 21.10, but any Linux distribution should be
-     fine
+   - Spiderweb Wiki is written and tested on Ubuntu 22.04, but any Linux distribution
+     should be fine
    - Other operating systems are untested, but they might work
 * Setup
   - Make a file ~conf.lisp~ in the main directory with the rest of the source
@@ -97,8 +97,9 @@ http {
       of jquery, add the following to ~conf.lisp~
 #+begin_src lisp
 (defparameter *jquery-source* :web)
-(defparameter *jquery-path* nil) ; this variable can be set to an URL if you want 
-                                 ; to use a different version
+(defparameter *jquery-path* nil) ; this variable can be set to an URL if you want to
+                                 ; use a different version or a different source than
+                                 ; the official CDN
 #+end_src
 *** Local
     - If you want to serve a local copy, add the following instead :
