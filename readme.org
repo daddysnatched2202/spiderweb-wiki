@@ -117,7 +117,7 @@ http {
 (defparameter *jquery-path* "<jquery url>")
 #+end_src
 * Dependencies
-  - Spiderweb Wiki depends on OpenSSL, which can be installed mith the ~libssl-dev~
+  - Spiderweb Wiki depends on OpenSSL, which can be installed with the ~libssl-dev~
     package on Debian-derived distros
 * Running the Program
   - After setting up ~conf.lisp~, you can run the application in the terminal by
