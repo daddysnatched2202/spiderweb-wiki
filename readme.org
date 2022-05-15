@@ -55,6 +55,9 @@
    - Spiderweb Wiki is written and tested on Ubuntu 22.04, but any Linux distribution
      should be fine
    - Other operating systems are untested, but they might work
+* Dependencies
+  - Spiderweb Wiki depends on OpenSSL, which can be installed with the ~libssl-dev~
+    package on Debian-derived distros
 * Setup
   - Make a file ~conf.lisp~ in the main directory with the rest of the source
   - Start ~conf.lisp~ with the following contents
@@ -116,9 +119,6 @@ http {
 (defparameter *jquery-source* :cdn)
 (defparameter *jquery-path* "<jquery url>")
 #+end_src
-* Dependencies
-  - Spiderweb Wiki depends on OpenSSL, which can be installed with the ~libssl-dev~
-    package on Debian-derived distros
 * Running the Program
   - After setting up ~conf.lisp~, you can run the application in the terminal by
     using the following commands
