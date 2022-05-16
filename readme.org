@@ -48,7 +48,7 @@
      please use it! But mass adoption isn't really the goal
 * Compatibility
 ** Lisp Implementations
-   - Spiderweb Wiki is written using portable Common Lisp, so it should run on any
+   - Spiderweb Wiki is written using portable Common Lisp, but it should run on any
      standard-conforming implementation
    - But it's developed on CCL and SBCL, so they'll likely work best
 ** Operating Systems
