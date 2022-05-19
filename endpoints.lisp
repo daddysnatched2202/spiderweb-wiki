@@ -65,7 +65,7 @@
 		(node/name n))))
     (:h1 "Notes")
     (:div :class "" (dolist (n (db/all-notes))
-		      (preview-note n spinneret:*html*)))))
+		      (html/preview-note n spinneret:*html*)))))
 
 (ningle/route ("/wiki/make-note") ()
   (html/with-page (:title "New Note")
