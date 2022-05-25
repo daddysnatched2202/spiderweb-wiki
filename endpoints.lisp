@@ -24,8 +24,7 @@
 (defun ningle/cache-file (file hash &key (file-type nil))
   (let* ((req (lack.request:request-headers ningle:*request*))
 	 (str (gethash "if-none-match" req)))
-    (if (string= str
-		 hash)
+    (if (string= str hash)
 	(progn
 	  (ningle/set-response-status 304)
 	  "Cache up to date")
@@ -81,7 +80,7 @@
            (handler-case (note/new path content)
              (error (e)
                (format nil
-                       "Encountered an error when trying to create note `~a`: ~a"
+                       "Encountered an error when trying to create note `~a`:~% `~a`"
                        path
                        e))
              (no-error ()
@@ -107,7 +106,7 @@
 
 (ningle/route ("/wiki") ()
   (html/with-page ()
-    "Probably you want to click on the 'Note Index' button …"))
+    "Probably you want to click on the `Note Index` button …"))
 
 ;;; maybe we should use nginx for the cache instead ??
 (setf (ningle/app:route *app* *jquery-url*)

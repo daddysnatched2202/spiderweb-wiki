@@ -78,7 +78,7 @@
 			      (slot-value obj)
 			      (general->serial)))
 		    (class-spec/slot-specs (serializable/class-spec obj))))
-      (error "No class spec for class ~a" (class-of obj))))
+      (error "No class spec for class `~a`" (class-of obj))))
 
 (defun general->serial (obj)
   (cond
@@ -149,7 +149,7 @@
 		    (slot-spec/class-ref)
 		    (mop:class-direct-superclasses))
 		  #'serializable?
-		  :err (list "Could not find class-spec for inherited slot ~a"
+		  :err (list "Could not find class-spec for inherited slot `~a`"
 			     (slot-spec/key slot-spec)))))
 	      (super-specs (am:->> first-super
 			     (class-spec/slot-specs)))
@@ -157,7 +157,7 @@
 			     super-specs
 			     #λ(if (mop:slot-definition-name (slot-spec/ref _0))
 				   nil)
-			     :err (list "Could not find valid slot spec for ~a"
+			     :err (list "Could not find valid slot spec for `~a`"
 					(slot-spec/key slot-spec)))))
 	 (serial->slot obj correct-spec)))
       ((list :seq a)
@@ -166,20 +166,20 @@
 		       obj))
 	   (mapcar #λ(serial->obj _0 a)
 		   obj)
-	   (error "~a failed type check of def ~a"
+	   (error "`~a` failed type check of def `~a`"
 		  obj
 		  spec)))
       ((list _ _)
-       (error "~a is not a valid type definition" spec))
+       (error "`~a` is not a valid type definition" spec))
       (a (if (super-type-check obj (find-class a))
 	     (serial->obj obj a)
-	     (error "~a failed type check of def ~a"
+	     (error "`~a` failed type check of def `~a`"
 		    obj
 		    spec))))))
 
 (defun init-class (class-spec alist)
   (unless (class-spec/deserial? class-spec)
-    (error "Class-spec ~a is not allowed to be deserialized" class-spec))
+    (error "Class-spec `~a` is not allowed to be deserialized" class-spec))
   (let* ((ref (class-spec/ref class-spec))
 	 (obj (make-instance ref)))
     (loop for s in (class-spec/slot-specs class-spec)
@@ -189,7 +189,8 @@
 		 (setf (slot-value obj slot-name)
 		       (serial->slot (cdr aso) s))
 		 (error
-		  "Tried to serialize alist ~a into class ~a, but slot ~a was not found"
+		  "Tried to serialize alist `~a` into class `~a`, but slot `~a` was ~
+not found"
 		  alist
 		  ref
 		  slot-name)))
@@ -199,8 +200,8 @@
   (if (serializable? class-sym)
       (alexandria:if-let ((c (super-type-check alist (find-class class-sym))))
 	(init-class (serializable/class-spec (make-instance class-sym)) alist)
-	(error "Could not type check class ~a" class-sym))
-      (error "Could not find class ~a" class-sym)))
+	(error "Could not type check class `~a`" class-sym))
+      (error "Could not find class `~a`" class-sym)))
 
 ;;; todo: allow inheritance of key
 (defun make-slot-spec (class slot-name key &optional type)
@@ -208,7 +209,8 @@
 		 :ref (first-matching (mop:class-slots class)
 				      #λ(eq (mop:slot-definition-name _0)
 					    slot-name)
-				      :err (list "No slot found for ~a in class ~a"
+				      :err (list "No slot found for `~a` in ~
+class `~a`"
 						 slot-name
 						 class))
 		 :key key
