@@ -27,15 +27,12 @@
 	(progn
 	  (ningle/set-response-status 304)
 	  "Cache up to date")
-	(labels ((as-printed (obj)
-		   (with-output-to-string (str)
-		     (princ obj str))))
-	  (if file-type
-	      (ningle/respond-type file-type))
-	  (ningle/add-response-header "Cache-Control" "must-revalidate")
-	  (ningle/add-response-header "ETag" (as-printed hash))
-	  (ningle/set-response-status 200)
-	  file))))
+        (if file-type
+            (ningle/respond-type file-type))
+        (ningle/add-response-header "Cache-Control" "must-revalidate")
+        (ningle/add-response-header "ETag" (princ-to-string hash))
+        (ningle/set-response-status 200)
+        file)))
 
 ;;; endpoints
 (ningle/route ("/wiki/json/notes") ()
@@ -73,7 +70,7 @@
 (ningle/route ("/wiki/make-note" :method :post) (path content)
   (handler-case (note/new path content)
     (note/already-exists-error (e)
-      (format nil "~a" e))
+      (princ-to-string e))
     (error (e)
       (format nil
               "Encountered an error when trying to create note `~a`:~% `~a`"
