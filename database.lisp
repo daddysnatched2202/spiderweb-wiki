@@ -202,7 +202,7 @@
   (b.d:with-transaction ()
     (with-slots (content type) (note/with-path old-path)
       (note/delete old-path)
-      (note/new (path->string new-path)
+      (note/new new-path
                 content
                 :type type))))
 
