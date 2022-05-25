@@ -62,6 +62,11 @@
     :accessor link/to))
   (:metaclass b.d:persistent-class))
 
+(define-condition note/already-exists-error (error) ((path :initarg :path
+                                                           :reader note/path))
+  (:report (lambda (condition stream)
+             (format stream "Note already exists: `~a`" (note/path condition)))))
+
 (defun db/all-notes ()
   (b.d:store-objects-with-class 'note))
 
@@ -174,7 +179,7 @@
              (list path)
              (string (string->path path)))))
     (if (note/with-path p)
-	(error "Note already exists: `~a`" path)
+	(error 'note/already-exists-error :path path)
 	(let ((n (make-instance 'note
 				:path p
 				:type type
