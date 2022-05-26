@@ -55,7 +55,7 @@
                      ((null el)
                       nil)
                      ((and (listp el)
-                           (eq 'ls (car el)))
+                           (string= "LS" (symbol-name (car el))))
                       (nord-make-list (cdr el)))
                      ((and (symbolp el)
                            (not (eq (symbol-package el)
