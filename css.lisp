@@ -18,39 +18,6 @@
 
 (in-package :web)
 
-(eval-when (:load-toplevel :compile-toplevel)
-  (defun nord-sym? (sym)
-    (when (and (symbolp sym)
-	       sym)
-      (am:->> sym
-	(symbol-name)
-	(str:downcase)
-	(ppcre:scan "^nord[0-9]*$")))))
-
-(eval-when (:load-toplevel :compile-toplevel)
-  (let ((keyw (find-package "KEYWORD")))
-    (defun css/nord-list-dispatch (el)
-      (cond ((nord-sym? el)
-	     el)
-	    ((null el)
-	     nil)
-	    ((and (listp el)
-		  (eq 'ls (car el)))
-	     (css/nord-sub-list (cdr el)))
-	    ((and (symbolp el)
-		  (not (eq (symbol-package el)
-			   keyw)))
-	     (list 'quote el))
-	    (t el)))))
-
-(eval-when (:load-toplevel :compile-toplevel)
-  (defun css/make-list (els)
-    (cons 'list (mapcar #'css/nord-list-dispatch els))))
-
-(eval-when (:load-toplevel :compile-toplevel)
-  (defun css/nord-sub-list (els)
-    (css/make-list els)))
-
 (defmacro css/with-nord-palette (&body body)
   `(let-bound ((nord0  "#2E3440")
 	       (nord1  "#3B4252")
@@ -74,8 +41,31 @@
      ,@body))
 
 (defmacro css/nord-list (&rest els)
-  (list 'css/with-nord-palette
-	(css/make-list els)))
+  (let ((keyw (find-package "KEYWORD")))
+    (labels ((nord-sym? (sym)
+               (and (symbolp sym)
+                    sym
+                    (am:->> sym
+                      (symbol-name)
+                      (str:downcase)
+                      (ppcre:scan "^nord[0-9]*$"))))
+             (nord-list-dispatch (el)
+               (cond ((nord-sym? el)
+                      el)
+                     ((null el)
+                      nil)
+                     ((and (listp el)
+                           (eq 'ls (car el)))
+                      (nord-make-list (cdr el)))
+                     ((and (symbolp el)
+                           (not (eq (symbol-package el)
+                                    keyw)))
+                      (list 'quote el))
+                     (t el)))
+             (nord-make-list (els)
+               (cons 'list (mapcar #'nord-list-dispatch els))))
+      (list 'css/with-nord-palette
+	             (nord-make-list els)))))
 
 (defun css/std ()
   (lass:compile-and-write
