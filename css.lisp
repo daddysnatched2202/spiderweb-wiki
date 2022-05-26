@@ -65,7 +65,7 @@
              (nord-make-list (els)
                (cons 'list (mapcar #'nord-list-dispatch els))))
       (list 'css/with-nord-palette
-	             (nord-make-list els)))))
+            (nord-make-list els)))))
 
 (defun css/std ()
   (lass:compile-and-write
