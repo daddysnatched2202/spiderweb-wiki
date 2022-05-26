@@ -34,8 +34,6 @@
 	       :cl-ppcre
 	       :3bmd
 	       :3bmd-ext-wiki-links
-	       :ironclad
-	       :babel
 	       :zs3
 	       :dexador)
   :serial t

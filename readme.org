@@ -56,8 +56,30 @@
      should be fine
    - Other operating systems are untested, but they might work
 * Dependencies
-  - Spiderweb Wiki depends on OpenSSL, which can be installed with the ~libssl-dev~
-    package on Debian-derived distros
+** External Dependencies
+   - Spiderweb Wiki depends on OpenSSL, which can be installed with the ~libssl-dev~
+     package on Debian-derived distros
+** Quicklisp Dependencies
+   - clack
+   - ningle
+   - str
+   - jonathan
+   - alexandria
+   - bknr.datastore
+   - ironclad
+   - babel
+   - arrow-macros
+   - parenscript
+   - closer-mop
+   - trivia
+   - uiop
+   - spinneret
+   - lass
+   - cl-ppcre
+   - 3bmd
+   - ironclad
+   - zs3
+   - dexador
 * Setup
   - Make a file ~conf.lisp~ in the main directory with the rest of the source
   - Start ~conf.lisp~ with the following contents
