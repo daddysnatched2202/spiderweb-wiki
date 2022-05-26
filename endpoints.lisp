@@ -73,7 +73,7 @@
       (princ-to-string e))
     (error (e)
       (format nil
-              "Encountered an error when trying to create note `~a`:~% `~a`"
+              "Encountered an error when trying to create note `~a`:~% ~a"
               path
               e))
     (:no-error ()
