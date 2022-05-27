@@ -69,7 +69,9 @@
 (ningle/route ("/wiki/make-note" :method :post) (path content)
   (handler-case (note/new path content)
     (error (e)
-      (princ-to-string e))
+      (format nil "Encountered an error while trying to create note `~a`: ~a"
+              (path->string path)
+              (princ-to-string e)))
     (:no-error ()
       (format nil
               "Made note `~a` successfully"
