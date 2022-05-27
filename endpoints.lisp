@@ -27,12 +27,12 @@
 	(progn
 	  (ningle/set-response-status 304)
 	  "Cache up to date")
-        (if file-type
-            (ningle/respond-type file-type))
-        (ningle/add-response-header "Cache-Control" "must-revalidate")
-        (ningle/add-response-header "ETag" (princ-to-string hash))
-        (ningle/set-response-status 200)
-        file)))
+        (progn (if file-type
+                   (ningle/respond-type file-type))
+               (ningle/add-response-header "Cache-Control" "must-revalidate")
+               (ningle/add-response-header "ETag" (princ-to-string hash))
+               (ningle/set-response-status 200)
+               file))))
 
 ;;; endpoints
 (ningle/route ("/wiki/json/notes") ()
@@ -64,7 +64,13 @@
 
 (ningle/route ("/wiki/make-note") ()
   (html/with-page (:title "New Note")
-    (:h1 "New Note")))
+    (:h1 "New Note")
+    (:form :action "/make-note" :method "post" :autocomplete "off"
+           (:input :type "text" :name "path")
+           (:textarea :name "content"
+                      :rows 30
+                      :cols 50)
+           (:input :type "submit"))))
 
 (ningle/route ("/wiki/make-note" :method :post) (path content)
   (handler-case (note/new path content)

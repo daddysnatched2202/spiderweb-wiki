@@ -19,6 +19,5 @@
 		    (b.i bknr.indices)
 		    (am arrow-macros)
 		    (mop closer-mop)
-		    (ana anaphora)
-		    (dex dexador))
+		    (ana anaphora))
   (:use :cl))

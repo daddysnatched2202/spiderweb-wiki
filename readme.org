@@ -79,7 +79,7 @@
    - 3bmd
    - ironclad
    - zs3
-   - dexador
+   - drakma
 * Setup
   - Make a file ~conf.lisp~ in the main directory with the rest of the source
   - Start ~conf.lisp~ with the following contents

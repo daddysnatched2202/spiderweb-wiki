@@ -22,11 +22,13 @@
   (setf *jquery-file*
 	(cond ((eq *jquery-source* :web)
 	       (multiple-value-bind (data code hash quri res)
-		   (dex:get (ana:aif *jquery-path*
-				     ana:it
-				     "https://code.jquery.com/jquery-3.6.0.min.js"))
-		 (declare (ignore code hash quri res))
-		 data))
+                   (drakma:http-request
+                    (ana:aif
+                     *jquery-path*
+                     ana:it
+                     "https://code.jquery.com/jquery-3.6.0.min.js"))
+                 (declare (ignore code hash quri res))
+                 data))
 	      ((eq *jquery-source* :local)
 	       (uiop:read-file-string *jquery-path*))
 	      ((eq *jquery-source* :cdn)

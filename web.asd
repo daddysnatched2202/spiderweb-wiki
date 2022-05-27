@@ -35,7 +35,7 @@
 	       :3bmd
 	       :3bmd-ext-wiki-links
 	       :zs3
-	       :dexador)
+	       :drakma)
   :serial t
   :components ((:file "package")
 	       (:file "lambda")
