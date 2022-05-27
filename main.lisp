@@ -39,7 +39,6 @@
 	*jquery-hash*
 	(if (eq *jquery-source* :cdn) nil
 	    (am:->> *jquery-file*
-	      (babel:string-to-octets)
 	      (ironclad:digest-sequence :sha256)
 	      (ironclad:byte-array-to-hex-string)))))
 
