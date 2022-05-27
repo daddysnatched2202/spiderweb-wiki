@@ -34,6 +34,14 @@
                (ningle/set-response-status 200)
                file))))
 
+;;; can be used to redirect the user to a different page
+(defun ningle/redirect (url &key (type :tmp))
+  (ningle/add-response-header "Location" url)
+  (ningle/set-response-status (case type
+                                (:permanent 301)
+                                (:tmp 307)))
+  "Redirect")
+
 ;;; endpoints
 (ningle/route ("/wiki/json/notes") ()
   (ningle/respond-type "application/json")
@@ -102,8 +110,7 @@
 	   (:p "Note does not exist"))))))
 
 (ningle/route ("/wiki") ()
-  (html/with-page ()
-    "Probably you want to click on the `Note Index` button …"))
+  (ningle/redirect "/wiki/notes"))
 
 ;;; maybe we should use nginx for the cache instead ??
 (setf (ningle/app:route *app* *jquery-url*)
