@@ -84,5 +84,3 @@
         (list :div :class "path-elements"
               (list 'dolist (list 'n (note/path note))
                     (list :a (list 'node/name 'n) :href (list 'node/url 'n))))))
-
-(defun html/edit-box ())

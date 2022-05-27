@@ -64,18 +64,12 @@
 
 (ningle/route ("/wiki/make-note") ()
   (html/with-page (:title "New Note")
-    (:h1 "New Note")
-    (html/edit-box)))
+    (:h1 "New Note")))
 
 (ningle/route ("/wiki/make-note" :method :post) (path content)
   (handler-case (note/new path content)
-    (note/already-exists-error (e)
-      (princ-to-string e))
     (error (e)
-      (format nil
-              "Encountered an error when trying to create note `~a`:~% ~a"
-              path
-              e))
+      (princ-to-string e))
     (:no-error ()
       (format nil
               "Made note `~a` successfully"
