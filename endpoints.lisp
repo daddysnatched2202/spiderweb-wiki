@@ -84,12 +84,12 @@
        (let ((name (node/name (car path))))
 	 (html/with-page (:title name)
 	   (:h1 (format nil "Category Page: ~a" name)))))
-      (n (html/with-page (:title (am:-> n
-				   (note/path)
-				   (last)))
-	   (:h1 (am:-> n
-		  (note/path)
-		  (path->string)))))
+      ((not (null n)) (html/with-page (:title (am:-> n
+				     (note/path)
+				     (last)))
+	     (:h1 (am:-> n
+		    (note/path)
+		    (path->string)))))
       (t (html/with-page (:title (path->string path))
 	   (:p "Note does not exist"))))))
 
