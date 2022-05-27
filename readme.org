@@ -48,13 +48,13 @@
      please use it! But mass adoption isn't really the goal
 * Compatibility
 ** Lisp Implementations
-   - Spiderweb Wiki is written using portable Common Lisp, but it should run on any
+   - Spiderweb Wiki is written using portable Common Lisp, so it should run on any
      standard-conforming implementation
-   - But it's developed on CCL and SBCL, so they'll likely work best
+   - But it's developed on CCL and SBCL
 ** Operating Systems
-   - Spiderweb Wiki is written and tested on Ubuntu 22.04, but any Linux distribution
+   - Spiderweb Wiki is written and tested on Ubuntu 22.04; any Linux distribution
      should be fine
-   - Other operating systems are untested, but they might work
+   - Other operating systems are untested
 * Dependencies
 ** External Dependencies
    - Spiderweb Wiki depends on OpenSSL, which can be installed with the ~libssl-dev~
