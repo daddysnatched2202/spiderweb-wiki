@@ -16,10 +16,7 @@
 
 (in-package :web)
 
-(defclass persistent-indexed-class (b.d:persistent-class b.i:indexed-class)
-  ())
-
-(defclass note ()
+(defclass note (b.d:store-object)
   ((content
     :initarg :content
     :reader note/content)
@@ -31,26 +28,26 @@
     :reader note/path
     :index-type b.i:hash-list-index
     :index-reader note/all-with-node))
-  (:metaclass persistent-indexed-class))
+  (:metaclass b.d:persistent-class))
 
-(defclass node ()
+(defclass node (b.d:store-object)
   ((name
     :initarg :name
     :reader node/name
     :index-type b.i:string-unique-index
     :index-reader node/with-name))
-  (:metaclass persistent-indexed-class))
+  (:metaclass b.d:persistent-class))
 
-(defclass breakout-node ()
+(defclass breakout-node (b.d:store-object)
   ((parent
     :initarg :parent
     :reader breakout-node/parent)
    (breakout
     :initarg :breakout
     :reader breakout-node/breakout))
-  (:metaclass persistent-indexed-class))
+  (:metaclass b.d:persistent-class))
 
-(defclass link ()
+(defclass link (b.d:store-object)
   ((text
     :initarg :text
     :accessor link/text)
@@ -62,10 +59,11 @@
     :accessor link/to))
   (:metaclass b.d:persistent-class))
 
-(define-condition note/already-exists-error (error) ((path :initarg :path
-                                                           :reader note/path))
+(define-condition note/already-exists-error (error)
+  ((path :initarg :path
+         :reader err/path))
   (:report (lambda (condition stream)
-             (format stream "Note already exists: `~a`" (note/path condition)))))
+             (format stream "Note already exists: `~a`" (err/path condition)))))
 
 (defun db/all-notes ()
   (b.d:store-objects-with-class 'note))
@@ -138,7 +136,9 @@
                                     :name rem-space))))))
 
   (defun string->path (str)
-    (am:-<>> (str:split sep str :omit-nulls t)
+    (am:-<>> str
+      (str:downcase)
+      (str:split sep am:<> :omit-nulls t)
       (mapcar #λ(if (= 0 (length _0))
                     (error "Path string `~a` contains 0-length path elements, ~
                             which are not allowed"
@@ -180,18 +180,18 @@
              (string (string->path path)))))
     (if (note/with-path p)
 	(error 'note/already-exists-error :path path)
-	(let ((n (make-instance 'note
-				:path p
-				:type type
-				:content content)))
-	  (b.d:with-transaction ()
-	    (mapcar #λ(link/new (car _0)
-			        (cadr _0)
-			        (ana:aif (caddr _0)
-				         ana:it
-				         (car _0)))
-		    (find-links content)))
-	  n))))
+	(b.d:with-transaction ()
+          (let ((n (make-instance 'note
+				  :path p
+				  :type type
+				  :content content)))
+            (mapcar #λ(link/new (car _0)
+                                (cadr _0)
+                                (ana:aif (caddr _0)
+                                         ana:it
+                                         (car _0)))
+                    (find-links content))
+	    n)))))
 
 (defun note/delete (path)
   (b.d:with-transaction ()
