@@ -112,7 +112,7 @@
 (ningle/route ("/wiki") ()
   (ningle/redirect "/wiki/notes"))
 
-;;; maybe we should use nginx for the cache instead ??
+;;; We use lisp to cache the file instead of nginx to automate downloading the file
 (setf (ningle/app:route *app* *jquery-url*)
       (lambda (params)
 	(declare (ignore params))
