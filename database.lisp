@@ -172,8 +172,7 @@
 			    :text text))))
 
 (defun link/delete (l)
-  (b.d:with-transaction ()
-    (b.d:delete-object l)))
+  (b.d:delete-object l))
 
 (defun note/new (path content &key (type :text/markdown))
   (let ((p (typecase path
@@ -195,9 +194,8 @@
 	    n)))))
 
 (defun note/delete (path)
-  (b.d:with-transaction ()
-    (mapcar #'link/delete (db/links-from path))
-    (b.d:delete-object (note/with-path path))))
+  (mapcar #'link/delete (db/links-from path))
+  (b.d:delete-object (note/with-path path)))
 
 (defun note/move (old-path new-path)
   (b.d:with-transaction ()
