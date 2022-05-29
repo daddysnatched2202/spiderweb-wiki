@@ -133,8 +133,8 @@ http {
 (defparameter *jquery-path* "<path to the jquery file.js>")
 #+end_src
 *** External CDN
-    - If you have /extremely/ limited resources on the server, you could use an
-      external CDN to serve the file
+    - You can also use an external CDN to serve the file, in case you have
+      /extremely/ limited resources on the server
     - Note that the wiki will cache jquery on clients, so it shouldn't be necessary
       to use a CDN because of slow internet connections
 #+begin_src lisp
