@@ -86,6 +86,18 @@
 		    :text-decoration none
 		    :padding 4px)
    (css/nord-list "a:hover" :background-color nord3)
+   (css/nord-list '(:or input textarea)
+                  :background-color nord2
+                  :color nord5
+                  :border none
+                  :padding 5px
+                  :margin 20px)
+   (css/nord-list "input[type=submit]:hover"
+                  :background-color nord3)
+   (css/nord-list ".note-edit"
+                  :display flex
+                  :flex-direction column
+                  :width 40%)
    '(.grid-container
      :display "grid"
      :grid-template-columns 25% 25% 25% 25%

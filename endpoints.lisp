@@ -59,6 +59,7 @@
 	"Creative Commons BY-SA 4.0")
     (" license")))
 
+;;; TODO: code for note previews
 (ningle/route ("/wiki/notes") ()
   (html/with-page (:title "Note Index")
     (:h1 "Path Elements")
@@ -67,17 +68,18 @@
 	    (:a :href (format nil "/notes/~a" (node/name n))
 		(node/name n))))
     (:h1 "Notes")
-    (:div :class "" (dolist (n (db/all-notes))
-		      (html/preview-note n)))))
+    (:div :class "notes-preview" (dolist (n (db/all-notes))))))
 
 (ningle/route ("/wiki/make-note") ()
   (html/with-page (:title "New Note")
     (:h1 "New Note")
-    (:form :action "/make-note" :method "post" :autocomplete "off"
+    (:form :action "/wiki/make-note"
+           :method "post"
+           :autocomplete "off"
+           :class "note-edit"
            (:input :type "text" :name "path")
            (:textarea :name "content"
-                      :rows 30
-                      :cols 50)
+                      :rows 50)
            (:input :type "submit"))))
 
 (ningle/route ("/wiki/make-note" :method :post) (path content)
@@ -87,7 +89,8 @@
         (:p (format nil "Encountered an error while trying to create note `~a`: ~a"
                     (path->string path)
                     (princ-to-string e)))))
-    (:no-error ()
+    (:no-error (e)
+      (declare (ignore e))
       (html/with-page (:title "Success")
         (:p (format nil "Made note `~a` successfully"
                  path))))))

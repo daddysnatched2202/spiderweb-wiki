@@ -105,8 +105,7 @@
                           (list path)
                           (string (string->path path)))))
     (first-matching (note/all-with-node (car converted-path))
-                    #λ(path= (note/path _0) converted-path)
-                    :err (list "No note with path `~a`" path))))
+                    #λ(path= (note/path _0) converted-path))))
 
 (defun note/all-with-partial-path (path)
   (labels ((rec (path notes)
@@ -117,8 +116,8 @@
     (rec (cdr path) (note/all-with-node (car path)))))
 
 (let ((space '(" " . "-"))
-      (break-char #\&)
-      (sep #\:))
+      (break-char "&")
+      (sep ":"))
   (defun string->node (str)
     (let* ((rem-space (am:->> str
 			(str:replace-all (car space) (cdr space))
@@ -139,18 +138,20 @@
     (am:-<>> str
       (str:downcase)
       (str:split sep am:<> :omit-nulls t)
-      (mapcar #λ(if (= 0 (length _0))
-                    (error "Path string `~a` contains 0-length path elements, ~
-                            which are not allowed"
-                           str)))
       (copy-list)
       (sort am:<> #'string<)
       (mapcar #'string->node)))
 
   (defun path->string (path)
-    (am:->> path
-      (mapcar #'node/name)
-      (str:join sep))))
+    (typecase path
+      (list (am:->> path
+              (mapcar #'node/name)
+              (str:join sep)))
+      (string path)
+      (t (error "`path` in call to `path->string` has value `~a`, which is of ~
+                bad type ~a"
+                path
+                (type-of path))))))
 
 (defun find-links (content)
   (let ((links))
@@ -207,9 +208,8 @@
                 :type type))))
 
 (defun db/clear ()
-  (b.d:with-transaction ()
-    (loop for obj in (b.d:all-store-objects)
-          do (b.d:delete-object obj))))
+  (loop for obj in (b.d:all-store-objects)
+        do (b.d:delete-object obj)))
 
 (defun db/load-credentials ()
   (if (eq *storage-type* :s3)
