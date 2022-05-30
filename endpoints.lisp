@@ -67,7 +67,7 @@
     (:h1 "Path Elements")
     (:div :class "grid-container"
 	  (dolist (n (db/all-nodes))
-	    (:a :href (format nil "/notes/~a" (node/name n))
+	    (:a :href (node/url n)
 		(node/name n))))
     (:h1 "Notes")
     (:div :class "notes-preview" (dolist (n (db/all-notes))))))
@@ -97,8 +97,9 @@
         (:p (format nil "Made note `~a` successfully"
                  path))))))
 
-(ningle/route ("/wiki/notes/:path") ((path :key :path))
-  (let ((n (note/with-path (string->path path))))
+(ningle/route ("/wiki/notes/:path") ((path-text :key :path))
+  (let* ((path (string->path path-text))
+         (n (note/with-path path)))
     (cond
       ((= (length path) 1)
        (let ((name (node/name (car path))))

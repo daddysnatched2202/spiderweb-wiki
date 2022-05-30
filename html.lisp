@@ -37,7 +37,7 @@
 	       (:a :href "/wiki/make-note" "New Note")
 	       (:a :href "/wiki/search" "Search")))))
 
-(defun note/url (note prefix)
+(defun note/url (note &key (prefix nil))
   (ccase prefix
     (:render (format nil
                      "/wiki/notes/~a"
