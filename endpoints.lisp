@@ -20,10 +20,12 @@
 
 ;;; can be used in an end point for caching static files on the client
 ;;; file-type should be a string which will be passed to ningle/respond-type, or nil
+;;; if you're setting it manually
 (defun ningle/cache-file (file hash &key (file-type nil))
-  (let* ((req (lack.request:request-headers ningle:*request*))
-	 (str (gethash "if-none-match" req)))
-    (if (string= str hash)
+  (am:-<> ningle:*request*
+    (lack.request:request-headers)
+    (gethash "if-none-match" am:<>)
+    (if (string= hash am:<>)
 	(progn
 	  (ningle/set-response-status 304)
 	  "Cache up to date")
