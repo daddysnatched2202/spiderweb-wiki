@@ -126,11 +126,7 @@
 	       (note/path)
 	       (path->string)))
          (:raw (if (eq :text/markdown (note/type node))
-                   (with-output-to-string (s)
-                     (3bmd:parse-string-and-print-to-stream
-                      (note/content node)
-                      s))
-                   (note/content node)))))
+                   (list :raw (note/preview node))))))
       (t (html/with-page (:title (path->string path))
 	   (:p "Note does not exist"))))))
 

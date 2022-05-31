@@ -75,7 +75,7 @@
 
 (defun note/preview (note &key (max-len 5))
   (let* ((lines (str:lines (note/content note)))
-         (shortened-content (first-x lines max-len)))
+         (shortened-content (str:unlines (first-x lines max-len))))
     (spinneret:with-html-string
       `(:div :class "note-preview"
         (:a ,(path->string (note/path note))
