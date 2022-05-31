@@ -183,7 +183,10 @@
   (let ((p (typecase path
              (list path)
              (string (string->path path)))))
-    (if (note/with-path p)
+    (if (handler-case (note/with-path p)
+          (error (e)
+            (declare (ignore e))
+            nil))
 	(error 'note/already-exists-error :path path)
 	(b.d:with-transaction ()
           (let ((n (make-instance 'note

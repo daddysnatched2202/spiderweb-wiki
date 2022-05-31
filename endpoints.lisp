@@ -114,7 +114,7 @@
 	   (:p :class "note-title" "Category Page: ")
            (:a :href (node/url (string->node name))
                name)
-           (dolist (n (note/all-with-node node))
+           (dolist (n (note/all-with-node (car path)))
              (:raw (note/preview n))))))
       ((not (null node))
        (html/with-page (:title (am:-> node
