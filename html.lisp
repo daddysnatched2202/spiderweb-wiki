@@ -37,7 +37,7 @@
 	       (:a :href "/wiki/make-note" "New Note")
 	       (:a :href "/wiki/search" "Search")))))
 
-(defun note/url (note &key (prefix nil))
+(defun note/url (note &key (prefix :render))
   (ccase prefix
     (:render (format nil
                      "/wiki/notes/~a"
@@ -73,14 +73,12 @@
 (setf 3bmd-wiki:*wiki-links* t)
 (setf 3bmd-wiki:*wiki-processor* (make-instance 'wiki-parser))
 
-(defun html/preview-note (note)
-  (list :div :class "note-preview"
-        (list :a (path->string (note/path note))
-              :href (note/url note :render))
-        (list :p (note/content note))))
-
-(defun html/render-note (note)
-  (list (list :h1 (path->string (note/path note)))
-        (list :div :class "path-elements"
-              (list 'dolist (list 'n (note/path note))
-                    (list :a (list 'node/name 'n) :href (list 'node/url 'n))))))
+(defun note/preview (note &key (max-len 5))
+  (let* ((lines (str:lines (note/content note)))
+         (shortened-content (first-x lines max-len)))
+    (spinneret:with-html-string
+      `(:div :class "note-preview"
+        (:a ,(path->string (note/path note))
+         :href ,(note/url note))
+        (:raw ,(with-output-to-string (s)
+                 (3bmd:parse-string-and-print-to-stream shortened-content s)))))))

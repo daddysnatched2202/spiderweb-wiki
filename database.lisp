@@ -97,22 +97,27 @@
        (path= (link/to a)
 	      (link/to b))))
 
+(defun convert-path (path)
+  (typecase path
+    (list path)
+    (string (string->path path))
+    (t (error "Path `~a` is not valid" path))))
+
 (defun note/has-node? (note node)
   (member node (note/path note)))
 
 (defun note/with-path (path)
-  (let ((converted-path (typecase path
-                          (list path)
-                          (string (string->path path)))))
+  (let ((converted-path (convert-path path)))
     (first-matching (note/all-with-node (car converted-path))
-                    #λ(path= (note/path _0) converted-path))))
+                    #λ(path= (note/path _0) converted-path)
+                    :err #λ(error "Note with path `~a` not found" path))))
 
 (defun note/all-with-partial-path (path)
   (labels ((rec (path notes)
-	     (if path
-		 (remove-if-not (alexandria:rcurry #'note/has-node? (car path))
-				(rec (cdr path) notes))
-		 notes)))
+             (if path
+                 (remove-if-not (alexandria:rcurry #'note/has-node? (car path))
+                                (rec (cdr path) notes))
+                 notes)))
     (rec (cdr path) (note/all-with-node (car path)))))
 
 (let ((space '(" " . "-"))

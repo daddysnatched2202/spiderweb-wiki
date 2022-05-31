@@ -98,8 +98,14 @@
                   :display flex
                   :flex-direction column
                   :width 40%)
-   '(.grid-container
+   (css/nord-list ".note-preview"
+                  :margin 2em
+                  :padding 1em
+                  :background-color nord1)
+   '(.nodes-container
      :display "grid"
-     :grid-template-columns 25% 25% 25% 25%
+     :grid-template-columns 25% 25% 25%
      :grid-column-gap 1em
-     :grid-row-gap 1em)))
+     :grid-row-gap 1em)
+   '(.note-title
+     :font-size 2em)))

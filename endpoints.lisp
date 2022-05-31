@@ -65,12 +65,14 @@
 (ningle/route ("/wiki/notes") ()
   (html/with-page (:title "Note Index")
     (:h1 "Path Elements")
-    (:div :class "grid-container"
+    (:div :class "nodes-container"
 	  (dolist (n (db/all-nodes))
 	    (:a :href (node/url n)
 		(node/name n))))
     (:h1 "Notes")
-    (:div :class "notes-preview" (dolist (n (db/all-notes))))))
+    (:div :class "notes-container"
+          (dolist (n (db/all-notes))
+            ))))
 
 (ningle/route ("/wiki/make-note") ()
   (html/with-page (:title "New Note")
@@ -99,19 +101,36 @@
 
 (ningle/route ("/wiki/notes/:path") ((path-text :key :path))
   (let* ((path (string->path path-text))
-         (n (note/with-path path)))
+         (node (handler-case (note/with-path path)
+                 (error (e)
+                   (declare (ignore e))
+                   nil))))
     (cond
-      ((= (length path) 1)
+      ((and (= (length path) 1)
+            (or (null node)
+                (str:empty? (note/content node))))
        (let ((name (node/name (car path))))
 	 (html/with-page (:title name)
-	   (:h1 (format nil "Category Page: ~a" name)))))
-      ((not (null n))
-       (html/with-page (:title (am:-> n
+	   (:h1 (format nil "Category Page: ~a" name))
+           (dolist (n (note/all-with-node node))
+             (:div :class "note-preview"
+                   (:a :href (note/url n) (path->string (note/path n)))
+                   (:raw (note/preview n)))))))
+      ((not (null node))
+       (html/with-page (:title (am:-> node
 				 (note/path)
 				 (last)))
-	 (:h1 (am:-> n
-		(note/path)
-		(path->string)))))
+	 (:a :href (note/url node)
+             :class "note-title"
+             (am:-> node
+	       (note/path)
+	       (path->string)))
+         (:raw (if (eq :text/markdown (note/type node))
+                   (with-output-to-string (s)
+                     (3bmd:parse-string-and-print-to-stream
+                      (note/content node)
+                      s))
+                   (note/content node)))))
       (t (html/with-page (:title (path->string path))
 	   (:p "Note does not exist"))))))
 
