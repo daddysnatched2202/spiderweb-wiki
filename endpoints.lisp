@@ -61,7 +61,6 @@
 	"Creative Commons BY-SA 4.0")
     (" license")))
 
-;;; TODO: code for note previews
 (ningle/route ("/wiki/notes") ()
   (html/with-page (:title "Note Index")
     (:h1 "Path Elements")
