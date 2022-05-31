@@ -72,7 +72,7 @@
     (:h1 "Notes")
     (:div :class "notes-container"
           (dolist (n (db/all-notes))
-            ))))
+            (:raw (note/preview n))))))
 
 (ningle/route ("/wiki/make-note") ()
   (html/with-page (:title "New Note")
@@ -111,11 +111,11 @@
                 (str:empty? (note/content node))))
        (let ((name (node/name (car path))))
 	 (html/with-page (:title name)
-	   (:h1 (format nil "Category Page: ~a" name))
+	   (:p :class "note-title" "Category Page: ")
+           (:a :href (node/url (string->node name))
+               name)
            (dolist (n (note/all-with-node node))
-             (:div :class "note-preview"
-                   (:a :href (note/url n) (path->string (note/path n)))
-                   (:raw (note/preview n)))))))
+             (:raw (note/preview n))))))
       ((not (null node))
        (html/with-page (:title (am:-> node
 				 (note/path)
@@ -126,7 +126,10 @@
 	       (note/path)
 	       (path->string)))
          (:raw (if (eq :text/markdown (note/type node))
-                   (note/preview node)
+                   (with-output-to-string (s)
+                     (3bmd:parse-string-and-print-to-stream
+                      (note/content node)
+                      s))
                    (error "Only markdown notes are supported right now")))))
       (t (html/with-page (:title (path->string path))
 	   (:p "Note does not exist"))))))

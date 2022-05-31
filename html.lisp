@@ -77,8 +77,7 @@
   (let* ((lines (str:lines (note/content note)))
          (shortened-content (str:unlines (first-x lines max-len))))
     (spinneret:with-html-string
-      `(:div :class "note-preview"
-        (:a ,(path->string (note/path note))
-         :href ,(note/url note))
-        (:raw ,(with-output-to-string (s)
-                 (3bmd:parse-string-and-print-to-stream shortened-content s)))))))
+      (:div :class "note-preview"
+            (:a :href (note/url note) (path->string (note/path note)))
+            (:raw (with-output-to-string (s)
+                    (3bmd:parse-string-and-print-to-stream shortened-content s)))))))
