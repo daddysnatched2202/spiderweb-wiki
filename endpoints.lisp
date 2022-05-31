@@ -126,7 +126,8 @@
 	       (note/path)
 	       (path->string)))
          (:raw (if (eq :text/markdown (note/type node))
-                   (list :raw (note/preview node))))))
+                   (note/preview node)
+                   (error "Only markdown notes are supported right now")))))
       (t (html/with-page (:title (path->string path))
 	   (:p "Note does not exist"))))))
 
