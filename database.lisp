@@ -16,6 +16,10 @@
 
 (in-package :web)
 
+(defparameter *space-char* '(" " . "-"))
+(defparameter *break-char* "&")
+(defparameter *sep-char* ":")
+
 (defclass note (b.d:store-object)
   ((content
     :initarg :content
@@ -120,43 +124,40 @@
                  notes)))
     (rec (cdr path) (note/all-with-node (car path)))))
 
-(let ((space '(" " . "-"))
-      (break-char "&")
-      (sep ":"))
-  (defun string->node (str)
-    (let* ((rem-space (am:->> str
-			(str:replace-all (car space) (cdr space))
-			(str:downcase)))
-	   (split-conv (str:split break-char rem-space)))
-      (ana:aif (node/with-name rem-space)
-	       ana:it
-	       (b.d:with-transaction ()
-                 (if (> (length split-conv) 1)
-                     (make-instance 'breakout-node
-                                    :name rem-space
-                                    :breakout (cdr split-conv)
-                                    :parent (car split-conv))
-                     (make-instance 'node
-                                    :name rem-space))))))
+(defun string->node (str)
+  (let* ((rem-space (am:->> str
+                      (str:replace-all (car *space-char*) (cdr *space-char*))
+                      (str:downcase)))
+         (split-conv (str:split *break-char* rem-space)))
+    (ana:aif (node/with-name rem-space)
+             ana:it
+             (b.d:with-transaction ()
+               (if (> (length split-conv) 1)
+                   (make-instance 'breakout-node
+                                  :name rem-space
+                                  :breakout (cdr split-conv)
+                                  :parent (car split-conv))
+                   (make-instance 'node
+                                  :name rem-space))))))
 
-  (defun string->path (str)
-    (am:-<>> str
-      (str:downcase)
-      (str:split sep am:<> :omit-nulls t)
-      (copy-list)
-      (sort am:<> #'string<)
-      (mapcar #'string->node)))
+(defun string->path (str)
+  (am:-<>> str
+    (str:downcase)
+    (str:split *sep-char* am:<> :omit-nulls t)
+    (copy-list)
+    (sort am:<> #'string<)
+    (mapcar #'string->node)))
 
-  (defun path->string (path)
-    (typecase path
-      (list (am:->> path
-              (mapcar #'node/name)
-              (str:join sep)))
-      (string path)
-      (t (error "`path` in call to `path->string` has value `~a`, which is of ~
-                bad type ~a"
-                path
-                (type-of path))))))
+(defun path->string (path)
+  (typecase path
+    (list (am:->> path
+            (mapcar #'node/name)
+            (str:join *sep-char*)))
+    (string path)
+    (t (error "`path` in call to `path->string` has value `~a`, which is of ~
+              bad type ~a"
+              path
+              (type-of path)))))
 
 (defun find-links (content)
   (let ((links))
@@ -165,16 +166,14 @@
       (push (str:split #\| str) links))
     links))
 
+;;; should this function do something different in case a link already exists between
+;;; two notes ??
 (defun link/new (from to text)
   (b.d:with-transaction ()
-    (ana:aif (link/exists? from to)
-	     (setf (link/from ana:it) from
-		   (link/to ana:it) to
-		   (link/text ana:it) text)
-	     (make-instance 'link
-			    :from from
-			    :to to
-			    :text text))))
+    (make-instance 'link
+                   :from from
+                   :to to
+                   :text text)))
 
 (defun link/delete (l)
   (b.d:delete-object l))
@@ -193,9 +192,9 @@
 				  :path p
 				  :type type
 				  :content content)))
-            (mapcar #λ(link/new (car _0)
-                                (cadr _0)
-                                (ana:aif (caddr _0)
+            (mapcar #λ(link/new p
+                                (string->path (car _0))
+                                (ana:aif (cadr _0)
                                          ana:it
                                          (car _0)))
                     (find-links content))
