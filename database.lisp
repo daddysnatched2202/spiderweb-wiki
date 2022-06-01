@@ -154,8 +154,8 @@
             (mapcar #'node/name)
             (str:join *sep-char*)))
     (string path)
-    (t (error "`path` in call to `path->string` has value `~a`, which is of ~
-              bad type ~a"
+    (t (error "Argument `path` in call to `path->string` has value `~a`, which is ~
+              of bad type ~a"
               path
               (type-of path)))))
 
