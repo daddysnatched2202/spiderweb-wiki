@@ -123,3 +123,7 @@ params `~a`, got params `~a`"
 	    :test-not #'equal
 	    :key #'car)
     (mapcar #'cdr)))
+
+(defmacro def-unless-bound (var val &key (def 'defparameter))
+  `(unless (boundp ',var)
+     (,def ,var ,val)))
