@@ -83,7 +83,7 @@
            (:input :type "text" :name "path")
            (:textarea :name "content"
                       :rows 50)
-           (:input :type "submit"))))
+           (:input :type "submit" :value "Make Note"))))
 
 (ningle/route ("/wiki/make-note" :method :post) (path content)
   (handler-case (note/new path content)
