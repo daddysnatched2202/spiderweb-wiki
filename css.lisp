@@ -99,7 +99,8 @@
                   :flex-direction column
                   :width 40%)
    (css/nord-list ".note-preview"
-                  :margin 2em
+                  :margin-top 2em
+                  :margin-bottom 2em
                   :padding 1em
                   :background-color nord1)
    '(.nodes-container
