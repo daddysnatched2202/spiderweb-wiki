@@ -125,5 +125,5 @@ params `~a`, got params `~a`"
     (mapcar #'cdr)))
 
 (defmacro def-unless-bound (var val &key (def 'defparameter))
-  `(unless (boundp ',var)
-     (,def ,var ,val)))
+  (if (not (boundp var))
+      `(,def ,var ,val)))

@@ -131,14 +131,13 @@
          (split-conv (str:split *break-char* rem-space)))
     (ana:aif (node/with-name rem-space)
              ana:it
-             (b.d:with-transaction ()
-               (if (> (length split-conv) 1)
-                   (make-instance 'breakout-node
-                                  :name rem-space
-                                  :breakout (cdr split-conv)
-                                  :parent (car split-conv))
-                   (make-instance 'node
-                                  :name rem-space))))))
+             (if (> (length split-conv) 1)
+                 (make-instance 'breakout-node
+                                :name rem-space
+                                :breakout (cdr split-conv)
+                                :parent (car split-conv))
+                 (make-instance 'node
+                                :name rem-space)))))
 
 (defun string->path (str)
   (am:-<>> str
@@ -169,11 +168,10 @@
 ;;; should this function do something different in case a link already exists between
 ;;; two notes ??
 (defun link/new (from to text)
-  (b.d:with-transaction ()
-    (make-instance 'link
-                   :from from
-                   :to to
-                   :text text)))
+  (make-instance 'link
+                 :from from
+                 :to to
+                 :text text))
 
 (defun link/delete (l)
   (b.d:delete-object l))
@@ -187,18 +185,17 @@
             (declare (ignore e))
             nil))
 	(error 'note/already-exists-error :path path)
-	(b.d:with-transaction ()
-          (let ((n (make-instance 'note
-				  :path p
-				  :type type
-				  :content content)))
-            (mapcar #λ(link/new p
-                                (string->path (car _0))
-                                (ana:aif (cadr _0)
-                                         ana:it
-                                         (car _0)))
-                    (find-links content))
-	    n)))))
+        (let ((n (make-instance 'note
+                                :path p
+                                :type type
+                                :content content)))
+          (mapcar #λ(link/new p
+                              (string->path (car _0))
+                              (ana:aif (cadr _0)
+                                       ana:it
+                                       (car _0)))
+                  (find-links content))
+          n))))
 
 (defun note/delete (path)
   (mapcar #'link/delete (db/links-from path))
