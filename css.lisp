@@ -97,7 +97,7 @@
    (css/nord-list ".note-edit"
                   :display flex
                   :flex-direction column
-                  :width 40%)
+                  :width 60%)
    (css/nord-list ".note-preview"
                   :margin-top 2em
                   :margin-bottom 2em
