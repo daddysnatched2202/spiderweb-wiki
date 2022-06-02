@@ -197,17 +197,22 @@
                   (find-links content))
           n))))
 
+(defun note/edit (note &key path content type)
+  (let ((old-path (note/path note))
+        (old-content (note/content note))
+        (old-type (note/type note)))
+    (macrolet ((if-set (sym)
+                 (list 'if sym
+                       sym
+                       (intern (str:concat "OLD-" (symbol-name sym))))))
+      (note/delete path)
+      (note/new (if-set path)
+                (if-set content)
+                :type (if-set type)))))
+
 (defun note/delete (path)
   (mapcar #'link/delete (db/links-from path))
   (b.d:delete-object (note/with-path path)))
-
-(defun note/move (old-path new-path)
-  (b.d:with-transaction ()
-    (with-slots (content type) (note/with-path old-path)
-      (note/delete old-path)
-      (note/new new-path
-                content
-                :type type))))
 
 (defun db/clear ()
   (loop for obj in (b.d:all-store-objects)
