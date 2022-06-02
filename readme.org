@@ -91,7 +91,6 @@
     - If you can store the files locally (on the same machine the server is running
       from), the setup is easy: add the following lines to ~conf.lisp~
 #+begin_src lisp
-(defparameter *storage-type* :local)
 (defparameter *base-path* "<path to the folder where the data will be stored>/")
 #+end_src
 *** S3
@@ -118,14 +117,10 @@ http {
 #+end_src
 ** Jquery
 *** Automatic (Recommended) 
-    - If you want Spiderweb Wiki to automatically download and use the correct
-      version of jquery, add the following to ~conf.lisp~
-#+begin_src lisp
-(defparameter *jquery-source* :web)
-(defparameter *jquery-path* nil) ; this variable can be set to an URL if you want
-                                 ; to use a different version of JQuery or a 
-                                 ; different source than the official CDN
-#+end_src
+    - Spiderweb-wiki will, by default, automatically download and use the correct
+      version of jquery
+    - You can set a custom source for the file in ~conf.lisp~ with the ~jquery-path~
+      variable
 *** Local
     - If you want to serve a local copy, add the following instead :
 #+begin_src lisp
