@@ -100,7 +100,7 @@
 
 (ningle/route ("/wiki/notes/:path") ((path-text :key :path))
   (let* ((path (string->path path-text))
-         (node (handler-case (note/with-path path)
+         (node (handler-case (note/with-path path-text)
                  (error (e)
                    (declare (ignore e))
                    nil))))
@@ -116,9 +116,7 @@
            (dolist (n (note/all-with-node (car path)))
              (:raw (note/preview n))))))
       ((not (null node))
-       (html/with-page (:title (am:-> node
-				 (note/path)
-				 (last)))
+       (html/with-page (:title (path->string path))
 	 (:a :href (note/url node)
              :class "note-title"
              (am:-> node
