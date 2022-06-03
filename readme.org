@@ -122,7 +122,7 @@ http {
     - You can set a custom source for the file in ~conf.lisp~ with the ~jquery-path~
       variable
 *** Local
-    - If you want to serve a local copy, add the following instead :
+    - If you want to serve a local copy, add the following to ~conf.lisp~ :
 #+begin_src lisp
 (defparameter *jquery-source* :local)
 (defparameter *jquery-path* "<path to the jquery file.js>")
