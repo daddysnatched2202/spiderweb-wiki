@@ -25,12 +25,12 @@
 (defun load-jquery ()
   (setf *jquery-file*
 	(case *jquery-source*
-          (:web (multiple-value-bind (data code hash quri res)
-                    (drakma:http-request *jquery-path*)
-                  (declare (ignore code hash quri res))
-                  data))
-	  (:local (uiop:read-file-string *jquery-path*))
-	  (:cdn nil)
+          ((:web) (multiple-value-bind (data code hash quri res)
+                      (drakma:http-request *jquery-path*)
+                    (declare (ignore code hash quri res))
+                    data))
+	  ((:local) (uiop:read-file-string *jquery-path*))
+	  ((:cdn) nil)
 	  (:otherwise (error "Jquery source must be `:local`, `:web`, or `:cdn`; it ~
                               is in fact `~a`"
                              *jquery-source*)))
