@@ -40,6 +40,7 @@
   :components ((:file "package")
 	       (:file "lambda")
 	       (:file "conf")
+               (:file "setup")
 	       (:file "util")
 	       (:file "database")
 	       (:file "css")

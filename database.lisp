@@ -16,9 +16,13 @@
 
 (in-package :web)
 
-(def-unless-bound *space-char* '(" " . "-"))
-(def-unless-bound *break-char* "&")
-(def-unless-bound *sep-char* ":")
+(defvar *space-char*)
+(defvar *break-char*)
+(defvar *sep-char*)
+
+(set-unless-bound *space-char* '(" " . "-"))
+(set-unless-bound *break-char* "&")
+(set-unless-bound *sep-char* ":")
 
 (defclass note (b.d:store-object)
   ((content

@@ -16,10 +16,6 @@
 
 (in-package :web)
 
-(def-unless-bound *jquery-source* :web)
-(def-unless-bound *jquery-path* "https://code.jquery.com/jquery-3.6.0.min.js")
-(def-unless-bound *storage-type* :local)
-
 (defvar *handler*)
 
 (defun load-jquery ()
