@@ -124,8 +124,8 @@ http {
 *** Local
     - If you want to serve a local copy, add the following to ~conf.lisp~ :
 #+begin_src lisp
-(defparameter *jquery-source* :local)
-(defparameter *jquery-path* "<path to the jquery file.js>")
+(defvar *jquery-source* :local)
+(defvar *jquery-path* "<path to the jquery file.js>")
 #+end_src
 *** External CDN
     - You can also use an external CDN to serve the file, in case you have
@@ -133,8 +133,8 @@ http {
     - Note that the wiki will cache jquery on clients, so it shouldn't be necessary
       to use a CDN because of slow internet connections
 #+begin_src lisp
-(defparameter *jquery-source* :cdn)
-(defparameter *jquery-path* "<jquery url>")
+(defvar *jquery-source* :cdn)
+(defvar *jquery-path* "<jquery url>")
 #+end_src
 * Running the Program
   - After setting up ~conf.lisp~, you can run the application in the terminal by
