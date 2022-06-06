@@ -92,8 +92,7 @@
         (:p (format nil "Encountered an error while trying to create note `~a`: ~a"
                     (path->string path)
                     (princ-to-string e)))))
-    (:no-error (e)
-      (declare (ignore e))
+    (:no-error ()
       (html/with-page (:title "Success")
         (:p (format nil "Made note `~a` successfully"
                  path))))))
