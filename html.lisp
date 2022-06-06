@@ -67,7 +67,7 @@
 	    (am:-> formatted-target
 	      (string->path)
 	      (note/with-path)
-	      (note/url :prefix :render))
+	      (note/url))
 	    link-text)))
 
 (setf 3bmd-wiki:*wiki-links* t)
