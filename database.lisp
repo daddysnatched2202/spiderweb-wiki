@@ -30,7 +30,8 @@
     :reader note/content)
    (type
     :initarg :type
-    :reader note/type)
+    :reader note/type
+    :initform :text/markdown)
    (path
     :initarg :path
     :reader note/path
@@ -71,7 +72,29 @@
   ((path :initarg :path
          :reader err/path))
   (:report (lambda (condition stream)
-             (format stream "Note already exists: `~a`" (err/path condition)))))
+             (format stream
+                     "Note already exists: `~a`"
+                     (path->string (err/path condition))))))
+
+(define-condition note/does-not-exist-error (error)
+  ((path :initarg :path
+         :reader err/path))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Note does not exist: `~a`"
+                     (path->string (err/path condition))))))
+
+(defmethod initialize-instance :after ((instance note/already-exists-error)
+                                       &rest args)
+  (declare (ignore args))
+  (setf (slot-value instance 'path)
+        (convert-path (err/path instance))))
+
+(defmethod initialize-instance :after ((instance note/does-not-exist-error)
+                                       &rest args)
+  (declare (ignore args))
+  (setf (slot-value instance 'path)
+        (convert-path (err/path instance))))
 
 (defun db/all-notes ()
   (b.d:store-objects-with-class 'note))
@@ -118,7 +141,7 @@
   (let ((converted-path (convert-path path)))
     (first-matching (note/all-with-node (car converted-path))
                     #λ(path= (note/path _0) converted-path)
-                    :err #λ(error "Note with path `~a` not found" path))))
+                    :err #λ(error 'note/does-not-exist-error :path path))))
 
 (defun note/all-with-partial-path (path)
   (labels ((rec (path notes)
@@ -181,38 +204,38 @@
   (b.d:delete-object l))
 
 (defun note/new (path content &key (type :text/markdown))
-  (let ((p (typecase path
-             (list path)
-             (string (string->path path)))))
-    (if (handler-case (note/with-path p)
-          (error (e)
-            (declare (ignore e))
-            nil))
-	(error 'note/already-exists-error :path path)
-        (let ((n (make-instance 'note
-                                :path p
-                                :type type
-                                :content content)))
-          (mapcar #λ(link/new p
-                              (string->path (car _0))
-                              (ana:aif (cadr _0)
-                                       ana:it
-                                       (car _0)))
-                  (find-links content))
-          n))))
+  (if (handler-case (note/with-path path)
+        (error (e)
+          (declare (ignore e))
+          nil))
+      (error 'note/already-exists-error :path path)
+      (let ((n (make-instance 'note
+                              :path (convert-path path)
+                              :type type
+                              :content content)))
+        (mapcar #λ(link/new path
+                            (string->path (car _0))
+                            (ana:aif (cadr _0)
+                                     ana:it
+                                     (car _0)))
+                (find-links content))
+        n)))
+
+(defmacro if-set (sym)
+  `(if (or (and (stringp ,sym)
+                (str:empty? ,sym))
+           (null ,sym))
+       ,(intern (str:concat "OLD-" (symbol-name sym)))
+       ,sym))
 
 (defun note/edit (note &key path content type)
   (let ((old-path (note/path note))
         (old-content (note/content note))
         (old-type (note/type note)))
-    (macrolet ((if-set (sym)
-                 (list 'if sym
-                       sym
-                       (intern (str:concat "OLD-" (symbol-name sym))))))
-      (note/delete path)
-      (note/new (if-set path)
-                (if-set content)
-                :type (if-set type)))))
+    (note/delete old-path)
+    (note/new (if-set path)
+              (if-set content)
+              :type (if-set type))))
 
 (defun note/delete (path)
   (mapcar #'link/delete (db/links-from path))

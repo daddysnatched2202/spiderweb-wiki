@@ -59,7 +59,7 @@
   (concatenate 'string *base-path* str))
 
 (defmacro ningle/route ((path &rest keys) (&rest param-list) &body body)
-  (alexandria:with-gensyms (params maybe-key)
+  (alexandria:with-gensyms (maybe-key)
     (labels ((make-optional (opt getter)
 	       (if opt
 		   `(alexandria:if-let ((,maybe-key ,getter))
@@ -77,18 +77,18 @@
 			  (key (getf plist :key (ps:symbol-to-js-string bind)))
 			  (array (getf plist :array))
 			  (opt (getf plist :optional)))
-		     `(,bind ,(make-optional opt (make-getter key array params))))
-		   `(,sym (get-param ,(ps:symbol-to-js-string sym) ,params)))))
+		     `(,bind ,(make-optional opt (make-getter key array 'params))))
+		   `(,sym (get-param ,(ps:symbol-to-js-string sym) params)))))
       (let* ((bindings (mapcar #'make-binding param-list))
-	     (page `#'(lambda (,params)
-			(declare (ignorable ,params))
+	     (page `#'(lambda (params)
+			(declare (ignorable params))
 			(alexandria:if-let ,bindings
 			  (progn ,@body)
 			  (warn "Could not fill params for route `~a`; required ~
-params `~a`, got params `~a`"
+params `~a`, got params `~a`~%"
 				,path
 				',param-list
-				,params)))))
+				params)))))
 	`(progn (setf (ningle:route *app* ,path ,@keys)
 		      ,page)
 		(setf (ningle:route *app*

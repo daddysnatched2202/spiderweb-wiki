@@ -44,6 +44,9 @@
                      (path->string (note/path note))))
     (:json (format nil
                    "/wiki/json/notes/~a"
+                   (path->string (note/path note))))
+    (:edit (format nil
+                   "/wiki/edit-note/~a"
                    (path->string (note/path note))))))
 
 (defun node/url (node)

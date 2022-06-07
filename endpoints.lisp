@@ -97,6 +97,46 @@
         (:p (format nil "Made note `~a` successfully"
                  path))))))
 
+(ningle/route ("/wiki/edit-note/:path") ((path-text :key :path))
+  (let ((note (handler-case (note/with-path path-text)
+                (note/does-not-exist-error () nil))))
+    (if note
+        (html/with-page (:title "Edit Note")
+          (:h1 (format nil "Editing ~a" (path->string (string->path path-text))))
+          (:form :action "/wiki/edit-note"
+                 :method "post"
+                 :autocomplete "off"
+                 :class "note-edit"
+                 (:input :type "text"
+                         :name "new-path"
+                         :value (am:-> note
+                                  (note/path)
+                                  (path->string)))
+                 (:textarea :name "new-content"
+                            :rows 50
+                            (note/content note))
+                 (:input :type "submit" :value "Edit Note")
+                 (:input :type "hidden" :name "old-path" :value path-text)))
+        (html/with-page (:title "Error")
+          (:p (format nil "Note does not exist: ~a" path-text))))))
+
+(ningle/route ("/wiki/edit-note" :method :post)
+    ((old-path :key "old-path")
+     (new-path :key "new-path")
+     (new-content :key "new-content"))
+  (handler-case (note/edit (note/with-path old-path)
+                           :path new-path
+                           :content new-content)
+    (error (e) (html/with-page (:title "Error")
+                 (:p (format nil
+                             "Could not edit note `~a`: ~a"
+                             (path->string old-path)
+                             e))))
+    (:no-error (e)
+      (declare (ignore e))
+      (html/with-page (:title "Success")
+                    (:p "Note was edited successfully")))))
+
 (ningle/route ("/wiki/notes/:path") ((path-text :key :path))
   (let* ((path (string->path path-text))
          (node (handler-case (note/with-path path-text)
@@ -126,14 +166,26 @@
                      (3bmd:parse-string-and-print-to-stream
                       (note/content node)
                       s))
-                   (error "Only markdown notes are supported right now")))))
+                   (error "Only markdown notes are supported right now ~a" node)))
+         (:a :href (note/url node :prefix :edit)
+             "Edit This Note")))
       (t (html/with-page (:title (path->string path))
 	   (:p "Note does not exist"))))))
+
+(ningle/route ("/wiki/search") ()
+  (html/with-page (:title "Search")
+    (:h1 "Search Notes")
+    (:input :class "search-input")
+    (:a :href "#" :class "search-paths-button" "Search Paths")
+    (:a :href "#" :class "search-notes-button" "Search Notes")
+    (:h1 "Results")
+    (:div :class "search-results")
+    (:script (script/search-page))))
 
 (ningle/route ("/wiki") ()
   (ningle/redirect "/wiki/notes"))
 
-;;; We use lisp to cache the file instead of nginx to automate downloading the file
+;;; We use lisp for the cache instead of nginx to automate downloading the file
 (setf (ningle/app:route *app* *jquery-url*)
       (lambda (params)
 	(declare (ignore params))

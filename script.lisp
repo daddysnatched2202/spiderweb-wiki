@@ -21,3 +21,6 @@
 
 (ps:defpsmacro jquery-single (item function)
   `(ps:chain ($ ,item) ,function))
+
+(defun script/search-page ()
+  (ps:ps* `()))
