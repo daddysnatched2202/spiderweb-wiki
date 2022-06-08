@@ -135,7 +135,7 @@
     (:no-error (e)
       (declare (ignore e))
       (html/with-page (:title "Success")
-                    (:p "Note was edited successfully")))))
+        (:p "Note was edited successfully")))))
 
 (ningle/route ("/wiki/notes/:path") ((path-text :key :path))
   (let* ((path (string->path path-text))
