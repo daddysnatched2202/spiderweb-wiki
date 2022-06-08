@@ -102,10 +102,11 @@
                   :margin-top 2em
                   :margin-bottom 2em
                   :padding 1em
-                  :background-color nord1)
+                  :background-color nord1
+                  (ls p :margin-left 4px))
    '(.nodes-container
      :display "grid"
-     :grid-template-columns 25% 25% 25%
+     :grid-template-columns 20% 20% 20% 20%
      :grid-column-gap 1em
      :grid-row-gap 1em)
    '(.note-title
