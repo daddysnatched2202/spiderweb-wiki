@@ -203,6 +203,10 @@
 (defun link/delete (l)
   (b.d:delete-object l))
 
+(defun node/delete (n)
+  (if (null (note/all-with-node n))
+      (b.d:delete-object n)))
+
 (defun note/new (path content &key (type :text/markdown))
   (if (handler-case (note/with-path path)
         (error () nil))
@@ -236,8 +240,10 @@
               :type (if-set type))))
 
 (defun note/delete (path)
-  (mapcar #'link/delete (db/links-from path))
-  (b.d:delete-object (note/with-path path)))
+  (let ((conv-path (convert-path path)))
+    (mapcar #'link/delete (db/links-from conv-path))
+    (b.d:delete-object (note/with-path conv-path))
+    (mapcar #'node/delete conv-path)))
 
 (defun db/clear ()
   (loop for obj in (b.d:all-store-objects)
