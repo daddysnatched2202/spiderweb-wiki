@@ -132,17 +132,14 @@
                              "Could not edit note `~a`: ~a"
                              (path->string old-path)
                              e))))
-    (:no-error (e)
-      (declare (ignore e))
+    (:no-error ()
       (html/with-page (:title "Success")
         (:p "Note was edited successfully")))))
 
 (ningle/route ("/wiki/notes/:path") ((path-text :key :path))
   (let* ((path (string->path path-text))
          (node (handler-case (note/with-path path-text)
-                 (error (e)
-                   (declare (ignore e))
-                   nil))))
+                 (error () nil))))
     (cond
       ((and (= (length path) 1)
             (or (null node)
