@@ -28,7 +28,9 @@
        (:title ,title)
        (:style (css/std)))
       (:body
-       (:script :src ,*jquery-url*)
+       ,(if (eq *jquery-source* :cdn)
+            (list :script :src *jquery-path*)
+	    (list :script :src *jquery-url*))
        ,@body)
       (:footer (:a :href "/wiki/notes" "Note Index")
 	       (:a :href "/wiki/licenses" "Licenses")
