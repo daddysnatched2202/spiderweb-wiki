@@ -134,7 +134,7 @@ http {
       to use a CDN because of slow internet connections
 #+begin_src lisp
 (defvar *jquery-source* :cdn)
-(defvar *jquery-path* "<jquery url>")
+(defvar *jquery-url* "<jquery url>")
 #+end_src
 * Running the Program
   - After setting up ~conf.lisp~, you can run the application in the terminal by
