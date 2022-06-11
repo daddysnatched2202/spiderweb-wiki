@@ -47,7 +47,10 @@
                    (path->string (note/path note))))
     (:edit (format nil
                    "/wiki/edit-note/~a"
-                   (path->string (note/path note))))))
+                   (path->string (note/path note))))
+    (:delete (format nil
+                     "/wiki/delete-note/~a"
+                     (path->string (note/path note))))))
 
 (defun node/url (node)
   (format nil "/wiki/notes/~a" (node/name node)))

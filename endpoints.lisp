@@ -106,7 +106,7 @@
           (:form :action "/wiki/edit-note"
                  :method "post"
                  :autocomplete "off"
-                 :class "note-edit"
+                 :class "note-edit-form"
                  (:input :type "text"
                          :name "new-path"
                          :value (am:-> note
@@ -164,8 +164,13 @@
                       (note/content node)
                       s))
                    (error "Only markdown notes are supported right now ~a" node)))
-         (:a :href (note/url node :prefix :edit)
-             "Edit This Note")))
+         (:div :class "note-button-bar"
+               (:a :href (note/url node :prefix :edit)
+                   :class "note-button-edit"
+                   "Edit This Note")
+               (:a :href "#"
+                   :class "note-button-delete"
+                   "Delete This Note"))))
       (t (html/with-page (:title (path->string path))
 	   (:p "Note does not exist"))))))
 

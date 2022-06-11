@@ -94,7 +94,7 @@
                   :margin 20px)
    (css/nord-list "input[type=submit]:hover"
                   :background-color nord3)
-   (css/nord-list ".note-edit"
+   (css/nord-list ".note-edit-form"
                   :display flex
                   :flex-direction column
                   :width 60%)
@@ -104,10 +104,21 @@
                   :padding 1em
                   :background-color nord1
                   (ls p :margin-left 4px))
+   (css/nord-list '(:or ".note-button-edit" ".note-button-delete")
+                  :margin 1em)
+   (css/nord-list ".note-button-edit:hover"
+                  :background-color nord14)
+   (css/nord-list ".note-button-delete:hover"
+                  :background-color nord11)
    '(.nodes-container
      :display "grid"
      :grid-template-columns 20% 20% 20% 20%
      :grid-column-gap 1em
      :grid-row-gap 1em)
    '(.note-title
-     :font-size 2em)))
+     :font-size 2em)
+   '(.note-button-bar
+     :float "right"
+     :position absolute
+     :bottom 4em
+     :right 0px)))
