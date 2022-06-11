@@ -110,14 +110,12 @@
                   :background-color nord11)
    '(.nodes-container
      :display "grid"
-     :grid-template-columns 24% 24% 24% 24%
-     :grid-column-gap 1em
-     :grid-row-gap 1em)
+     :grid-template-columns auto auto auto auto
+     :grid-gap 1em)
    '(.notes-container
      :display "grid"
-     :grid-template-columns 49% 49%
-     :grid-column-gap 1em
-     :grid-row-gap 1em)
+     :grid-template-columns auto auto
+     :grid-gap 1em)
    '(.note-title
      :font-size 2em)
    '(.note-button-bar
