@@ -79,7 +79,8 @@
 			       :margin 5px
 			       :position relative))
    (css/nord-list body :background-color nord0
-		       :color nord5)
+		       :color nord5
+                       :line-height 1.5em)
    (css/nord-list p :color nord5)
    (css/nord-list a :background-color nord2
 		    :color nord5

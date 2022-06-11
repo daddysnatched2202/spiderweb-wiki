@@ -137,6 +137,12 @@
 (defun note/has-node? (note node)
   (member node (note/path note)))
 
+(defun note/exists? (path)
+  (handler-case (note/with-path path)
+    (error (e)
+      (declare (ignore e))
+      nil)))
+
 (defun note/with-path (path)
   (let ((converted-path (convert-path path)))
     (first-matching (note/all-with-node (car converted-path))

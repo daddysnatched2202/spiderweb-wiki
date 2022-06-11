@@ -43,7 +43,7 @@
                      "/wiki/notes/~a"
                      (path->string (note/path note))))
     (:json (format nil
-                   "/wiki/json/notes/~a"
+                   "/wiki/json/~a"
                    (path->string (note/path note))))
     (:edit (format nil
                    "/wiki/edit-note/~a"
@@ -55,27 +55,37 @@
 (defun node/url (node)
   (format nil "/wiki/node/~a" (node/name node)))
 
-(defun simple-path->url (path)
-  )
+(defun path->url (path)
+  (let ((conv (convert-path path)))
+    (cond ((note/exists? conv)
+           (note/url (note/with-path conv)))
+          ((= (length conv)
+              1)
+           (node/url (car conv)))
+          ((> (length conv)
+              1)
+           "/wiki/notes")
+          (t (format t
+                     "Tried to get URL for bad path of value `~a`~%"
+                     path)))))
 
 (defclass wiki-parser () ())
-(defmethod 3bmd::process-wiki-link ((parser wiki-parser)
-				    normalized-target
-				    formatted-target
-				    args
-				    stream)
+(defmethod 3bmd-wiki:process-wiki-link ((parser wiki-parser)
+				        normalized-target
+				        formatted-target
+				        args
+				        stream)
   (declare (ignore parser
 		   normalized-target))
-  (let ((link-text (ana:aif (car args)
+  (let ((link-text (ana:aif (cadr args)
                             ana:it
-                            (format nil
-                                    "~{~a~^ ~}"
-                                    (string->path formatted-target)))))
+                            (am:-> formatted-target
+                              (string->path)
+                              (path->string)))))
     (format stream
 	    "<a href=\"~a\">~a</a>"
 	    (am:-> formatted-target
-	      (string->path)
-              (simple-path->url))
+              (path->url))
 	    link-text)))
 
 (setf 3bmd-wiki:*wiki-links* t)
