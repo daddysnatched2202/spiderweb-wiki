@@ -98,10 +98,13 @@
                   :display flex
                   :flex-direction column
                   :width 60%)
-   (css/nord-list ".note-preview"
+   (css/nord-list '(:or ".note-preview-grid" ".note-preview")
                   :padding 1em
                   :background-color nord1
                   (ls p :margin-left 4px))
+   (css/nord-list ".note-preview"
+                  :margin-top 1em
+                  :margin-bottom 1em)
    (css/nord-list '(:or ".note-button-edit" ".note-button-delete")
                   :margin 0.5em)
    (css/nord-list ".note-button-edit:hover"

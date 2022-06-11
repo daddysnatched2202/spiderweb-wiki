@@ -71,7 +71,7 @@
     (:h1 "Notes")
     (:div :class "notes-container"
           (dolist (n (db/all-notes))
-            (:raw (note/preview n))))))
+            (:raw (note/preview n :class "note-preview-grid"))))))
 
 (ningle/route ("/wiki/make-note") ()
   (html/with-page (:title "New Note")
