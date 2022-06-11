@@ -103,7 +103,7 @@
                 (note/does-not-exist-error () nil))))
     (if note
         (html/with-page (:title "Edit Note")
-          (:h1 (format nil "Editing ~a" (path->string (string->path path-text))))
+          (:h1 (format nil "Editing ~a" (path->string path-text)))
           (:form :action "/wiki/edit-note"
                  :method "post"
                  :autocomplete "off"
@@ -136,12 +136,15 @@
     (:no-error (e)
       (declare (ignore e))
       (html/with-page (:title "Success")
-        (:p "Note was edited successfully")))))
+        (:p (format nil "Note `~a` was edited successfully"
+                    (path->string old-path)))))))
 
 (ningle/route ("/wiki/notes/:path") ((path-text :key :path))
   (let* ((path (string->path path-text))
          (node (handler-case (note/with-path path-text)
-                 (error () nil))))
+                 (error (e)
+                   (declare (ignore e))
+                   nil))))
     (cond
       ((not (null node))
        (html/with-page (:title (path->string path))

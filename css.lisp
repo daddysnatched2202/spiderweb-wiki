@@ -105,7 +105,7 @@
                   :background-color nord1
                   (ls p :margin-left 4px))
    (css/nord-list '(:or ".note-button-edit" ".note-button-delete")
-                  :margin 1em)
+                  :margin 0.5em)
    (css/nord-list ".note-button-edit:hover"
                   :background-color nord14)
    (css/nord-list ".note-button-delete:hover"
