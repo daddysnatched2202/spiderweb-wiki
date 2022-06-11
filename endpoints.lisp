@@ -79,7 +79,7 @@
     (:form :action "/wiki/make-note"
            :method "post"
            :autocomplete "off"
-           :class "note-edit"
+           :class "note-edit-form"
            (:input :type "text" :name "path")
            (:textarea :name "content"
                       :rows 50)
@@ -92,7 +92,8 @@
         (:p (format nil "Encountered an error while trying to create note `~a`: ~a"
                     (path->string path)
                     (princ-to-string e)))))
-    (:no-error ()
+    (:no-error (e)
+      (declare (ignore e))
       (html/with-page (:title "Success")
         (:p (format nil "Made note `~a` successfully"
                  path))))))
@@ -132,7 +133,8 @@
                              "Could not edit note `~a`: ~a"
                              (path->string old-path)
                              e))))
-    (:no-error ()
+    (:no-error (e)
+      (declare (ignore e))
       (html/with-page (:title "Success")
         (:p "Note was edited successfully")))))
 
@@ -141,16 +143,6 @@
          (node (handler-case (note/with-path path-text)
                  (error () nil))))
     (cond
-      ((and (= (length path) 1)
-            (or (null node)
-                (str:empty? (note/content node))))
-       (let ((name (node/name (car path))))
-	 (html/with-page (:title name)
-	   (:p :class "note-title" "Category Page: ")
-           (:a :href (node/url (string->node name))
-               name)
-           (dolist (n (note/all-with-node (car path)))
-             (:raw (note/preview n))))))
       ((not (null node))
        (html/with-page (:title (path->string path))
 	 (:a :href (note/url node)
@@ -173,6 +165,18 @@
                    "Delete This Note"))))
       (t (html/with-page (:title (path->string path))
 	   (:p "Note does not exist"))))))
+
+(ningle/route ("/wiki/node/:node") ((node-text :key :node))
+  (let ((path (string->path node-text)))
+    (cond ((> (length path) 1)
+           (html/with-page (:title "Error")
+             (:p (format nil "Path supplied to `/wiki/node` must have only one path ~
+                           element; its actual value is `~a`"
+                         (path->string path)))))
+          (t (html/with-page (:title (path->string path))
+               (:h1 (format nil "Category Page: ~a" (path->string path)))
+               (dolist (n (note/all-with-node (car path)))
+                 (:raw (note/preview n))))))))
 
 (ningle/route ("/wiki/search") ()
   (html/with-page (:title "Search")

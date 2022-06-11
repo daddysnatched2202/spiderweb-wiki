@@ -53,7 +53,7 @@
                      (path->string (note/path note))))))
 
 (defun node/url (node)
-  (format nil "/wiki/notes/~a" (node/name node)))
+  (format nil "/wiki/node/~a" (node/name node)))
 
 (defclass wiki-parser () ())
 (defmethod 3bmd::process-wiki-link ((parser wiki-parser)
