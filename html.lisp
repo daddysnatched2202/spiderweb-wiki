@@ -55,6 +55,9 @@
 (defun node/url (node)
   (format nil "/wiki/node/~a" (node/name node)))
 
+(defun simple-path->url (path)
+  )
+
 (defclass wiki-parser () ())
 (defmethod 3bmd::process-wiki-link ((parser wiki-parser)
 				    normalized-target
@@ -72,8 +75,7 @@
 	    "<a href=\"~a\">~a</a>"
 	    (am:-> formatted-target
 	      (string->path)
-	      (note/with-path)
-	      (note/url))
+              (simple-path->url))
 	    link-text)))
 
 (setf 3bmd-wiki:*wiki-links* t)

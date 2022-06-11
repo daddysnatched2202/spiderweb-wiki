@@ -207,9 +207,22 @@
   (if (null (note/all-with-node n))
       (b.d:delete-object n)))
 
+(defun node/rename (old new)
+  (mapcar (lambda (note)
+            (note/edit note
+                       :path (mapcar #λ(if (string= (node/name _0) old)
+                                           (string->node new)
+                                           _0)
+                                     (note/path note))
+                       :delete-nodes nil))
+          (note/all-with-node (string->node old)))
+  (node/delete (string->node old)))
+
 (defun note/new (path content &key (type :text/markdown))
   (if (handler-case (note/with-path path)
-        (error () nil))
+        (error (e)
+          (declare (ignore e))
+          nil))
       (error 'note/already-exists-error :path path)
       (let ((n (make-instance 'note
                               :path (convert-path path)
@@ -230,20 +243,21 @@
        ,(intern (str:concat "OLD-" (symbol-name sym)))
        ,sym))
 
-(defun note/edit (note &key path content type)
+(defun note/edit (note &key path content type (delete-nodes t))
   (let ((old-path (note/path note))
         (old-content (note/content note))
         (old-type (note/type note)))
-    (note/delete old-path)
+    (note/delete old-path :delete-nodes delete-nodes)
     (note/new (if-set path)
               (if-set content)
               :type (if-set type))))
 
-(defun note/delete (path)
+(defun note/delete (path &key (delete-nodes t))
   (let ((conv-path (convert-path path)))
     (mapcar #'link/delete (db/links-from conv-path))
     (b.d:delete-object (note/with-path conv-path))
-    (mapcar #'node/delete conv-path)))
+    (if delete-nodes
+        (mapcar #'node/delete conv-path))))
 
 (defun db/clear ()
   (loop for obj in (b.d:all-store-objects)

@@ -99,8 +99,6 @@
                   :flex-direction column
                   :width 60%)
    (css/nord-list ".note-preview"
-                  :margin-top 2em
-                  :margin-bottom 2em
                   :padding 1em
                   :background-color nord1
                   (ls p :margin-left 4px))
@@ -112,7 +110,12 @@
                   :background-color nord11)
    '(.nodes-container
      :display "grid"
-     :grid-template-columns 20% 20% 20% 20%
+     :grid-template-columns 24% 24% 24% 24%
+     :grid-column-gap 1em
+     :grid-row-gap 1em)
+   '(.notes-container
+     :display "grid"
+     :grid-template-columns 49% 49%
      :grid-column-gap 1em
      :grid-row-gap 1em)
    '(.note-title

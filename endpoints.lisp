@@ -63,7 +63,7 @@
 
 (ningle/route ("/wiki/notes") ()
   (html/with-page (:title "Note Index")
-    (:h1 "Path Elements")
+    (:h1 "Nodes")
     (:div :class "nodes-container"
 	  (dolist (n (db/all-nodes))
 	    (:a :href (node/url n)
