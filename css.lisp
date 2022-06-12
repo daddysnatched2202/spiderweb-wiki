@@ -80,7 +80,8 @@
 			       :position relative))
    (css/nord-list body :background-color nord0
 		       :color nord5
-                       :line-height 1.5em)
+                       :line-height 1.5em
+                       :padding 1em)
    (css/nord-list p :color nord5)
    (css/nord-list a :background-color nord2
 		    :color nord5
@@ -114,16 +115,20 @@
                   :background-color nord11)
    '(.nodes-container
      :display "grid"
-     :grid-template-columns auto auto auto auto
-     :grid-gap 1em)
+     :grid-template-columns 1fr 1fr 1fr 1fr
+     :grid-gap 1em
+     :margin-top 1em
+     :margin-bottom 1em)
    '(.notes-container
      :display "grid"
-     :grid-template-columns auto auto
-     :grid-gap 1em)
+     :grid-template-columns 1fr 1fr
+     :grid-gap 1em
+     :margin-top 1em)
    '(.note-title
      :font-size 2em)
    '(.note-button-bar
      :float "right"
      :position absolute
      :bottom 4em
-     :right 0px)))
+     :right 0px)
+   '(h1 :margin 0px)))
