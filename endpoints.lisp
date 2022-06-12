@@ -73,6 +73,21 @@
           (dolist (n (db/all-notes))
             (:raw (note/preview n :class "note-preview-grid"))))))
 
+(ningle/route ("/wiki/make-note/:init-path") ((init-path :key :init-path))
+  (html/with-page (:title "New Note")
+    (:h1 "New Note")
+    (:form :action "/wiki/make-note"
+           :method "post"
+           :autocomplete "off"
+           :class "note-edit-form"
+           (:input :type "text"
+                   :name "path"
+                   :value (path->string (string->path init-path)))
+           (:textarea :name "content"
+                      :rows 50)
+           (:input :type "submit"
+                   :value "Make Note"))))
+
 (ningle/route ("/wiki/make-note") ()
   (html/with-page (:title "New Note")
     (:h1 "New Note")
@@ -80,10 +95,12 @@
            :method "post"
            :autocomplete "off"
            :class "note-edit-form"
-           (:input :type "text" :name "path")
+           (:input :type "text"
+                   :name "path")
            (:textarea :name "content"
                       :rows 50)
-           (:input :type "submit" :value "Make Note"))))
+           (:input :type "submit"
+                   :value "Make Note"))))
 
 (ningle/route ("/wiki/make-note" :method :post) (path content)
   (handler-case (note/new path content)
@@ -116,8 +133,11 @@
                  (:textarea :name "new-content"
                             :rows 50
                             (note/content note))
-                 (:input :type "submit" :value "Edit Note")
-                 (:input :type "hidden" :name "old-path" :value path-text)))
+                 (:input :type "submit"
+                         :value "Edit Note")
+                 (:input :type "hidden"
+                         :name "old-path"
+                         :value path-text)))
         (html/with-page (:title "Error")
           (:p (format nil "Note does not exist: ~a" path-text))))))
 

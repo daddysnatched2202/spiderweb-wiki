@@ -64,7 +64,7 @@
            (node/url (car conv)))
           ((> (length conv)
               1)
-           "/wiki/notes")
+           (format nil "/wiki/make-note/~a" (path->string path)))
           (t (format t
                      "Tried to get URL for bad path of value `~a`~%"
                      path)))))

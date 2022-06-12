@@ -263,7 +263,16 @@
     (mapcar #'link/delete (db/links-from conv-path))
     (b.d:delete-object (note/with-path conv-path))
     (if delete-nodes
-        (mapcar #'node/delete conv-path))))
+        (db/clean-nodes))))
+
+(defun db/clean-nodes ()
+  (remove-if-not #λ(if (and _0
+                            (= (length (note/all-with-node _0))
+                               0))
+                       (progn (node/delete _0)
+                              nil)
+                       _0)
+                 (db/all-nodes)))
 
 (defun db/clear ()
   (loop for obj in (b.d:all-store-objects)
