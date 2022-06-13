@@ -213,6 +213,7 @@
   (if (null (note/all-with-node n))
       (b.d:delete-object n)))
 
+;;; todo: also change links
 (defun node/rename (old new)
   (mapcar (lambda (note)
             (note/edit note

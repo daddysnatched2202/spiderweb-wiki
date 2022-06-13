@@ -91,7 +91,7 @@
 (setf 3bmd-wiki:*wiki-links* t)
 (setf 3bmd-wiki:*wiki-processor* (make-instance 'wiki-parser))
 
-(defun note/preview (note &key (max-len 5) (class "note-preview"))
+(defun html/preview-note (note &key (max-len 5) (class "note-preview"))
   (let* ((lines (str:lines (note/content note)))
          (shortened-content (str:concat (str:unlines (first-x lines max-len))
                                         (if (> (length lines) max-len)
@@ -102,3 +102,8 @@
             (:a :href (note/url note) (path->string (note/path note)))
             (:raw (with-output-to-string (s)
                     (3bmd:parse-string-and-print-to-stream shortened-content s)))))))
+
+(defun html/gen-note-previews (notes &key (max-len 5) (class "note-preview"))
+  (spinneret:with-html-string
+    (dolist (n notes)
+      (:raw (html/preview-note n :max-len max-len :class class)))))

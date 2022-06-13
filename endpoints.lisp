@@ -70,8 +70,8 @@
 		(node/name n))))
     (:h1 "Notes")
     (:div :class "notes-container"
-          (dolist (n (db/all-notes))
-            (:raw (note/preview n :class "note-preview-grid"))))))
+          (:raw (html/gen-note-previews (db/all-notes)
+                                        :class "note-preview-grid")))))
 
 (ningle/route ("/wiki/make-note/:init-path") ((init-path :key :init-path))
   (html/with-page (:title "New Note")
@@ -198,8 +198,7 @@
                          (path->string path)))))
           (t (html/with-page (:title (path->string path))
                (:h1 (format nil "Category Page: ~a" (path->string path)))
-               (dolist (n (note/all-with-node (car path)))
-                 (:raw (note/preview n))))))))
+               (:raw (html/gen-note-previews (note/all-with-node (car path)))))))))
 
 (ningle/route ("/wiki/search") ()
   (html/with-page (:title "Search")
