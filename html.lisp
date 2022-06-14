@@ -77,7 +77,7 @@
 				        stream)
   (declare (ignore parser
 		   normalized-target))
-  (let ((link-text (ana:aif (cadr args)
+  (let ((link-text (ana:aif (car args)
                             ana:it
                             (am:-> formatted-target
                               (string->path)

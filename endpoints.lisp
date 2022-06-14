@@ -194,7 +194,7 @@
     (cond ((> (length path) 1)
            (html/with-page (:title "Error")
              (:p (format nil "Path supplied to `/wiki/node` must have only one path ~
-                           element; its actual value is `~a`"
+                              element; its actual value is `~a`"
                          (path->string path)))))
           (t (html/with-page (:title (path->string path))
                (:h1 (format nil "Category Page: ~a" (path->string path)))
