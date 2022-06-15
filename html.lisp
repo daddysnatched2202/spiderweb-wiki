@@ -67,7 +67,8 @@
            (format nil "/wiki/make-note/~a" (path->string path)))
           (t (format t
                      "Tried to get URL for bad path of value `~a`~%"
-                     path)))))
+                     path)
+             "/wiki/"))))
 
 (defclass wiki-parser () ())
 (defmethod 3bmd-wiki:process-wiki-link ((parser wiki-parser)
