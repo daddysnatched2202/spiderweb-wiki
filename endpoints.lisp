@@ -196,9 +196,29 @@
              (:p (format nil "Path supplied to `/wiki/node` must have only one path ~
                               element; its actual value is `~a`"
                          (path->string path)))))
-          (t (html/with-page (:title (path->string path))
-               (:h1 (format nil "Category Page: ~a" (path->string path)))
-               (:raw (html/gen-note-previews (note/all-with-node (car path)))))))))
+          (t (html/with-page (:title node-text)
+               (:h1 (format nil "Category Page: ~a" node-text))
+               (:raw (html/gen-note-previews (note/all-with-node (car path))))
+               (:h1 "Rename?")
+               (:form :action "/wiki/node-rename"
+                      :method "post"
+                      :autocomplete "off"
+                      :class "node-edit-form"
+                      (:input :type "text"
+                              :name "new-name"
+                              :value node-text)
+                      (:input :type "submit"
+                              :value "Change Path")
+                      (:input :type "hidden"
+                              :name "old-name"
+                              :value node-text)))))))
+
+(ningle/route ("/wiki/node-rename" :method :post)
+    ((old-name :key "old-name")
+     (new-name :key "new-name"))
+  (node/rename old-name new-name)
+  (html/with-page (:title "Success")
+    (:p "Node renamed")))
 
 (ningle/route ("/wiki/search") ()
   (html/with-page (:title "Search")

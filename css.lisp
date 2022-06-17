@@ -113,6 +113,8 @@
                   :background-color nord14)
    (css/nord-list ".note-button-delete:hover"
                   :background-color nord11)
+   (css/nord-list ".node-edit-form"
+                  (ls input :margin-left 0px))
    '(.nodes-container
      :display "grid"
      :grid-template-columns 1fr 1fr 1fr 1fr
