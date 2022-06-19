@@ -156,8 +156,23 @@
     (:no-error (e)
       (declare (ignore e))
       (html/with-page (:title "Success")
-        (:p (format nil "Note `~a` was edited successfully"
+        (:p (format nil "Note `~a` was edited"
                     (path->string old-path)))))))
+
+(ningle/route ("/wiki/delete-note" :method :post)
+    ((path :key "path"))
+  (handler-case (note/delete path)
+    (error (e) (html/with-page (:title "Error")
+                 (:p (format nil
+                             "Could not delete note `~a`: ~a"
+                             (path->string path)
+                             e))))
+    (:no-error (e)
+      (declare (ignore e))
+      (html/with-page (:title "Success")
+        (:p (format nil
+                    "Note `~a` was deleted"
+                    (path->string path)))))))
 
 (ningle/route ("/wiki/notes/:path") ((path-text :key :path))
   (let* ((path (string->path path-text))

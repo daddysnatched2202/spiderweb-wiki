@@ -24,3 +24,6 @@
 
 (defun script/search-page ()
   (ps:ps* `()))
+
+(defun script/note-page ()
+  (ps:ps* `()))
