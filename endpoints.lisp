@@ -222,19 +222,17 @@
 (ningle/route ("/wiki") ()
   (ningle/redirect "/wiki/notes"))
 
-(ningle/route ("/get-url" :method :post)
+(ningle/route ("/wiki/get-url" :method :post)
     ((note-path :key "note-path")
      (url-type :key "url-type"))
-  (let ((res (handler-case (note/url note-path
-                                     :prefix (intern (str:upcase url-type)
-                                                     "KEYWORD"))
-               (condition (e)
-                 (declare (ignore e))
-                 400))))
-    (if (and (numberp res)
-             (= res 400))
-        (ningle/set-response-status 400)
-        res)))
+  (handler-case (note/url note-path
+                          :prefix (intern (str:upcase url-type)
+                                          "KEYWORD"))
+    (condition (c)
+      (declare (ignore c))
+      (ningle/set-response-status 400))
+    (:no-error (url)
+      url)))
 
 ;;; We use lisp for the cache instead of nginx to automate downloading the file
 (setf (ningle/app:route *app* *jquery-url*)
