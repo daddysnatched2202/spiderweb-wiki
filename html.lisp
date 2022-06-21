@@ -38,19 +38,15 @@
 	       (:a :href "/wiki/search" "Search")))))
 
 (defun note/url (note &key (prefix :render))
-  (ccase prefix
-    (:render (format nil
-                     "/wiki/notes/~a"
-                     (path->string (note/path note))))
-    (:json (format nil
-                   "/wiki/json/~a"
-                   (path->string (note/path note))))
-    (:edit (format nil
-                   "/wiki/edit-note/~a"
-                   (path->string (note/path note))))
-    (:delete (format nil
-                     "/wiki/delete-note/~a"
-                     (path->string (note/path note))))))
+  (format nil
+          (ccase prefix
+            (:render "/wiki/notes/~a")
+            (:json "/wiki/json/~a")
+            (:edit "/wiki/edit-note/~a")
+            (:delete "/wiki/delete-note/~a"))
+          (am:-> note
+            (convert-path)
+            (path->string))))
 
 (defun node/url (node)
   (format nil "/wiki/node/~a" (node/name node)))

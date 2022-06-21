@@ -26,4 +26,5 @@
   (ps:ps* `()))
 
 (defun script/note-page ()
-  (ps:ps* `()))
+  (ps:ps* `(jquery (document ready) ()
+                   ())))

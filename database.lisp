@@ -132,6 +132,7 @@
   (typecase path
     (list path)
     (string (string->path path))
+    (note (note/path path))
     (t (error "Path `~a` is not valid" path))))
 
 (defun note/has-node? (note node)

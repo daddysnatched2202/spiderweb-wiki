@@ -111,7 +111,31 @@ params `~a`, got params `~a`~%"
 
 (defun ningle/set-response-status (code)
   (setf (lack.response:response-status ningle:*response*)
-	code))
+	code)
+  (string code))
+
+;;; can be used in an end point for caching static files on the client
+;;; file-type should be a string which will be passed to ningle/respond-type, or nil
+;;; if you're setting it manually
+(defun ningle/cache-file (file hash &key (file-type nil))
+  (am:-<> ningle:*request*
+    (lack.request:request-headers)
+    (gethash "if-none-match" am:<>)
+    (if (string= hash am:<>)
+        (ningle/set-response-status 304)
+        (progn (if file-type
+                   (ningle/respond-type file-type))
+               (ningle/add-response-header "Cache-Control" "must-revalidate")
+               (ningle/add-response-header "ETag" (princ-to-string hash))
+               (ningle/set-response-status 200)
+               file))))
+
+;;; can be used to redirect the user to a different page
+(defun ningle/redirect (url &key (type :tmp))
+  (ningle/add-response-header "Location" url)
+  (ningle/set-response-status (case type
+                                (:permanent 301)
+                                (:tmp 307))))
 
 (defun get-param (param params)
   (cdr (assoc param params :test #'equal)))

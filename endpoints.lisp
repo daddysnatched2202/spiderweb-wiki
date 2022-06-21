@@ -18,32 +18,6 @@
 
 (defvar *app* (make-instance 'ningle:app))
 
-;;; can be used in an end point for caching static files on the client
-;;; file-type should be a string which will be passed to ningle/respond-type, or nil
-;;; if you're setting it manually
-(defun ningle/cache-file (file hash &key (file-type nil))
-  (am:-<> ningle:*request*
-    (lack.request:request-headers)
-    (gethash "if-none-match" am:<>)
-    (if (string= hash am:<>)
-	(progn
-	  (ningle/set-response-status 304)
-	  "Cache up to date")
-        (progn (if file-type
-                   (ningle/respond-type file-type))
-               (ningle/add-response-header "Cache-Control" "must-revalidate")
-               (ningle/add-response-header "ETag" (princ-to-string hash))
-               (ningle/set-response-status 200)
-               file))))
-
-;;; can be used to redirect the user to a different page
-(defun ningle/redirect (url &key (type :tmp))
-  (ningle/add-response-header "Location" url)
-  (ningle/set-response-status (case type
-                                (:permanent 301)
-                                (:tmp 307)))
-  "Redirect")
-
 ;;; endpoints
 (ningle/route ("/wiki/json/notes") ()
   (ningle/respond-type "application/json")
@@ -247,6 +221,20 @@
 
 (ningle/route ("/wiki") ()
   (ningle/redirect "/wiki/notes"))
+
+(ningle/route ("/get-url" :method :post)
+    ((note-path :key "note-path")
+     (url-type :key "url-type"))
+  (let ((res (handler-case (note/url note-path
+                                     :prefix (intern (str:upcase url-type)
+                                                     "KEYWORD"))
+               (condition (e)
+                 (declare (ignore e))
+                 400))))
+    (if (and (numberp res)
+             (= res 400))
+        (ningle/set-response-status 400)
+        res)))
 
 ;;; We use lisp for the cache instead of nginx to automate downloading the file
 (setf (ningle/app:route *app* *jquery-url*)
