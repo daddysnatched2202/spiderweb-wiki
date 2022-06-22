@@ -80,13 +80,15 @@
   (handler-case (note/new path content)
     (error (e)
       (html/with-page (:title "Error")
-        (:p (format nil "Encountered an error while trying to create note `~a`: ~a"
+        (:p (format nil
+                    "Encountered an error while trying to create note `~a`: ~a"
                     (path->string path)
                     (princ-to-string e)))))
     (:no-error ()
       (html/with-page (:title "Success")
-        (:p (format nil "Made note `~a` successfully"
-                 path))))))
+        (:p (format nil
+                    "Made note `~a` successfully"
+                    path))))))
 
 (ningle/route ("/wiki/edit-note/:path") ((path-text :key :path))
   (let ((note (handler-case (note/with-path path-text)
@@ -128,7 +130,8 @@
                              e))))
     (:no-error ()
       (html/with-page (:title "Success")
-        (:p (format nil "Note `~a` was edited"
+        (:p (format nil
+                    "Note `~a` was edited"
                     (path->string old-path)))))))
 
 (ningle/route ("/wiki/delete-note" :method :post)
@@ -177,8 +180,9 @@
   (let ((path (string->path node-text)))
     (cond ((> (length path) 1)
            (html/with-page (:title "Error")
-             (:p (format nil "Path supplied to `/wiki/node` must have only one path ~
-                              element; its actual value is `~a`"
+             (:p (format nil
+                         "Path supplied to `/wiki/node` must have only one path ~
+                          element; its actual value is `~a`"
                          (path->string path)))))
           (t (html/with-page (:title node-text)
                (:h1 (format nil "Category Page: ~a" node-text))
