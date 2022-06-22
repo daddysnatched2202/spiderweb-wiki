@@ -83,8 +83,7 @@
         (:p (format nil "Encountered an error while trying to create note `~a`: ~a"
                     (path->string path)
                     (princ-to-string e)))))
-    (:no-error (e)
-      (declare (ignore e))
+    (:no-error ()
       (html/with-page (:title "Success")
         (:p (format nil "Made note `~a` successfully"
                  path))))))
@@ -127,8 +126,7 @@
                              "Could not edit note `~a`: ~a"
                              (path->string old-path)
                              e))))
-    (:no-error (e)
-      (declare (ignore e))
+    (:no-error ()
       (html/with-page (:title "Success")
         (:p (format nil "Note `~a` was edited"
                     (path->string old-path)))))))
@@ -141,8 +139,7 @@
                              "Could not delete note `~a`: ~a"
                              (path->string path)
                              e))))
-    (:no-error (e)
-      (declare (ignore e))
+    (:no-error ()
       (html/with-page (:title "Success")
         (:p (format nil
                     "Note `~a` was deleted"
@@ -151,9 +148,7 @@
 (ningle/route ("/wiki/notes/:path") ((path-text :key :path))
   (let* ((path (string->path path-text))
          (node (handler-case (note/with-path path-text)
-                 (error (e)
-                   (declare (ignore e))
-                   nil))))
+                 (error () nil))))
     (cond
       ((not (null node))
        (html/with-page (:title (path->string path))
@@ -230,8 +225,7 @@
                                           "KEYWORD"))
     (condition ()
       (ningle/set-response-status 400))
-    (:no-error (url)
-      url)))
+    (:no-error (url) url)))
 
 ;;; We use lisp for the cache instead of nginx to automate downloading the file
 (setf (ningle/app:route *app* *jquery-url*)

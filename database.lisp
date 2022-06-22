@@ -140,9 +140,7 @@
 
 (defun note/exists? (path)
   (handler-case (note/with-path path)
-    (error (e)
-      (declare (ignore e))
-      nil)))
+    (error () nil)))
 
 (defun note/with-path (path)
   (let ((converted-path (convert-path path)))
@@ -228,9 +226,7 @@
 
 (defun note/new (path content &key (type :text/markdown))
   (if (handler-case (note/with-path path)
-        (error (e)
-          (declare (ignore e))
-          nil))
+        (error () nil))
       (error 'note/already-exists-error :path path)
       (let ((n (make-instance 'note
                               :path (convert-path path)
