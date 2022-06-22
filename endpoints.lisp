@@ -228,8 +228,7 @@
   (handler-case (note/url note-path
                           :prefix (intern (str:upcase url-type)
                                           "KEYWORD"))
-    (condition (c)
-      (declare (ignore c))
+    (condition ()
       (ningle/set-response-status 400))
     (:no-error (url)
       url)))
