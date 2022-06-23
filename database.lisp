@@ -194,7 +194,8 @@
   (let ((links))
     (cl-ppcre:do-register-groups (str)
 	("\\[\\[(.*?)\\]\\]" content)
-      (push (str:split #\| str) links))
+      (unless (str:starts-with? "http" str)
+        (push (str:split #\| str) links)))
     links))
 
 ;;; should this function do something different in case a link already exists between
