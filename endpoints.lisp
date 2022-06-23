@@ -84,7 +84,8 @@
                     "Encountered an error while trying to create note `~a`: ~a"
                     (path->string path)
                     (princ-to-string e)))))
-    (:no-error ()
+    (:no-error (e)
+      (declare (ignore e))
       (html/with-page (:title "Success")
         (:p (format nil
                     "Made note `~a` successfully"
@@ -128,7 +129,8 @@
                              "Could not edit note `~a`: ~a"
                              (path->string old-path)
                              e))))
-    (:no-error ()
+    (:no-error (e)
+      (declare (ignore e))
       (html/with-page (:title "Success")
         (:p (format nil
                     "Note `~a` was edited"
@@ -142,7 +144,8 @@
                              "Could not delete note `~a`: ~a"
                              (path->string path)
                              e))))
-    (:no-error ()
+    (:no-error (e)
+      (declare (ignore e))
       (html/with-page (:title "Success")
         (:p (format nil
                     "Note `~a` was deleted"

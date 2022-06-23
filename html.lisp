@@ -81,8 +81,10 @@
                               (path->string)))))
     (format stream
 	    "<a href=\"~a\">~a</a>"
-	    (am:-> formatted-target
-              (path->url))
+	    (if (str:starts-with? "http" formatted-target)
+                formatted-target
+                (am:-> formatted-target
+                  (path->url)))
 	    link-text)))
 
 (setf 3bmd-wiki:*wiki-links* t)
