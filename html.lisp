@@ -86,7 +86,7 @@
                    formatted-target
                    link-text))
           ((or (and (cadr args)
-                    (string= (cadr args) "path"))
+                    (string= (cadr args) "note"))
                (null (cadr args)))
            (format stream
                    "<a href=\"~a\">~a</a>"
