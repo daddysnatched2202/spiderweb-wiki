@@ -79,13 +79,20 @@
                             (am:-> formatted-target
                               (string->path)
                               (path->string)))))
-    (format stream
-	    "<a href=\"~a\">~a</a>"
-	    (if (str:starts-with? "http" formatted-target)
-                formatted-target
-                (am:-> formatted-target
-                  (path->url)))
-	    link-text)))
+    (cond ((and (cadr args)
+                (string= (cadr args) "url"))
+           (format stream
+                   "<a href=\"~a\">~a</a>"
+                   formatted-target
+                   link-text))
+          ((or (and (cadr args)
+                    (string= (cadr args) "path"))
+               (null (cadr args)))
+           (format stream
+                   "<a href=\"~a\">~a</a>"
+                   (path->url formatted-target)
+                   link-text))
+          (t "<a href=\"/wiki/\">Bad Link</a>"))))
 
 (setf 3bmd-wiki:*wiki-links* t)
 (setf 3bmd-wiki:*wiki-processor* (make-instance 'wiki-parser))
