@@ -92,7 +92,9 @@
                    "<a href=\"~a\">~a</a>"
                    (path->url formatted-target)
                    link-text))
-          (t "<a href=\"/wiki/\">Bad Link</a>"))))
+          (t (format stream
+                     "<a href=\"/wiki/\">Bad Link: ~a</a>"
+                     formatted-target)))))
 
 (setf 3bmd-wiki:*wiki-links* t)
 (setf 3bmd-wiki:*wiki-processor* (make-instance 'wiki-parser))
