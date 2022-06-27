@@ -93,7 +93,7 @@
                    (path->url formatted-target)
                    link-text))
           (t (format stream
-                     "<a href=\"/wiki/\">Bad Link: ~a</a>"
+                     "<a href=\"/wiki/\">BAD LINK: ~a</a>"
                      formatted-target)))))
 
 (setf 3bmd-wiki:*wiki-links* t)
