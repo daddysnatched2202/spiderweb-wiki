@@ -77,24 +77,29 @@
   (let ((link-text (ana:aif (car args)
                             ana:it
                             (am:-> formatted-target
-                              (string->path)
-                              (path->string)))))
-    (cond ((and (cadr args)
-                (string= (cadr args) "url"))
-           (format stream
-                   "<a href=\"~a\">~a</a>"
-                   formatted-target
-                   link-text))
-          ((or (and (cadr args)
-                    (string= (cadr args) "note"))
-               (null (cadr args)))
-           (format stream
-                   "<a href=\"~a\">~a</a>"
-                   (path->url formatted-target)
-                   link-text))
-          (t (format stream
-                     "<a href=\"/wiki/\">BAD LINK: ~a</a>"
-                     formatted-target)))))
+                                   (string->path)
+                                   (path->string)))))
+    (labels ((gen-format-string (target label)
+               (format nil
+                       "<a href=\"~a\">~a</a>"
+                       target
+                       label)))
+            (cond ((and (cadr args)
+                        (string= (cadr args) "url"))
+                   (format stream
+                           (gen-format-string "~a" "~a")
+                           formatted-target
+                           link-text))
+                  ((or (and (cadr args)
+                            (string= (cadr args) "note"))
+                       (null (cadr args)))
+                   (format stream
+                           (gen-format-string "~a" "~a")
+                           (path->url formatted-target)
+                           link-text))
+                  (t (format stream
+                             (gen-format-string "/wiki" "BAD LINK: ~a")
+                             formatted-target))))))
 
 (setf 3bmd-wiki:*wiki-links* t)
 (setf 3bmd-wiki:*wiki-processor* (make-instance 'wiki-parser))
