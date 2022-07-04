@@ -71,8 +71,12 @@
                    "Edit This Note")
                (:a :href "#"
                    :class "note-button-delete"
-                   "Delete This Note"))
-         (:script (:raw (script/note-page)))))
+                   "Delete This Note")
+               (:div :class "note-dialog-delete"
+                     (:p "Are you sure you want to delete this note?")
+                     (:br)
+                     (:a :href "#" :class "note-delete-confirm" "Confirm")))
+         (:script (:raw (script/note-page (path->string path))))))
       (t (html/with-page (:title (path->string path))
 	   (:p "Note does not exist"))))))
 
@@ -167,7 +171,7 @@
 
 (ningle/route ("/wiki/delete-note" :method :post)
     ((path :key "path"))
-  (handler-case (note/delete path)
+  (handler-case (note/delete path :delete-nodes t)
     (error (e) (html/with-page (:title "Error")
                  (:p (format nil
                              "Could not delete note `~a`: ~a"

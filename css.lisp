@@ -115,6 +115,13 @@
                   :background-color nord11)
    (css/nord-list ".node-edit-form"
                   (ls input :margin-left 0px))
+   (css/nord-list ".note-dialog-delete"
+                  :background-color nord1
+                  :position absolute
+                  :right 0.5em
+                  :bottom 35px
+                  :padding 15px
+                  (ls p :margin 5px))
    '(.nodes-container
      :display "grid"
      :grid-template-columns 1fr 1fr 1fr 1fr
