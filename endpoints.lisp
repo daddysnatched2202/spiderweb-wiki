@@ -47,20 +47,34 @@
           (:raw (html/gen-note-previews (db/all-notes)
                                         :class "note-preview-grid")))))
 
-(ningle/route ("/wiki/make-note/:init-path") ((init-path :key :init-path))
-  (html/with-page (:title "New Note")
-    (:h1 "New Note")
-    (:form :action "/wiki/make-note"
-           :method "post"
-           :autocomplete "off"
-           :class "note-edit-form"
-           (:input :type "text"
-                   :name "path"
-                   :value (path->string (string->path init-path)))
-           (:textarea :name "content"
-                      :rows 50)
-           (:input :type "submit"
-                   :value "Make Note"))))
+(ningle/route ("/wiki/notes/:path") ((path-text :key :path))
+  (let* ((path (string->path path-text))
+         (node (handler-case (note/with-path path-text)
+                 (error () nil))))
+    (cond
+      ((not (null node))
+       (html/with-page (:title (path->string path))
+	 (:a :href (note/url node)
+             :class "note-title"
+             (am:-> node
+	       (note/path)
+	       (path->string)))
+         (:raw (if (eq :text/markdown (note/type node))
+                   (with-output-to-string (s)
+                     (3bmd:parse-string-and-print-to-stream
+                      (note/content node)
+                      s))
+                   (error "Only markdown notes are supported right now ~a" node)))
+         (:div :class "note-button-bar"
+               (:a :href (note/url node :prefix :edit)
+                   :class "note-button-edit"
+                   "Edit This Note")
+               (:a :href "#"
+                   :class "note-button-delete"
+                   "Delete This Note"))
+         (:script (:raw (script/note-page)))))
+      (t (html/with-page (:title (path->string path))
+	   (:p "Note does not exist"))))))
 
 (ningle/route ("/wiki/make-note") ()
   (html/with-page (:title "New Note")
@@ -71,6 +85,21 @@
            :class "note-edit-form"
            (:input :type "text"
                    :name "path")
+           (:textarea :name "content"
+                      :rows 50)
+           (:input :type "submit"
+                   :value "Make Note"))))
+
+(ningle/route ("/wiki/make-note/:init-path") ((init-path :key :init-path))
+  (html/with-page (:title "New Note")
+    (:h1 "New Note")
+    (:form :action "/wiki/make-note"
+           :method "post"
+           :autocomplete "off"
+           :class "note-edit-form"
+           (:input :type "text"
+                   :name "path"
+                   :value (path->string (string->path init-path)))
            (:textarea :name "content"
                       :rows 50)
            (:input :type "submit"
@@ -151,34 +180,6 @@
                     "Note `~a` was deleted"
                     (path->string path)))))))
 
-(ningle/route ("/wiki/notes/:path") ((path-text :key :path))
-  (let* ((path (string->path path-text))
-         (node (handler-case (note/with-path path-text)
-                 (error () nil))))
-    (cond
-      ((not (null node))
-       (html/with-page (:title (path->string path))
-	 (:a :href (note/url node)
-             :class "note-title"
-             (am:-> node
-	       (note/path)
-	       (path->string)))
-         (:raw (if (eq :text/markdown (note/type node))
-                   (with-output-to-string (s)
-                     (3bmd:parse-string-and-print-to-stream
-                      (note/content node)
-                      s))
-                   (error "Only markdown notes are supported right now ~a" node)))
-         (:div :class "note-button-bar"
-               (:a :href (note/url node :prefix :edit)
-                   :class "note-button-edit"
-                   "Edit This Note")
-               (:a :href "#"
-                   :class "note-button-delete"
-                   "Delete This Note"))))
-      (t (html/with-page (:title (path->string path))
-	   (:p "Note does not exist"))))))
-
 (ningle/route ("/wiki/node/:node") ((node-text :key :node))
   (let ((path (string->path node-text)))
     (cond ((> (length path) 1)
@@ -219,7 +220,7 @@
     (:a :href "#" :class "search-notes-button" "Search Notes")
     (:h1 "Results")
     (:div :class "search-results")
-    (:script (script/search-page))))
+    (:script (:raw (script/search-page)))))
 
 (ningle/route ("/wiki") ()
   (ningle/redirect "/wiki/notes"))

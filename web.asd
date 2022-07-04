@@ -46,5 +46,6 @@
 	       (:file "css")
 	       (:file "html")
 	       (:file "serial")
+               (:file "script")
 	       (:file "endpoints")
 	       (:file "main")))

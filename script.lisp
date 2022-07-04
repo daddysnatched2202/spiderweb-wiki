@@ -22,9 +22,21 @@
 (ps:defpsmacro jquery-single (item function)
   `(ps:chain ($ ,item) ,function))
 
+(defun script/lib ()
+  `(ps:defun make-url (path type)
+     (ps:chain $
+               (post "/wiki/get-url"
+                     (ps:create
+                      "note-path" path
+                      "url-type" type)))))
+
 (defun script/search-page ()
   (ps:ps* `()))
 
 (defun script/note-page ()
-  (ps:ps* `(jquery (document ready) ()
-                   ())))
+  (ps:ps*
+   (script/lib)
+   `(jquery (document ready) ()
+            (jquery-single ".note-dialog-delete" (hide))
+            (jquery (".note-button-delete" click) ()
+                    (jquery-single ".note-dialog-delete" (toggle))))))
