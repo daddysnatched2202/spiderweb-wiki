@@ -69,25 +69,30 @@
 
 (defun css/std ()
   (lass:compile-and-write
-   (css/nord-list footer :position absolute
-			 :bottom 0px
-			 :left 0px
-			 :height 3em
-			 :width 100%
-			 :background-color nord1
-			 (ls a :bottom -15px
-			       :margin 5px
-			       :position relative))
-   (css/nord-list body :background-color nord0
-		       :color nord5
-                       :line-height 1.5em
-                       :padding 1em)
-   (css/nord-list p :color nord5)
-   (css/nord-list a :background-color nord2
-		    :color nord5
-		    :text-decoration none
-		    :padding 4px)
-   (css/nord-list "a:hover" :background-color nord3)
+   (css/nord-list footer
+                  :position absolute
+		  :bottom 0px
+		  :left 0px
+		  :height 3em
+		  :width 100%
+		  :background-color nord1
+		  (ls a :bottom -15px
+			:margin 0.5em
+			:position relative))
+   (css/nord-list body
+                  :background-color nord0
+		  :color nord5
+                  :line-height 1.5em
+                  :padding 1em)
+   (css/nord-list p
+                  :color nord5)
+   (css/nord-list a
+                  :background-color nord2
+		  :color nord5
+		  :text-decoration none
+		  :padding 4px)
+   (css/nord-list "a:hover"
+                  :background-color nord3)
    (css/nord-list '(:or input textarea)
                   :background-color nord2
                   :color nord5
@@ -118,7 +123,7 @@
    (css/nord-list ".note-dialog-delete"
                   :background-color nord1
                   :position absolute
-                  :right 0.5em
+                  :right 1em
                   :bottom 35px
                   :padding 15px
                   (ls p :margin 5px))
@@ -140,4 +145,9 @@
      :position absolute
      :bottom 4em
      :right 0px)
-   '(h1 :margin 0px)))
+   '(.search-paths-button
+     :margin-right 20px)
+   '(.search-input
+     :margin-left 0px)
+   '(h1
+     :margin 0px)))
