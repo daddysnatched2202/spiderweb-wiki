@@ -36,7 +36,7 @@
     :initarg :path
     :reader note/path
     :index-type b.i:hash-list-index
-    :index-reader note/all-with-node))
+    :index-reader note//all-with-node))
   (:metaclass b.d:persistent-class))
 
 (defclass node (b.d:store-object)
@@ -128,6 +128,12 @@
        (path= (link/to a)
 	      (link/to b))))
 
+(defun convert-node (node)
+  (typecase node
+    (string (string->node node))
+    (node node)
+    (t (error "Node `~a` is not valid" node))))
+
 (defun convert-path (path)
   (typecase path
     (list path)
@@ -147,6 +153,11 @@
     (first-matching (note/all-with-node (car converted-path))
                     #λ(path= (note/path _0) converted-path)
                     :err #λ(error 'note/does-not-exist-error :path path))))
+
+(defun note/all-with-node (node)
+  (let ((conv (convert-node node)))
+    (remove-duplicates (note//all-with-node conv) :test #λ(path= (note/path _0)
+                                                                 (note/path _1)))))
 
 (defun note/all-with-partial-path (path)
   (labels ((rec (path notes)
