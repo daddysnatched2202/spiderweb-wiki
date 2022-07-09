@@ -156,8 +156,9 @@
 
 (defun note/all-with-node (node)
   (let ((conv (convert-node node)))
-    (remove-duplicates (note//all-with-node conv) :test #λ(path= (note/path _0)
-                                                                 (note/path _1)))))
+    (remove-duplicates (note//all-with-node conv)
+                       :test #λ(path= (note/path _0)
+                                      (note/path _1)))))
 
 (defun note/all-with-partial-path (path)
   (labels ((rec (path notes)
