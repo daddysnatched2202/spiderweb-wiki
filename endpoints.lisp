@@ -65,6 +65,18 @@
                       (note/content node)
                       s))
                    (error "Only markdown notes are supported right now ~a" node)))
+         (when (db/links-from path)
+           (:h2 "Linked Notes")
+           (:div :class "link-box"
+                 (dolist (l (db/links-from path))
+                   (:a :href (note/url (link/to l))
+                       (path->string (link/to l))))))
+         (when (db/links-to path)
+           (:h2 "Backlinks")
+           (:div :class "link-box"
+                 (dolist (l (db/links-to path))
+                   (:a :href (note/url (link/from l))
+                       (path->string (link/from l))))))
          (:div :class "note-button-bar"
                (:a :href (note/url node :prefix :edit)
                    :class "note-button-edit"
