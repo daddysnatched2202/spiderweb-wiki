@@ -22,7 +22,7 @@
      isn't the best fit for your information
    - There are other options (like using org's tags) but they aren't exactly
      convenient
-   - So the Spiderweb takes the opposite approach, preferring to link between notes
+   - So this wiki takes the opposite approach, preferring to link between information
      with an orderless categorization system
 ** Relatives
    - Org-mode does not necessarily make it easy to find information that is related
