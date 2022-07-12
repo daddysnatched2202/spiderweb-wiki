@@ -16,12 +16,12 @@
 
 (in-package :web)
 
-;;; Returns the first item in ls for which pred returns a true value
-;;; If none of the items in ls match, then 'otherwise' will be returned
-;;; If 'err' is not nil, then it should be either
-;;; 1. A list which is the arguments that will be passed to 'error' if there is
-;;; no match
-;;; 2. A function that will be called with no arguments if there is no match
+;;; Returns the first item in ls for which pred returns a true value If none of the
+;;; items in ls match, then 'otherwise' will be returned
+;;; If 'err' is not nil, then it will be used if there is no match; it should
+;;; be either
+;;; 1. A list which is the arguments that will be passed to 'error'
+;;; 2. A function that will be called with no arguments
 (defun first-matching (ls pred &key (otherwise nil) (err nil))
   (loop for x in ls
 	if (funcall pred x)

@@ -263,17 +263,21 @@
 (defun note/edit (note &key path content type (delete-nodes t))
   (let ((old-path (note/path note))
         (old-content (note/content note))
-        (old-type (note/type note)))
-    (note/delete old-path :delete-nodes delete-nodes)
+        (old-type (note/type note))
+        (*delete-nodes* delete-nodes))
+    (declare (special *delete-nodes*))
+    (note/delete note)
     (note/new (if-set path)
               (if-set content)
               :type (if-set type))))
 
-(defun note/delete (path &key (delete-nodes t))
+(defun note/delete (path &key (delete-nodes nil delete-nodes-supplied-p))
   (let ((conv-path (convert-path path)))
     (mapcar #'link/delete (db/links-from conv-path))
     (b.d:delete-object (note/with-path conv-path))
-    (if delete-nodes
+    (if (if delete-nodes-supplied-p
+            delete-nodes
+            *delete-nodes*)
         (db/clean-nodes))))
 
 (defun db/clean-nodes ()
