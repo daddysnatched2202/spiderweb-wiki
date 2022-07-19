@@ -36,17 +36,16 @@
 (defun script/note-page (note-path)
   (ps:ps*
    (script/lib)
-   `(jquery (document ready) ()
-            (jquery-single ".note-dialog-delete" (hide))
-            (jquery (".note-button-delete" click) ()
-                    (jquery-single ".note-dialog-delete" (toggle)))
-            (jquery (".note-delete-confirm" click) ()
-                    (progn (ps:chain $
-                                     (post "/wiki/delete-note"
-                                           (ps:create
-                                            "path" ,note-path)
-                                           (lambda ()
-                                             (ps:chain
-                                              window
-                                              location
-                                              (replace "/wiki/notes"))))))))))
+   `(jquery
+     (document ready) ()
+     (jquery-single ".note-dialog-delete" (hide))
+     (jquery (".note-button-delete" click) ()
+             (jquery-single ".note-dialog-delete" (toggle)))
+     (jquery (".note-delete-confirm" click) ()
+             (ps:chain $
+                       (post "/wiki/delete-note"
+                             (ps:create
+                              "path" ,note-path)
+                             (lambda ()
+                               (ps:chain window location
+                                         (replace "/wiki/notes")))))))))

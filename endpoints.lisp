@@ -130,11 +130,10 @@
                     (path->string path)
                     (princ-to-string e)))))
     (:no-error (e)
-      (declare (ignore e))
       (html/with-page (:title "Success")
         (:p (format nil
                     "Made note `~a` successfully"
-                    path))))))
+                    (path->string (note/path e))))))))
 
 (ningle/route ("/wiki/edit-note/:path") ((path-text :key :path))
   (let ((note (handler-case (note/with-path path-text)
