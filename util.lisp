@@ -101,9 +101,8 @@
 		      ,page))))))
 
 (defun ningle/push-response (response)
-  (setf (lack.response:response-headers ningle:*response*)
-	(append (lack.response:response-headers ningle:*response*)
-		response)))
+  (nconc (lack.response:response-headers ningle:*response*)
+         response))
 
 (defun ningle/add-response-header (key val)
   (ningle/push-response (list key val)))
