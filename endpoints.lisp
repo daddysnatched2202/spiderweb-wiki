@@ -49,48 +49,44 @@
 
 (ningle/route ("/wiki/notes/:path") ((path-text :key :path))
   (let* ((path (string->path path-text))
-         (node (handler-case (note/with-path path-text)
-                 (error () nil))))
-    (cond
-      ((not (null node))
-       (html/with-page (:title (path->string path))
-	 (:a :href (note/url node)
-             :class "note-title"
-             (am:-> node
-	       (note/path)
-	       (path->string)))
-         (:raw (if (eq :text/markdown (note/type node))
-                   (with-output-to-string (s)
-                     (3bmd:parse-string-and-print-to-stream
-                      (note/content node)
-                      s))
-                   (error "Only markdown notes are supported right now ~a" node)))
-         (when (db/links-from path)
-           (:h2 "Linked Notes")
-           (:div :class "link-box"
-                 (dolist (l (db/links-from path))
-                   (:a :href (note/url (link/to l))
-                       (path->string (link/to l))))))
-         (when (db/links-to path)
-           (:h2 "Backlinks")
-           (:div :class "link-box"
-                 (dolist (l (db/links-to path))
-                   (:a :href (note/url (link/from l))
-                       (path->string (link/from l))))))
-         (:div :class "note-button-bar"
-               (:a :href (note/url node :prefix :edit)
-                   :class "note-button-edit"
-                   "Edit This Note")
-               (:a :href "#"
-                   :class "note-button-delete"
-                   "Delete This Note")
-               (:div :class "note-dialog-delete"
-                     (:p "Are you sure you want to delete this note?")
-                     (:br)
-                     (:a :href "#" :class "note-delete-confirm" "Confirm")))
-         (:script (:raw (script/note-page (path->string path))))))
-      (t (html/with-page (:title (path->string path))
-	   (:p "Note does not exist"))))))
+         (node (note/with-path path-text)))
+    (html/with-page (:title (path->string path))
+      (:a :href (note/url node)
+          :class "note-title"
+          (am:-> node
+            (note/path)
+            (path->string)))
+      (:raw (if (eq :text/markdown (note/type node))
+                (with-output-to-string (s)
+                  (3bmd:parse-string-and-print-to-stream
+                   (note/content node)
+                   s))
+                (error "~a is not a markdown note; Only markdown notes are ~
+                       supported right now" node)))
+      (when (db/links-from path)
+        (:h2 "Linked Notes")
+        (:div :class "link-box"
+              (dolist (l (db/links-from path))
+                (:a :href (note/url (link/to l))
+                    (path->string (link/to l))))))
+      (when (db/links-to path)
+        (:h2 "Backlinks")
+        (:div :class "link-box"
+              (dolist (l (db/links-to path))
+                (:a :href (note/url (link/from l))
+                    (path->string (link/from l))))))
+      (:div :class "note-button-bar"
+            (:a :href (note/url node :prefix :edit)
+                :class "note-button-edit"
+                "Edit This Note")
+            (:a :href "#"
+                :class "note-button-delete"
+                "Delete This Note")
+            (:div :class "note-dialog-delete"
+                  (:p "Are you sure you want to delete this note?")
+                  (:br)
+                  (:a :href "#" :class "note-delete-confirm" "Confirm")))
+      (:script (:raw (script/note-page (path->string path)))))))
 
 (ningle/route ("/wiki/make-note") ()
   (html/with-page (:title "New Note")
@@ -136,64 +132,46 @@
                     (path->string (note/path e))))))))
 
 (ningle/route ("/wiki/edit-note/:path") ((path-text :key :path))
-  (let ((note (handler-case (note/with-path path-text)
-                (note/does-not-exist-error () nil))))
-    (if note
-        (html/with-page (:title "Edit Note")
-          (:h1 (format nil "Editing ~a" (path->string path-text)))
-          (:form :action "/wiki/edit-note"
-                 :method "post"
-                 :autocomplete "off"
-                 :class "note-edit-form"
-                 (:input :type "text"
-                         :name "new-path"
-                         :value (am:-> note
-                                  (note/path)
-                                  (path->string)))
-                 (:textarea :name "new-content"
-                            :rows 50
-                            (note/content note))
-                 (:input :type "submit"
-                         :value "Edit Note")
-                 (:input :type "hidden"
-                         :name "old-path"
-                         :value path-text)))
-        (html/with-page (:title "Error")
-          (:p (format nil "Note does not exist: ~a" path-text))))))
+  (let ((note (note/with-path path-text)))
+    (html/with-page (:title "Edit Note")
+      (:h1 (format nil "Editing ~a" (path->string path-text)))
+      (:form :action "/wiki/edit-note"
+             :method "post"
+             :autocomplete "off"
+             :class "note-edit-form"
+             (:input :type "text"
+                     :name "new-path"
+                     :value (am:-> note
+                              (note/path)
+                              (path->string)))
+             (:textarea :name "new-content"
+                        :rows 50
+                        (note/content note))
+             (:input :type "submit"
+                     :value "Edit Note")
+             (:input :type "hidden"
+                     :name "old-path"
+                     :value path-text)))))
 
 (ningle/route ("/wiki/edit-note" :method :post)
     ((old-path :key "old-path")
      (new-path :key "new-path")
      (new-content :key "new-content"))
-  (handler-case (note/edit (note/with-path old-path)
-                           :path new-path
-                           :content new-content)
-    (error (e) (html/with-page (:title "Error")
-                 (:p (format nil
-                             "Could not edit note `~a`: ~a"
-                             (path->string old-path)
-                             e))))
-    (:no-error (e)
-      (declare (ignore e))
-      (html/with-page (:title "Success")
-        (:p (format nil
-                    "Note `~a` was edited"
-                    (path->string old-path)))))))
+  (note/edit (note/with-path old-path)
+               :path new-path
+               :content new-content)
+  (html/with-page (:title "Success")
+    (:p (format nil
+                "Note `~a` was edited"
+                (path->string old-path)))))
 
 (ningle/route ("/wiki/delete-note" :method :post)
     ((path :key "path"))
-  (handler-case (note/delete path :delete-nodes t)
-    (error (e) (html/with-page (:title "Error")
-                 (:p (format nil
-                             "Could not delete note `~a`: ~a"
-                             (path->string path)
-                             e))))
-    (:no-error (e)
-      (declare (ignore e))
-      (html/with-page (:title "Success")
-        (:p (format nil
-                    "Note `~a` was deleted"
-                    (path->string path)))))))
+  (note/delete path :delete-nodes t)
+  (html/with-page (:title "Success")
+    (:p (format nil
+                "Note `~a` was deleted"
+                (path->string path)))))
 
 (ningle/route ("/wiki/node/:node") ((node-text :key :node))
   (let ((path (string->path node-text)))
@@ -243,12 +221,9 @@
 (ningle/route ("/wiki/get-url" :method :post)
     ((note-path :key "note-path")
      (url-type :key "url-type"))
-  (handler-case (note/url note-path
-                          :prefix (intern (str:upcase url-type)
-                                          "KEYWORD"))
-    (condition ()
-      (ningle/set-response-status 400))
-    (:no-error (url) url)))
+  (note/url note-path
+            :prefix (intern (str:upcase url-type)
+                            "KEYWORD")))
 
 ;;; We use lisp for the cache instead of nginx to automate downloading the file
 (setf (ningle/app:route *app* *jquery-url*)

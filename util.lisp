@@ -82,15 +82,22 @@
 		     `(,bind ,(make-optional opt (make-getter key array 'params))))
 		   `(,sym (get-param ,(ps:symbol-to-js-string sym) params)))))
       (let* ((bindings (mapcar #'make-binding param-list))
-	     (page `#'(lambda (params)
-			(declare (ignorable params))
-			(alexandria:if-let ,bindings
-			  (progn ,@body)
-			  (warn "Could not fill params for route `~a`; required ~
+	     (page `(lambda (params)
+		      (declare (ignorable params))
+		      (alexandria:if-let ,bindings
+			(handler-case (progn ,@body)
+                          (condition (c)
+                            (html/with-page (:title "Error")
+                              (:p (format nil
+                                          "Got an error: ~a"
+                                          c))))
+                          (:no-error (ret)
+                            ret))
+			(warn "Could not fill params for route `~a`; required ~
                                  params `~a`, got params `~a`~%"
-				,path
-				',param-list
-				params)))))
+			      ,path
+			      ',param-list
+			      params)))))
 	`(progn (setf (ningle:route *app* ,path ,@keys)
 		      ,page)
 		(setf (ningle:route *app*
