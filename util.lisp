@@ -88,9 +88,10 @@
 			(handler-case (progn ,@body)
                           (condition (c)
                             (html/with-page (:title "Error")
-                              (:p (format nil
-                                          "Got an error: ~a"
-                                          c))))
+                              (:p "Got an error")
+                              (:br)
+                              (:br)
+                              (princ-to-string c)))
                           (:no-error (ret)
                             ret))
 			(warn "Could not fill params for route `~a`; required ~
