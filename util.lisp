@@ -101,8 +101,8 @@
 		      ,page))))))
 
 (defun ningle/push-response (response)
-  (nconc (lack.response:response-headers ningle:*response*)
-         response))
+  (alexandria:appendf (lack.response:response-headers ningle:*response*)
+                      response))
 
 (defun ningle/add-response-header (key val)
   (ningle/push-response (list key val)))
