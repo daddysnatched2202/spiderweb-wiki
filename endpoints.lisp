@@ -47,7 +47,7 @@
           (:raw (html/gen-note-previews (db/all-notes)
                                         :class "note-preview-grid")))))
 
-(ningle/route ("/wiki/notes/:path") ((path-text :key :path))
+(ningle/route ("/wiki/notes/:path") (:binding-list ((path-text :key :path)))
   (let* ((path (string->path path-text))
          (node (note/with-path path-text)))
     (html/with-page (:title (path->string path))
@@ -103,7 +103,8 @@
            (:input :type "submit"
                    :value "Make Note"))))
 
-(ningle/route ("/wiki/make-note/:init-path") ((init-path :key :init-path))
+(ningle/route ("/wiki/make-note/:init-path")
+    (:binding-list ((init-path :key :init-path)))
   (html/with-page (:title "New Note")
     (:h1 "New Note")
     (:form :action "/wiki/make-note"
@@ -118,21 +119,21 @@
            (:input :type "submit"
                    :value "Make Note"))))
 
-(ningle/route ("/wiki/make-note" :method :post) (path content)
-  (handler-case (note/new path content)
-    (error (e)
-      (html/with-page (:title "Error")
-        (:p (format nil
-                    "Encountered an error while trying to create note `~a`: ~a"
-                    (path->string path)
-                    (princ-to-string e)))))
-    (:no-error (e)
-      (html/with-page (:title "Success")
-        (:p (format nil
-                    "Made note `~a` successfully"
-                    (path->string (note/path e))))))))
+(ningle/route ("/wiki/make-note" :method :post)
+    (:binding-list (path content)
+     :fail-clause (error (e)
+                         (html/with-page (:title "Error")
+                           (:p (format nil
+                                       "Encountered an error while trying to ~
+                                        create note `~a`: ~a"
+                                       (path->string path)
+                                       (princ-to-string e))))))
+  (html/with-page (:title "Success")
+    (:p (format nil
+                "Made note `~a` successfully"
+                (path->string (note/path (note/new path content)))))))
 
-(ningle/route ("/wiki/edit-note/:path") ((path-text :key :path))
+(ningle/route ("/wiki/edit-note/:path") (:binding-list ((path-text :key :path)))
   (let ((note (note/with-path path-text)))
     (html/with-page (:title "Edit Note")
       (:h1 (format nil "Editing ~a" (path->string path-text)))
@@ -155,26 +156,26 @@
                      :value path-text)))))
 
 (ningle/route ("/wiki/edit-note" :method :post)
-    ((old-path :key "old-path")
-     (new-path :key "new-path")
-     (new-content :key "new-content"))
+    (:binding-list ((old-path :key "old-path")
+                    (new-path :key "new-path")
+                    (new-content :key "new-content")))
   (note/edit (note/with-path old-path)
-               :path new-path
-               :content new-content)
+             :path new-path
+             :content new-content)
   (html/with-page (:title "Success")
     (:p (format nil
                 "Note `~a` was edited"
                 (path->string old-path)))))
 
 (ningle/route ("/wiki/delete-note" :method :post)
-    ((path :key "path"))
+    (:binding-list ((path :key "path")))
   (note/delete path :delete-nodes t)
   (html/with-page (:title "Success")
     (:p (format nil
                 "Note `~a` was deleted"
                 (path->string path)))))
 
-(ningle/route ("/wiki/node/:node") ((node-text :key :node))
+(ningle/route ("/wiki/node/:node") (:binding-list ((node-text :key :node)))
   (let ((path (string->path node-text)))
     (cond ((> (length path) 1)
            (html/with-page (:title "Error")
@@ -200,8 +201,8 @@
                               :value node-text)))))))
 
 (ningle/route ("/wiki/node-rename" :method :post)
-    ((old-name :key "old-name")
-     (new-name :key "new-name"))
+    (:binding-list ((old-name :key "old-name")
+                    (new-name :key "new-name")))
   (node/rename old-name new-name)
   (html/with-page (:title "Success")
     (:p "Node renamed")))
@@ -220,8 +221,8 @@
   (ningle/redirect "/wiki/notes"))
 
 (ningle/route ("/wiki/get-url" :method :post)
-    ((note-path :key "note-path")
-     (url-type :key "url-type"))
+    (:binding-list ((note-path :key "note-path")
+                    (url-type :key "url-type")))
   (note/url note-path
             :prefix (intern (str:upcase url-type)
                             "KEYWORD")))

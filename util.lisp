@@ -60,8 +60,8 @@
 (defun make-rel-path (str)
   (concatenate 'string *base-path* str))
 
-(defmacro ningle/route ((path &rest keys) (&rest param-list) &body body)
-  (alexandria:with-gensyms (maybe-key)
+(defmacro ningle/route ((path &rest keys) (&rest args) &body body)
+  (alexandria:with-gensyms (maybe-key route-func)
     (labels ((make-optional (opt getter)
 	       (if opt
 		   `(alexandria:if-let ((,maybe-key ,getter))
@@ -79,34 +79,39 @@
 			  (key (getf plist :key (ps:symbol-to-js-string bind)))
 			  (array (getf plist :array))
 			  (opt (getf plist :optional)))
-		     `(,bind ,(make-optional opt (make-getter key array 'params))))
-		   `(,sym (get-param ,(ps:symbol-to-js-string sym) params)))))
-      (let* ((bindings (mapcar #'make-binding param-list))
-	     (page `(lambda (params)
-		      (declare (ignorable params))
-		      (alexandria:if-let ,bindings
-			(handler-case (progn ,@body)
-                          (condition (c)
-                            (html/with-page (:title "Error")
-                              (:p "Got an error")
-                              (:br)
-                              (:br)
-                              (princ-to-string c)))
+		     (list bind (make-optional opt (make-getter key array 'params))))
+		   (list sym (list 'get-param
+                                   (ps:symbol-to-js-string sym)
+                                   'params)))))
+      (destructuring-bind (&key binding-list fail-clause) args
+        (let ((bindings (mapcar #'make-binding binding-list)))
+	  `(labels ((,route-func (params)
+                      (declare (ignorable params))
+                      (alexandria:if-let ,bindings
+                        (handler-case (progn ,@body)
+                          ,(ana:aif fail-clause
+                             ana:it
+                             '(condition (c)
+                               (html/with-page (:title "Error")
+                                 (:p "Got an error")
+                                 (:br)
+                                 (:br)
+                                 (princ-to-string c))))
                           (:no-error (ret)
                             ret))
-			(warn "Could not fill params for route `~a`; required ~
-                                 params `~a`, got params `~a`~%"
-			      ,path
-			      ',param-list
-			      params)))))
-	`(progn (setf (ningle:route *app* ,path ,@keys)
-		      ,page)
-		(setf (ningle:route *app*
-				    ,(if (string= (str:s-last path) "/")
-					 (str:substring 0 -1 path)
-					 (str:concat path "/"))
-				    ,@keys)
-		      ,page))))))
+                        (warn "Could not fill params for route `~a`; required ~
+                              args `~a`, got args `~a`~%"
+                              ,path
+                              ',binding-list
+                              params))))
+             (setf (ningle:route *app* ,path ,@keys)
+                   #',route-func)
+             (setf (ningle:route *app*
+                                 ,(if (string= (str:s-last path) "/")
+                                      (str:substring 0 -1 path)
+                                      (str:concat path "/"))
+                                 ,@keys)
+                   #',route-func)))))))
 
 (defun ningle/push-response (response)
   (alexandria:appendf (lack.response:response-headers ningle:*response*)
