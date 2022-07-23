@@ -37,7 +37,7 @@
 	       (:a :href "/wiki/make-note" "New Note")
 	       (:a :href "/wiki/search" "Search")))))
 
-(defun note/url (note &key (prefix :render))
+(defun note->url (note &key (prefix :render))
   (format nil
           (ccase prefix
             (:render "/wiki/notes/~a")
@@ -48,16 +48,16 @@
             (convert-path)
             (path->string))))
 
-(defun node/url (node)
+(defun node->url (node)
   (format nil "/wiki/node/~a" (node/name node)))
 
 (defun path->url (path)
   (let ((conv (convert-path path)))
     (cond ((note/exists? conv)
-           (note/url (note/with-path conv)))
+           (note->url (note/with-path conv)))
           ((= (length conv)
               1)
-           (node/url (car conv)))
+           (node->url (car conv)))
           ((> (length conv)
               1)
            (format nil "/wiki/make-note/~a" (path->string path)))
@@ -112,7 +112,7 @@
                                             ""))))
     (spinneret:with-html-string
       (:div :class class
-            (:a :href (note/url note) (path->string (note/path note)))
+            (:a :href (note->url note) (path->string (note/path note)))
             (:raw (with-output-to-string (s)
                     (3bmd:parse-string-and-print-to-stream shortened-content s)))))))
 

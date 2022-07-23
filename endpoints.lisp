@@ -40,7 +40,7 @@
     (:h1 "Nodes")
     (:div :class "nodes-container"
 	  (dolist (n (db/all-nodes))
-	    (:a :href (node/url n)
+	    (:a :href (node->url n)
 		(node/name n))))
     (:h1 "Notes")
     (:div :class "notes-container"
@@ -51,7 +51,7 @@
   (let* ((path (string->path path-text))
          (node (note/with-path path-text)))
     (html/with-page (:title (path->string path))
-      (:a :href (note/url node)
+      (:a :href (note->url node)
           :class "note-title"
           (am:-> node
             (note/path)
@@ -68,16 +68,16 @@
         (:h2 "Linked Notes")
         (:div :class "link-box"
               (dolist (l (db/links-from path))
-                (:a :href (note/url (link/to l))
+                (:a :href (note->url (link/to l))
                     (path->string (link/to l))))))
       (when (db/links-to path)
         (:h2 "Backlinks")
         (:div :class "link-box"
               (dolist (l (db/links-to path))
-                (:a :href (note/url (link/from l))
+                (:a :href (note->url (link/from l))
                     (path->string (link/from l))))))
       (:div :class "note-button-bar"
-            (:a :href (note/url node :prefix :edit)
+            (:a :href (note->url node :prefix :edit)
                 :class "note-button-edit"
                 "Edit This Note")
             (:a :href "#"
@@ -223,7 +223,7 @@
 (ningle/route ("/wiki/get-url" :method :post)
     (:binding-list ((note-path :key "note-path")
                     (url-type :key "url-type")))
-  (note/url note-path
+  (note->url note-path
             :prefix (intern (str:upcase url-type)
                             "KEYWORD")))
 
