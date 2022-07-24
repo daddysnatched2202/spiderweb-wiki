@@ -18,12 +18,6 @@
 
 (defvar *app* (make-instance 'ningle:app))
 
-;;; endpoints
-(ningle/route ("/wiki/json/notes") ()
-  (ningle/respond-type "application/json")
-  (jonathan:to-json (mapcar #'obj->serial (db/all-notes))
-		    :from :alist))
-
 ;;; TODO: system for different licenses / repos using classes
 (ningle/route ("/wiki/licenses") ()
   (html/with-page (:title "License Info")
