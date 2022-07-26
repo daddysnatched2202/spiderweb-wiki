@@ -20,11 +20,13 @@
 (defvar *break-char*)
 (defvar *sep-char*)
 
+(defvar *delete-nodes*)
+
 (set-unless-bound *space-char* '(" " . "-"))
 (set-unless-bound *break-char* "&")
 (set-unless-bound *sep-char* ":")
 
-(defclass note (b.d:store-object)
+(defclass note (serializable)
   ((content
     :initarg :content
     :reader note/content)
@@ -39,7 +41,7 @@
     :index-reader note//all-with-node))
   (:metaclass b.d:persistent-class))
 
-(defclass node (b.d:store-object)
+(defclass node (serializable)
   ((name
     :initarg :name
     :reader node/name
@@ -47,7 +49,7 @@
     :index-reader node/with-name))
   (:metaclass b.d:persistent-class))
 
-(defclass breakout-node (b.d:store-object)
+(defclass breakout-node (serializable)
   ((parent
     :initarg :parent
     :reader breakout-node/parent)
@@ -56,7 +58,7 @@
     :reader breakout-node/breakout))
   (:metaclass b.d:persistent-class))
 
-(defclass link (b.d:store-object)
+(defclass link (serializable)
   ((text
     :initarg :text
     :accessor link/text)
@@ -263,9 +265,8 @@
 (defun note/edit (note &key path content type (delete-nodes t))
   (let ((old-path (note/path note))
         (old-content (note/content note))
-        (old-type (note/type note))
-        (*delete-nodes* delete-nodes))
-    (declare (special *delete-nodes*))
+        (old-type (note/type note)))
+    (setf *delete-nodes* delete-nodes)
     (note/delete note)
     (note/new (if-set path)
               (if-set content)

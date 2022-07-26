@@ -214,6 +214,16 @@
 (ningle/route ("/wiki") ()
   (ningle/redirect "/wiki/notes"))
 
+(ningle/route ("/wiki/json/notes") ()
+  (handler-case (jonathan:to-json (general->serial (db/all-notes))
+                                  :from :alist)
+    (condition (c)
+      (html/with-page (:title "Error")
+        (:p (format nil "Error: ~a" c))))
+    (:no-error (json)
+      (ningle/respond-type "application/json")
+      json)))
+
 (ningle/route ("/wiki/get-url" :method :post)
     (:binding-list ((note-path :key "note-path")
                     (url-type :key "url-type")))

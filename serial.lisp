@@ -31,9 +31,10 @@
 ;;; t, t : class
 ;;; (:seq t), t : class
 
-(defclass serializable ()
+(defclass serializable (b.d:store-object)
   ((class-spec
-    :accessor serializable/class-spec)))
+    :accessor serializable/class-spec))
+  (:metaclass b.d:persistent-class))
 
 (defclass slot-spec ()
   ((ref
@@ -83,10 +84,10 @@
 (defun general->serial (obj)
   (cond
     ((null obj) nil)
-    ((serializable? obj)
-     (obj->serial obj))
     ((listp obj)
      (cons (general->serial (car obj)) (general->serial (cdr obj))))
+    ((serializable? obj)
+     (obj->serial obj))
     (t obj)))
 
 ;;; doesn't do type check (not a problem since serial->slot does it)
@@ -123,7 +124,7 @@
 			    class
 			    (mop:class-direct-subclasses)
 			    (mapcar #λ(serializable/class-spec _0))))
-			  (c-spec))
+			  (c-spec (serializable/class-spec obj)))
 	(if (eq :perfect (can-interpret-as-class obj c-spec))
 	    class
 	    (first-matching (mop:class-direct-subclasses class)
@@ -190,7 +191,7 @@
 		       (serial->slot (cdr aso) s))
 		 (error
 		  "Tried to serialize alist `~a` into class `~a`, but slot `~a` was ~
-not found"
+                  not found"
 		  alist
 		  ref
 		  slot-name)))
@@ -210,9 +211,11 @@ not found"
 				      #λ(eq (mop:slot-definition-name _0)
 					    slot-name)
 				      :err (list "No slot found for `~a` in ~
-class `~a`"
+                                                 class `~a`"
 						 slot-name
 						 class))
 		 :key key
 		 :type-def type
 		 :class-ref class))
+
+(defun make-class-spec (class))
