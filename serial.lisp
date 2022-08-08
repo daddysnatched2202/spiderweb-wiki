@@ -120,10 +120,9 @@
 (defun super-type-check (obj class)
   (if (listp obj)
       (alexandria:if-let ((subclass-specs
-			   (am:->>
-			    class
-			    (mop:class-direct-subclasses)
-			    (mapcar #λ(serializable/class-spec _0))))
+			   (am:->> class
+			     (mop:class-direct-subclasses)
+			     (mapcar #λ(serializable/class-spec _0))))
 			  (c-spec (serializable/class-spec obj)))
 	(if (eq :perfect (can-interpret-as-class obj c-spec))
 	    class
