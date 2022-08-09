@@ -16,8 +16,8 @@
 
 (in-package :web)
 
-;;; Returns the first item in ls for which pred returns a true value If none of the
-;;; items in ls match, then 'otherwise' will be returned
+;;; Returns the first item in ls for which pred returns a true value
+;;; If none of the items in ls match, then 'otherwise' will be returned
 ;;; If 'err' is not nil, then it will be used if there is no match; it should
 ;;; be either
 ;;; 1. A list which is the arguments that will be passed to 'error'
