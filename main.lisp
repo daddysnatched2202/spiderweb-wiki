@@ -44,5 +44,6 @@
   (load-jquery))
 
 (defun stop ()
+  (b.d:snapshot)
   (b.d:close-store)
   (clack:stop *handler*))
