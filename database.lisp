@@ -38,7 +38,9 @@
     :initarg :path
     :reader note/path
     :index-type b.i:hash-list-index
-    :index-reader note//all-with-node))
+    :index-reader note//all-with-node)
+   (class-spec
+    :initform nil))
   (:metaclass b.d:persistent-class))
 
 (defclass node (serializable)

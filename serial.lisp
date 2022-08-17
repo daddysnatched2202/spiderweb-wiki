@@ -19,7 +19,7 @@
 ;;; todo: Optional type declarations in encoded json
 ;;; todo: handle types that differ in serialization vs deserialization (symbols)
 ;;; todo: custom init functions
-;;; todo: optionally disallow deserializaing
+;;; todo: optionally disallow deserializing
 
 ;;; type-def
 ;;; atomic
@@ -31,15 +31,32 @@
 ;;; t, t : class
 ;;; (:seq t), t : class
 
+;;; TODO: Make the serialization code actually work
+
 (defclass serializable (b.d:store-object)
   ((class-spec
     :accessor serializable/class-spec))
   (:metaclass b.d:persistent-class))
 
+(defmethod initialize-instance :after ((instance serializable) &rest initargs)
+  (declare (ignore initargs))
+  (with-slots (class-spec) instance
+    (let ((class (class-of instance)))
+      (setf class-spec
+            (make-instance 'class-spec
+                           :ref class
+                           :slot-specs (mapcar
+                                        #λ(apply (alexandria:curry #'make-instance
+                                                                   'slot-spec)
+                                                 :class-ref class
+                                                 _0)
+                                        (serializable/class-spec instance))
+                           :deserial t)))))
+
 (defclass slot-spec ()
-  ((ref
-    :initarg :ref
-    :accessor slot-spec/ref)
+  ((slot-ref
+    :initarg :slot-ref
+    :accessor slot-spec/slot-ref)
    (type-def
     :initarg :type-def
     :accessor slot-spec/type-def)
@@ -74,7 +91,7 @@
 	      (class-name))
 	    (mapcar #λ(cons (slot-spec/key _0)
 			    (am:->> _0
-			      (slot-spec/ref)
+			      (slot-spec/slot-ref)
 			      (mop:slot-definition-name)
 			      (slot-value obj)
 			      (general->serial)))
@@ -155,7 +172,7 @@
 			     (class-spec/slot-specs)))
 	      (correct-spec (first-matching
 			     super-specs
-			     #λ(if (mop:slot-definition-name (slot-spec/ref _0))
+			     #λ(if (mop:slot-definition-name (slot-spec/slot-ref _0))
 				   nil)
 			     :err (list "Could not find valid slot spec for `~a`"
 					(slot-spec/key slot-spec)))))
@@ -183,7 +200,7 @@
   (let* ((ref (class-spec/ref class-spec))
 	 (obj (make-instance ref)))
     (loop for s in (class-spec/slot-specs class-spec)
-	  for slot-name = (mop:slot-definition-name (slot-spec/ref s))
+	  for slot-name = (mop:slot-definition-name (slot-spec/slot-ref s))
 	  for aso = (assoc (slot-spec/key s) alist :test #'equal)
 	  do (if aso
 		 (setf (slot-value obj slot-name)
@@ -216,5 +233,3 @@
 		 :key key
 		 :type-def type
 		 :class-ref class))
-
-(defun make-class-spec (class))
