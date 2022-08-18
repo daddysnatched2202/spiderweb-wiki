@@ -40,7 +40,9 @@
     :index-type b.i:hash-list-index
     :index-reader note//all-with-node)
    (class-spec
-    :initform nil))
+    :initform '((:key content)
+                (:key type)
+                (:key path))))
   (:metaclass b.d:persistent-class))
 
 (defclass node (serializable)
@@ -48,7 +50,9 @@
     :initarg :name
     :reader node/name
     :index-type b.i:string-unique-index
-    :index-reader node/with-name))
+    :index-reader node/with-name)
+   (class-spec
+    :initform '((:key name))))
   (:metaclass b.d:persistent-class))
 
 (defclass breakout-node (serializable)
@@ -57,7 +61,10 @@
     :reader breakout-node/parent)
    (breakout
     :initarg :breakout
-    :reader breakout-node/breakout))
+    :reader breakout-node/breakout)
+   (class-spec
+    :initform '((:key parent)
+                (:key breakout))))
   (:metaclass b.d:persistent-class))
 
 (defclass link (serializable)
@@ -69,7 +76,11 @@
     :accessor link/from)
    (to
     :initarg :to
-    :accessor link/to))
+    :accessor link/to)
+   (class-spec
+    :initform '((:key text)
+                (:key from)
+                (:key to))))
   (:metaclass b.d:persistent-class))
 
 (define-condition note/already-exists-error (error)

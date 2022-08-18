@@ -31,8 +31,6 @@
 ;;; t, t : class
 ;;; (:seq t), t : class
 
-;;; TODO: Make the serialization code actually work
-
 (defclass serializable (b.d:store-object)
   ((class-spec
     :accessor serializable/class-spec))
@@ -43,15 +41,21 @@
   (with-slots (class-spec) instance
     (let ((class (class-of instance)))
       (setf class-spec
-            (make-instance 'class-spec
-                           :ref class
-                           :slot-specs (mapcar
-                                        #λ(apply (alexandria:curry #'make-instance
-                                                                   'slot-spec)
-                                                 :class-ref class
-                                                 _0)
-                                        (serializable/class-spec instance))
-                           :deserial t)))))
+            (make-instance
+             'class-spec
+             :ref class
+             :slot-specs
+             (mapcar #λ(apply (alexandria:curry #'make-instance
+                                                'slot-spec)
+                              :class-ref class
+                              :slot-ref (am:-<> class
+                                          (mop:class-slots)
+                                          (find (getf _0 :key)
+                                                am:<>
+                                                :key #'mop:slot-definition-name))
+                              _0)
+                     (serializable/class-spec instance))
+             :deserial t)))))
 
 (defclass slot-spec ()
   ((slot-ref
@@ -80,7 +84,9 @@
     :initform t)))
 
 (defun serializable? (obj)
-  (if (symbolp obj)
+  (if (and (symbolp obj)
+           (not (eq (symbol-package obj)
+                    (find-package :keyword))))
       (mop:subclassp (find-class obj) (find-class 'serializable))
       (mop:subclassp (class-of obj) (find-class 'serializable))))
 
