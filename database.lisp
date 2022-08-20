@@ -128,6 +128,12 @@
   (remove-if-not #λ(path= (link/from _0) path)
 		 (db/all-links)))
 
+(defun db/links-with (node)
+  (let ((nd (convert-node node)))
+    (remove-if-not #λ(or (path/has-node? (link/from _0) nd)
+                         (path/has-node? (link/to _0) nd))
+                   (db/all-links))))
+
 (defun link/exists? (from to)
   (find-if #λ(and (path= from (link/from _0))
 		  (path= to (link/to _0)))
@@ -143,6 +149,10 @@
        (path= (link/to a)
 	      (link/to b))))
 
+(defun node= (a b)
+  (string= (node/name (convert-node a))
+           (node/name (convert-node b))))
+
 (defun convert-node (node)
   (typecase node
     (string (string->node node))
@@ -156,8 +166,21 @@
     (note (note/path path))
     (t (error "Path `~a` is not valid" path))))
 
+(defun path/has-node? (path node)
+  (member node path :test #'node=))
+
+(defun path/update (path old-node new-node)
+  (let ((c-old (convert-node old-node))
+        (c-new (convert-node new-node)))
+    (mapcar #λ(if (node= _0 c-old)
+                  c-new
+                  _0)
+            path)))
+
 (defun note/has-node? (note node)
-  (member node (note/path note)))
+  (am:-> note
+    (note/path)
+    (path/has-node? node)))
 
 (defun note/exists? (path)
   (handler-case (note/with-path path)
@@ -182,6 +205,14 @@
                                 (rec (cdr path) notes))
                  notes)))
     (rec (cdr path) (note/all-with-node (car path)))))
+
+(defun link/all-with-node (node)
+  (let ((conv (convert-node node)))
+    (am:-<> (db/all-links)
+      (remove-if-not #λ(member conv _0
+                               :test #'node=)
+                     am:<>)
+      (remove-duplicates :test #'node=))))
 
 (defun string->node (str)
   (let* ((rem-space (am:->> str
@@ -240,7 +271,6 @@
   (if (null (note/all-with-node n))
       (b.d:delete-object n)))
 
-;;; todo: also change links
 (defun node/rename (old new)
   (mapcar (lambda (note)
             (note/edit note
@@ -249,8 +279,15 @@
                                            _0)
                                      (note/path note))
                        :delete-nodes nil))
-          (note/all-with-node (string->node old)))
-  (node/delete (string->node old)))
+          (note/all-with-node old))
+  (node/delete (string->node old))
+  (mapcar (lambda (link)
+            (cond ((path/has-node? (link/from link) old)
+                   (setf (link/from link) (path/update (link/from link) old new)))
+                  ((path/has-node? (link/to link) old)
+                   (setf (link/to link) (path/update (link/to link) old new)))
+                  (t (error "This should never be triggered"))))
+          (link/all-with-node old)))
 
 (defun note/new (path content &key (type :text/markdown))
   (if (handler-case (note/with-path path)
