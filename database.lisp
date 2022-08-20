@@ -283,9 +283,9 @@
   (node/delete (string->node old))
   (mapcar (lambda (link)
             (if (path/has-node? (link/from link) old)
-                  (setf (link/from link) (path/update (link/from link) old new)))
+                (setf (link/from link) (path/update (link/from link) old new)))
             (if (path/has-node? (link/to link) old)
-             (setf (link/to link) (path/update (link/to link) old new))))
+                (setf (link/to link) (path/update (link/to link) old new))))
           (link/all-with-node old)))
 
 (defun note/new (path content &key (type :text/markdown))
