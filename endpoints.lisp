@@ -179,6 +179,7 @@
                          (path->string path)))))
           (t (html/with-page (:title node-text)
                (:h1 (format nil "Category Page: ~a" node-text))
+               (:br)
                (:raw (html/gen-note-previews (note/all-with-node (car path))))
                (:h1 "Rename?")
                (:form :action "/wiki/node-rename"
