@@ -42,7 +42,8 @@
    (class-spec
     :initform '((:key content)
                 (:key type)
-                (:key path))))
+                (:key path))
+    :transient t))
   (:metaclass b.d:persistent-class))
 
 (defclass node (serializable)
@@ -52,7 +53,8 @@
     :index-type b.i:string-unique-index
     :index-reader node/with-name)
    (class-spec
-    :initform '((:key name))))
+    :initform '((:key name))
+    :transient t))
   (:metaclass b.d:persistent-class))
 
 (defclass breakout-node (serializable)
@@ -64,7 +66,8 @@
     :reader breakout-node/breakout)
    (class-spec
     :initform '((:key parent)
-                (:key breakout))))
+                (:key breakout))
+    :transient t))
   (:metaclass b.d:persistent-class))
 
 (defclass link (serializable)
@@ -80,7 +83,8 @@
    (class-spec
     :initform '((:key text)
                 (:key from)
-                (:key to))))
+                (:key to))
+    :transient t))
   (:metaclass b.d:persistent-class))
 
 (define-condition note/already-exists-error (error)

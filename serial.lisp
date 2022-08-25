@@ -33,7 +33,8 @@
 
 (defclass serializable (b.d:store-object)
   ((class-spec
-    :accessor serializable/class-spec))
+    :accessor serializable/class-spec
+    :transient t))
   (:metaclass b.d:persistent-class))
 
 (defmethod initialize-instance :after ((instance serializable) &rest initargs)
