@@ -26,8 +26,6 @@
 (set-unless-bound *break-char* "&")
 (set-unless-bound *sep-char* ":")
 
-;;; todo: can we replace the note//all-with-node and note/all-with-node functions
-;;; with an `:around` method ??
 (defclass note (serializable)
   ((content
     :initarg :content
