@@ -33,7 +33,8 @@
   (html/with-page (:title "Note Index")
     (:h1 "Nodes")
     (:div :class "nodes-container"
-	  (dolist (n (db/all-nodes))
+	  (dolist (n (am:-> (db/all-nodes)
+                       (sort #'string< :key #'node/name)))
 	    (:a :href (node->url n)
 		(node/name n))))
     (:h1 "Notes")

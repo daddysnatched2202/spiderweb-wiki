@@ -26,6 +26,8 @@
 (set-unless-bound *break-char* "&")
 (set-unless-bound *sep-char* ":")
 
+;;; todo: can we replace the note//all-with-node and note/all-with-node functions
+;;; with an `:around` method ??
 (defclass note (serializable)
   ((content
     :initarg :content
@@ -115,6 +117,14 @@
   (setf (slot-value instance 'path)
         (convert-path (err/path instance))))
 
+(defmethod print-object ((n node) stream)
+  (print-unreadable-object (n stream)
+    (format stream "node: ~a" (node/name n))))
+
+(defmethod print-object ((l link) stream)
+  (print-unreadable-object (l stream)
+    (format stream "link: ~a -> ~a" (link/from l) (link/to l))))
+
 (defun db/all-notes ()
   (b.d:store-objects-with-class 'note))
 
@@ -133,9 +143,9 @@
 		 (db/all-links)))
 
 (defun db/links-with (node)
-  (let ((nd (convert-node node)))
-    (remove-if-not #λ(or (path/has-node? (link/from _0) nd)
-                         (path/has-node? (link/to _0) nd))
+  (let ((conv (convert-node node)))
+    (remove-if-not #λ(or (path/has-node? (link/from _0) conv)
+                         (path/has-node? (link/to _0) conv))
                    (db/all-links))))
 
 (defun link/exists? (from to)
@@ -210,14 +220,6 @@
                  notes)))
     (rec (cdr path) (note/all-with-node (car path)))))
 
-(defun link/all-with-node (node)
-  (let ((conv (convert-node node)))
-    (am:-<> (db/all-links)
-      (remove-if-not #λ(member conv _0
-                               :test #'node=)
-                     am:<>)
-      (remove-duplicates :test #'node=))))
-
 (defun string->node (str)
   (let* ((rem-space (am:->> str
                       (str:replace-all (car *space-char*) (cdr *space-char*))
@@ -272,25 +274,27 @@
   (b.d:delete-object l))
 
 (defun node/delete (n)
-  (if (null (note/all-with-node n))
-      (b.d:delete-object n)))
+  (when (or (db/links-with n)
+            (note/all-with-node n))
+    (warn "Deleting node `~a` when it still has references" n)))
 
 (defun node/rename (old new)
-  (mapcar (lambda (note)
-            (note/edit note
-                       :path (mapcar #λ(if (string= (node/name _0) old)
-                                           (string->node new)
-                                           _0)
-                                     (note/path note))
-                       :delete-nodes nil))
-          (note/all-with-node old))
-  (mapcar (lambda (link)
-            (if (path/has-node? (link/from link) old)
-                (setf (link/from link) (path/update (link/from link) old new)))
-            (if (path/has-node? (link/to link) old)
-                (setf (link/to link) (path/update (link/to link) old new))))
-          (link/all-with-node old))
-  (node/delete (string->node old)))
+  (let ((new-node (convert-node new))
+        (old-node (convert-node old)))
+    (labels ((replace-old-node (current-node)
+               (if (node= current-node old-node)
+                   new-node
+                   current-node)))
+      (mapcar (lambda (note)
+                (note/edit note
+                           :path (mapcar #'replace-old-node (note/path note))
+                           :delete-nodes nil))
+              (note/all-with-node old-node))
+      (mapcar (lambda (link)
+                (mapcar #'replace-old-node (link/from link))
+                (mapcar #'replace-old-node (link/to link)))
+              (db/links-with old-node)))
+    (node/delete old-node)))
 
 (defun note/new (path content &key (type :text/markdown))
   (if (handler-case (note/with-path path)
