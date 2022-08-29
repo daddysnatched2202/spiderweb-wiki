@@ -1,5 +1,5 @@
-* Spiderweb
-  Wiki software built on the idea of creating many interconnecting links between
+* Introduction
+  A wiki application built on the idea of creating many interconnecting links between
   ideas, much like a spiderweb
 * Org Mode
   When fantastic tools like Emacs' org-mode already exist for keeping notes, why
