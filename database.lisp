@@ -215,6 +215,10 @@
     (note/path)
     (path/has-node? node)))
 
+(defun link/has-node? (link node)
+  (or (path/has-node? (link/from link) node)
+      (path/has-node? (link/to link) node)))
+
 (defun note/exists? (path)
   (handler-case (note/with-path path)
     (error () nil)))
@@ -233,8 +237,7 @@
 
 (defun link/all-with-node (node)
   (let ((conv (convert-node node)))
-    (remove-duplicates (remove-if-not #λ(or (path/has-node? (link/from _0) conv)
-                                            (path/has-node? (link/to _0) conv))
+    (remove-duplicates (remove-if-not #λ(link/has-node? _0 conv)
                                       (db/all-links))
                        :test #'link=)))
 
@@ -338,9 +341,19 @@
   (b.d:delete-object l))
 
 (defun node/delete (n)
-  (ana:awhen (or (db/links-with n)
-                 (note/all-with-node n))
-    (error "Deleting node `~a` when it is still referenced by `~a`" n ana:it))
+  (labels ((finder (ls)
+             (find-if #λ(typecase _0
+                          (note (note/has-node? _0 n))
+                          (link (link/has-node? _0 n))
+                          ;; this should never happen
+                          (t (error "obj `~a` passed to `finder` has a bad type"
+                                    _0)))
+                      ls)))
+    (ana:awhen (or (db/links-with n)
+                   (note/all-with-node n))
+      (error "Deleting node `~a` when it is still referenced by `~a`"
+             n
+             (finder ana:it))))
   (b.d:delete-object n))
 
 (defun note/delete (path &key (delete-nodes nil))
