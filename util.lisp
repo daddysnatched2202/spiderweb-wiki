@@ -161,3 +161,7 @@
 	    :test-not #'equal
 	    :key #'car)
     (mapcar #'cdr)))
+
+(defmacro err!=nil ((&key (condition 'error)) &body body)
+  `(handler-case (progn ,@body)
+     (,condition () nil)))
