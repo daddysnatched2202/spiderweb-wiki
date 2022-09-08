@@ -57,11 +57,11 @@
 	   (declare (ignorable ,@args))
 	   ,@body)))))
 
-;;; If the car of the sexp read by λ-reader is :progn, all subsequent statements get
-;;; passed to λ-macro (it's :progn instead of progn so that the macro could be
-;;; separated into its own package without the symbol needing to be interned into
-;;; other packages, and to avoid rebinding symbols defined by the standard, because
-;;; it's bad style)
+;;; If sexp read by λ-reader is a list whose car is :progn, all subsequent statements
+;;; get passed as the body of λ-macro (it's :progn instead of progn so that the macro
+;;; could be separated into its own package without the symbol needing to be interned
+;;; into other packages, and to avoid rebinding symbols defined by the standard,
+;;; because it's bad style)
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar arg))
   (let ((form (read stream t nil t)))
