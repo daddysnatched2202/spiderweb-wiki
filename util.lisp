@@ -162,6 +162,10 @@
 	    :key #'car)
     (mapcar #'cdr)))
 
-(defmacro err!=nil ((&key (condition 'error)) &body body)
-  `(handler-case (progn ,@body)
-     (,condition () nil)))
+(defmacro err!=nil ((&key (conditions 'error)) &body body)
+  (labels ((make-mask (c)
+             `(,c () nil)))
+    `(handler-case (progn ,@body)
+       ,@(if (listp conditions)
+             (mapcar #'make-mask conditions)
+             (list (make-mask conditions))))))
