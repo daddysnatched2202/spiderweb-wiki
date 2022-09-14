@@ -101,7 +101,7 @@
 
 (defun html/preview-note (note &key (max-len 5) (class "note-preview"))
   (let* ((lines (str:lines (note/content note)))
-         (shortened-content (str:concat (str:unlines (first-x lines max-len))
+         (shortened-content (str:concat (str:unlines (subseq lines 0 max-len))
                                         (if (> (length lines) max-len)
                                             "…"
                                             ""))))

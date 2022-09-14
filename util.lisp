@@ -40,11 +40,6 @@
 					    (type-of err))))
 			    otherwise))))
 
-(defun first-x (ls x)
-  (loop for y from 0 below x
-        for l in ls
-        collect l))
-
 (defmacro let-bound ((&rest bindings) &body body)
   (labels ((bound-pred (x)
 	     (member x (mapcar #'car bindings)))
