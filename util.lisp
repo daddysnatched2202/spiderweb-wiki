@@ -142,7 +142,7 @@
 ;;; can be used to redirect the user to a different page
 (defun ningle/redirect (url &key (type :tmp))
   (ningle/add-response-header "Location" url)
-  (ningle/set-response-status (case type
+  (ningle/set-response-status (ecase type
                                 (:permanent 301)
                                 (:tmp 307))))
 
