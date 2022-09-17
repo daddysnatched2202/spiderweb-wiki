@@ -63,8 +63,8 @@
 		      ,maybe-key
 		      ,opt)
 		   getter))
-	     (make-getter (key array ls)
-	       (if array
+	     (make-getter (key is-array ls)
+	       (if is-array
 		   `(get-param-array ,key ,ls)
 		   `(get-param ,key ,ls)))
 	     (make-binding (sym)
