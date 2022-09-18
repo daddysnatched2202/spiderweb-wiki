@@ -100,8 +100,8 @@
                               ',binding-list
                               params))))
              (setf (ningle:route *app* ,path ,@keys)
-                   #',route-func)
-             (setf (ningle:route *app*
+                   #',route-func
+                   (ningle:route *app*
                                  ,(if (string= (str:s-last path) "/")
                                       (str:substring 0 -1 path)
                                       (str:concat path "/"))
