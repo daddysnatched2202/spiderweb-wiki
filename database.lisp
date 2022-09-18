@@ -187,13 +187,13 @@
            (node/name (convert-node b))))
 
 (defun convert-node (node)
-  (typecase node
+  (ctypecase node
     (string (string->node node))
     (node node)
     (t (error "Node `~a` is not valid" node))))
 
 (defun convert-path (path)
-  (typecase path
+  (ctypecase path
     (list path)
     (string (string->path path))
     (note (note/path path))
@@ -272,7 +272,7 @@
     (mapcar #'string->node)))
 
 (defun path->string (path)
-  (typecase path
+  (ctypecase path
     (list (am:->> path
             (mapcar #'node/name)
             (str:join *sep-char*)))

@@ -28,7 +28,7 @@
 	  do (return x)
 	finally (return (if (and err
 				 (not otherwise))
-			    (typecase err
+			    (ctypecase err
 				  (list (apply #'error err))
 				  (function (funcall err))
 				  (t (error "The value of `err` in call to ~
@@ -142,7 +142,7 @@
 ;;; can be used to redirect the user to a different page
 (defun ningle/redirect (url &key (type :tmp))
   (ningle/add-response-header "Location" url)
-  (ningle/set-response-status (ecase type
+  (ningle/set-response-status (ccase type
                                 (:permanent 301)
                                 (:tmp 307))))
 
