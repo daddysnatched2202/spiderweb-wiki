@@ -84,17 +84,17 @@
                        "<a href=\"~a\">~a</a>"
                        target
                        label)))
-      (cond ((and (cadr args)
-                  (string= (cadr args) "url"))
+      (cond ((ana:aand (cadr args)
+                       (string= ana:it "url"))
              (generate-link formatted-target
                             link-text))
-            ((or (and (cadr args)
-                      (string= (cadr args) "note"))
+            ((or (ana:aand (cadr args)
+                           (string= ana:it "note"))
                  (null (cadr args)))
              (generate-link (path->url formatted-target)
                             link-text))
             (t (generate-link "/wiki"
-                              (format nil "BAD LINK ~a" formatted-target)))))))
+                              (format nil "BAD LINK `~a`" formatted-target)))))))
 
 (setf 3bmd-wiki:*wiki-links* t)
 (setf 3bmd-wiki:*wiki-processor* (make-instance 'wiki-parser))
