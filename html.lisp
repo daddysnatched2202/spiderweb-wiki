@@ -101,10 +101,10 @@
 
 (defun html/preview-note (note &key (max-len 5) (class "note-preview"))
   (let* ((lines (str:lines (note/content note)))
-         (shortened-content (str:concat (str:unlines (subseq lines 0 max-len))
-                                        (if (> (length lines) max-len)
-                                            "…"
-                                            ""))))
+         (unlines (str:unlines lines))
+         (shortened-content (if (> (length lines) max-len)
+                                (str:concat unlines "…")
+                                unlines)))
     (spinneret:with-html-string
       (:div :class class
             (:a :href (note->url note) (path->string (note/path note)))
