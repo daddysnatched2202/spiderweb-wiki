@@ -29,15 +29,14 @@
 	finally (return (if (and err
 				 (not otherwise))
 			    (ctypecase err
-				  (list (apply #'error err))
-				  (function (funcall err))
-				  (t (error "The value of `err` in call to ~
-                                            `first-matching` must be either a ~
-                                            list or a function; ~%it in fact ~
-                                            has the value `~a`, ~
-                                            which is of type `~a`"
-					    err
-					    (type-of err))))
+                              (list (apply #'error err))
+                              (function (funcall err))
+                              (t (error "The value of `err` in call to ~
+                                        `first-matching` must be either a ~
+                                        list or a function; ~%it in fact ~
+                                        has the value `~a`, which is of type `~a`"
+					err
+					(type-of err))))
 			    otherwise))))
 
 (defmacro let-bound ((&rest bindings) &body body)
