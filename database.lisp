@@ -24,7 +24,7 @@
 (set-unless-bound *break-char* "&")
 (set-unless-bound *sep-char* ":")
 
-(defvar *link/regexp* "\\[\\[(.*?)\\]\\]")
+(defvar *link-regexp* "\\[\\[(.*?)\\]\\]")
 
 (defclass note (serializable)
   ((content
@@ -282,7 +282,7 @@
 
 (defun find-links (content)
   (let ((links))
-    (cl-ppcre:do-register-groups (str) (*link/regexp* content)
+    (cl-ppcre:do-register-groups (str) (*link-regexp* content)
       (unless (str:starts-with? "http" str)
         (push (str:split #\| str) links)))
     links))
@@ -299,7 +299,7 @@
                               text))))
     (mapcar #λ(note/edit
                _0
-               :content (cl-ppcre:regex-replace-all *link/regexp*
+               :content (cl-ppcre:regex-replace-all *link-regexp*
                                                     (note/content _0)
                                                     #'regen-link
                                                     :simple-calls t))
