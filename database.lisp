@@ -118,10 +118,8 @@
 (defmethod initialize-instance :after ((instance link)
                                        &rest args)
   (declare (ignore args))
-  (setf (slot-value instance 'from)
-        (convert-path (slot-value instance 'from)))
-  (setf (slot-value instance 'to)
-        (convert-path (slot-value instance 'to))))
+  (setf (slot-value instance 'from) (convert-path (slot-value instance 'from))
+        (slot-value instance 'to) (convert-path (slot-value instance 'to))))
 
 (defmethod initialize-instance :after ((instance note)
                                        &rest args)
