@@ -46,8 +46,8 @@
 		 (am:-<>> bindings
 		   (mapcar #'anon-arg-number)
 		   (reduce #'max)
-		   (loop for x from 0 upto am:<>
-			 collect (intern (format nil "_~a" x))))
+                   (mapcar (lambda (x) (intern (format nil "_~a" x)))
+                           (alexandria:iota (1+ am:<>))))
 		 nil)))
     (am:-<>> body
       (matching-symbols #'anon-arg?)
