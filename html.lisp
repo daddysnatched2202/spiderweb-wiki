@@ -61,9 +61,7 @@
           ((> (length conv)
               1)
            (format nil "/wiki/make-note/~a" (path->string path)))
-          (t (format t
-                     "Tried to get URL for bad path of value `~a`~%"
-                     path)
+          (t (warn "Tried to get URL for bad path of value `~a`" path)
              "/wiki/"))))
 
 (defclass wiki-parser () ())
