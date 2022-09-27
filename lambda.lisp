@@ -43,11 +43,12 @@
 (defmacro λ-macro (&body body)
   (labels ((ensure-anon-args (bindings)
 	     (if (> (length bindings) 0)
-		 (am:-<>> bindings
+		 (am:->> bindings
 		   (mapcar #'anon-arg-number)
 		   (reduce #'max)
-                   (mapcar (lambda (x) (intern (format nil "_~a" x)))
-                           (alexandria:iota (1+ am:<>))))
+                   (1+)
+                   (alexandria:iota)
+                   (mapcar (lambda (x) (intern (format nil "_~a" x)))))
 		 nil)))
     (am:-<>> body
       (matching-symbols #'anon-arg?)
