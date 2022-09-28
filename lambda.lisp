@@ -48,8 +48,7 @@
 		   (reduce #'max)
                    (1+)
                    (alexandria:iota)
-                   (mapcar (lambda (x) (intern (format nil "_~a" x)))))
-		 nil)))
+                   (mapcar (lambda (x) (intern (format nil "_~a" x))))))))
     (am:-<>> body
       (matching-symbols #'anon-arg?)
       (ensure-anon-args)

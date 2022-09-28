@@ -15,6 +15,8 @@
 ;; along with Spiderweb Wiki.  If not, see <https://www.gnu.org/licenses/>.
 
 (asdf:defsystem :web
+  :description "Wiki software for highly interconnected information"
+  :license "GPL3.0"
   :depends-on (:clack
 	       :ningle
 	       :str
