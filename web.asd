@@ -44,6 +44,7 @@
 	       (:file "conf")
                (:file "setup")
 	       (:file "util")
+               (:file "routing")
                (:file "serial")
 	       (:file "database")
 	       (:file "css")
