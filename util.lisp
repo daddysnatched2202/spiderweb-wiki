@@ -16,6 +16,9 @@
 
 (in-package :web)
 
+(defun make-rel-path (str)
+  (concatenate 'string *base-path* str))
+
 ;;; Returns the first item in ls for which pred returns a true value
 ;;; If none of the items in ls match, then 'otherwise' will be returned
 ;;; If 'err' is not nil, then it will be used if there is no match; it should
@@ -50,9 +53,6 @@
 			   (alexandria:rcurry #'used-pred bound-in-body)
 			   bindings)))
       `(let* ,used-bindings ,@body))))
-
-(defun make-rel-path (str)
-  (concatenate 'string *base-path* str))
 
 (defmacro err!=nil ((&rest conditions) &body body)
   (labels ((make-mask (c)
