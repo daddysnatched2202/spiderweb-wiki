@@ -238,7 +238,9 @@
       (lambda (params)
 	(declare (ignore params))
 	(if (eq *jquery-source* :cdn)
-	    (warn "Requested jquery URL when wiki is set to use an external CDN")
+	    (progn (warn "Requested jquery URL when wiki is set to use an external ~
+                         CDN")
+                   (ningle/redirect *jquery-path*))
 	    (ningle/cache-file *jquery-file*
 			       *jquery-hash*
 			       :file-type "text/javascript"))))
