@@ -100,7 +100,7 @@
                (ningle/set-response-status 200)
                file))))
 
-;;; can be used to redirect the user to a different page
+;;; can be called in an endpoint to redirect the user to a different page
 (defun ningle/redirect (url &key (type :tmp))
   (ningle/add-response-header "Location" url)
   (ningle/set-response-status (ccase type
