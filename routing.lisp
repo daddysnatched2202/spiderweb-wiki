@@ -49,7 +49,7 @@
                              ana:it
                              '(condition (c)
                                (html/with-page (:title "Error")
-                                 (:p "Got an error")
+                                 (:p "Internal server error:")
                                  (:br)
                                  (:br)
                                  (princ-to-string c))))
