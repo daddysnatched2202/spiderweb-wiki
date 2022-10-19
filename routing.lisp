@@ -52,9 +52,7 @@
                                  (:p "Internal server error:")
                                  (:br)
                                  (:br)
-                                 (princ-to-string c))))
-                          (:no-error (ret)
-                            ret))
+                                 (princ-to-string c)))))
                         (warn "Could not fill params for route `~a`; required ~
                               args `~a`, got args `~a`~%"
                               ,path
