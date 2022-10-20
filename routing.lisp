@@ -29,14 +29,15 @@
 		   `(get-param-array ,key ,ls)
 		   `(get-param ,key ,ls)))
 	     (make-binding (sym)
-	       (if (listp sym)
-		   (let* ((plist (cdr sym))
-			  (bind (car sym))
-			  (key (getf plist :key (ps:symbol-to-js-string bind)))
-			  (array (getf plist :array))
-			  (opt (getf plist :optional)))
-		     (list bind (make-optional opt (make-getter key array 'params))))
-		   (list sym (list 'get-param
+               (if (listp sym)
+                   (destructuring-bind (name &key
+                                         (key (ps:symbol-to-js-string name))
+                                         array
+                                         optional)
+                       sym
+                     (list name (make-optional optional
+                                               (make-getter key array 'params))))
+                   (list sym (list 'get-param
                                    (ps:symbol-to-js-string sym)
                                    'params)))))
       (destructuring-bind (&key binding-list fail-clause) args
