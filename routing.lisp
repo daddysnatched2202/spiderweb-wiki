@@ -106,8 +106,8 @@
                                 (:permanent 301)
                                 (:tmp 307))))
 
-(defun get-param (param params)
-  (cdr (assoc param params :test #'equal)))
+(defun get-param (param params &key (test #'equal))
+  (cdr (assoc param params :test test)))
 
 (defun get-param-array (param params)
   (am:-<>> params
