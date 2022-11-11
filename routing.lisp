@@ -31,9 +31,9 @@
 	     (make-binding (sym)
                (if (listp sym)
                    (destructuring-bind (name &key
-                                         (key (ps:symbol-to-js-string name))
-                                         array
-                                         optional)
+                                               (key (ps:symbol-to-js-string name))
+                                               array
+                                               optional)
                        sym
                      (list name (make-optional optional
                                                (make-getter key array 'params))))
