@@ -109,10 +109,10 @@
 (defun get-param (param params &key (test #'equal))
   (cdr (assoc param params :test test)))
 
-(defun get-param-array (param params)
+(defun get-param-array (param params &key (test #'equal))
   (am:-<>> params
     (remove param
 	    am:<>
-	    :test-not #'equal
+	    :test-not test
 	    :key #'car)
     (mapcar #'cdr)))
