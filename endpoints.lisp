@@ -237,10 +237,8 @@
 (setf (ningle/app:route *app* *jquery-url*)
       (lambda (params)
 	(declare (ignore params))
-	(if (eq *jquery-source* :cdn)
-	    (progn (warn "Requested jquery URL when wiki is set to use an external ~
-                         CDN")
-                   (ningle/redirect *jquery-path*))
+	(if (eq *jquery/source-type* :cdn)
+	    (ningle/redirect *jquery/source-url*)
 	    (ningle/cache-file *jquery-file*
 			       *jquery-hash*
 			       :file-type "text/javascript"))))

@@ -20,24 +20,25 @@
 
 (defun load-jquery ()
   (setf *jquery-file*
-	(case *jquery-source*
+	(case *jquery/source-type*
           ((:web) (multiple-value-bind (data code hash quri res)
-                      (drakma:http-request *jquery-path*)
+                      (drakma:http-request *jquery/source-url*)
                     (declare (ignore code hash quri res))
                     data))
-	  ((:local) (uiop:read-file-string *jquery-path*))
+	  ((:local) (uiop:read-file-string *jquery/local-path*))
 	  ((:cdn) nil)
-	  (:otherwise (error "Jquery source must be `:local`, `:web`, or `:cdn`; it ~
-                              is in fact `~a`"
-                             *jquery-source*)))
+	  (:otherwise (error "`jquery/source-type` must be `:local`, `:web`, or ~
+                              `:cdn`; it is in fact `~a`"
+                             *jquery/source-type*)))
 	*jquery-hash*
-	(if (eq *jquery-source* :cdn) nil
+	(if (eq *jquery/source-type* :cdn)
+            nil
 	    (am:->> *jquery-file*
 	      (ironclad:digest-sequence :sha256)
 	      (ironclad:byte-array-to-hex-string)))))
 
 (defun run ()
-  (if (eq *storage-type* :local)
+  (if (eq *storage/type* :local)
       (db/load-local (make-rel-path "datastore/"))
       (error "Only local storage is supported for now"))
   (setf *handler* (clack:clackup *app*))
