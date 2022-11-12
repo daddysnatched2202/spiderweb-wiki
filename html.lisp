@@ -33,9 +33,9 @@
 	   (list :script :src *jquery-url*))
        ,@body)
       (:footer (:a :href "/wiki/notes" "Note Index")
-	       (:a :href "/wiki/licenses" "Licenses")
 	       (:a :href "/wiki/make-note" "New Note")
-	       (:a :href "/wiki/search" "Search")))))
+	       (:a :href "/wiki/search" "Search")
+               (:a :href "/wiki/licenses" "Licenses")))))
 
 (defun note->url (note &key (prefix :render))
   (format nil
