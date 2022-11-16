@@ -68,12 +68,13 @@
                                  ,@keys)
                    #',route-func)))))))
 
-(defun ningle/push-response (response)
+;;; Low-level response function
+(defun ningle//push-response (response)
   (alexandria:appendf (lack.response:response-headers ningle:*response*)
                       response))
 
 (defun ningle/add-response-header (key val)
-  (ningle/push-response (list key val)))
+  (ningle//push-response (list key val)))
 
 (defun ningle/respond-type (type)
   (ningle/add-response-header :content-type type))
