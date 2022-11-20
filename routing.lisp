@@ -16,7 +16,7 @@
 
 (in-package :web)
 
-(defmacro ningle/route ((path &rest keys) (&rest args) &body body)
+(defmacro ningle/route ((path &rest keys) (&key binding-list fail-clause) &body body)
   (alexandria:with-gensyms (maybe-key route-func)
     (labels ((make-optional (opt getter)
 	       (if opt
@@ -40,33 +40,32 @@
                    (list sym (list 'get-param
                                    (ps:symbol-to-js-string sym)
                                    'params)))))
-      (destructuring-bind (&key binding-list fail-clause) args
-        (let ((bindings (mapcar #'make-binding binding-list)))
-	  `(labels ((,route-func (params)
-                      (declare (ignorable params))
-                      (alexandria:if-let ,bindings
-                        (handler-case (progn ,@body)
-                          ,(ana:aif fail-clause
-                             ana:it
-                             '(condition (c)
-                               (html/with-page (:title "Error")
-                                 (:p "Internal server error:")
-                                 (:br)
-                                 (:br)
-                                 (princ-to-string c)))))
-                        (warn "Could not fill params for route `~a`; required ~
+      (let ((bindings (mapcar #'make-binding binding-list)))
+        `(labels ((,route-func (params)
+                    (declare (ignorable params))
+                    (alexandria:if-let ,bindings
+                      (handler-case (progn ,@body)
+                        ,(ana:aif fail-clause
+                           ana:it
+                           '(condition (c)
+                             (html/with-page (:title "Error")
+                              (:p "Internal server error:")
+                              (:br)
+                              (:br)
+                              (princ-to-string c)))))
+                      (warn "Could not fill params for route `~a`; required ~
                               args `~a`, got args `~a`~%"
-                              ,path
-                              ',binding-list
-                              params))))
-             (setf (ningle:route *app* ,path ,@keys)
-                   #',route-func
-                   (ningle:route *app*
-                                 ,(if (string= (str:s-last path) "/")
-                                      (str:substring 0 -1 path)
-                                      (str:concat path "/"))
-                                 ,@keys)
-                   #',route-func)))))))
+                            ,path
+                            ',binding-list
+                            params))))
+           (setf (ningle:route *app* ,path ,@keys)
+                 #',route-func
+                 (ningle:route *app*
+                               ,(if (string= (str:s-last path) "/")
+                                    (str:substring 0 -1 path)
+                                    (str:concat path "/"))
+                               ,@keys)
+                 #',route-func))))))
 
 ;;; Low-level response function
 (defun ningle//push-response (response)

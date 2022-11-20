@@ -407,9 +407,9 @@
         do (b.d:delete-object obj)))
 
 (defun db/load-credentials ()
-  (if (eq *storage-type* :s3)
+  (if (eq *storage/type* :s3)
       (setf zs3:*credentials* (zs3:file-credentials (make-rel-path "s3")))
-      (error "Trying to load s3 credentials when *storage-type* is not set for s3")))
+      (error "Trying to load s3 credentials when *storage/type* is not set for s3")))
 
 (defun db/load-local (path)
   (make-instance 'b.d:mp-store
