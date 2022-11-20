@@ -42,7 +42,8 @@
           (:raw (html/gen-note-previews (db/all-notes)
                                         :class "note-preview-grid")))))
 
-(ningle/route ("/wiki/notes/:path") (:binding-list ((path-text :key :path)))
+(ningle/route ("/wiki/notes/:path")
+    (:binding-list ((path-text :key :path)))
   (let* ((path (string->path path-text))
          (node (note/with-path path-text)))
     (html/with-page (:title (path->string path))
@@ -128,7 +129,8 @@
                 "Made note `~a` successfully"
                 (path->string (note/path (note/new path content)))))))
 
-(ningle/route ("/wiki/edit-note/:path") (:binding-list ((path-text :key :path)))
+(ningle/route ("/wiki/edit-note/:path")
+    (:binding-list ((path-text :key :path)))
   (let ((note (note/with-path path-text)))
     (html/with-page (:title "Edit Note")
       (:h1 (format nil "Editing ~a" (path->string path-text)))
@@ -170,7 +172,8 @@
                 "Note `~a` was deleted"
                 (path->string path)))))
 
-(ningle/route ("/wiki/node/:node") (:binding-list ((node-text :key :node)))
+(ningle/route ("/wiki/node/:node")
+    (:binding-list ((node-text :key :node)))
   (let ((path (string->path node-text)))
     (cond ((> (length path) 1)
            (html/with-page (:title "Error")
