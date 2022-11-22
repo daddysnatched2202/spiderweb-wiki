@@ -392,15 +392,15 @@
                 :type (if-set type)))))
 
 (defun db/clean-nodes ()
-  (delete-if-not #λ(if (and _0
-                            (= (length (note/all-with-node _0))
-                               0)
-                            (= (length (link/all-with-node _0))
-                               0))
-                       (progn (node/delete _0)
-                              nil)
-                       _0)
-                 (db/all-nodes)))
+  (mapcar #λ(if (and _0
+                     (= (length (note/all-with-node _0))
+                        0)
+                     (= (length (link/all-with-node _0))
+                        0))
+                (progn (node/delete _0)
+                       nil)
+                _0)
+          (db/all-nodes)))
 
 (defun db/clear ()
   (loop for obj in (b.d:all-store-objects)
