@@ -97,7 +97,9 @@
 
 (defun html/preview-note (note &key (max-len 5) (class "note-preview"))
   (let* ((lines (str:lines (note/content note)))
-         (unlines (str:unlines lines))
+         (unlines (str:unlines (loop for i from 0 below max-len
+                                     for l in lines
+                                     collect l)))
          (shortened-content (if (> (length lines) max-len)
                                 (str:concat unlines "…")
                                 unlines)))
