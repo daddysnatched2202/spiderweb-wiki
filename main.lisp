@@ -20,7 +20,7 @@
 
 (defun load-jquery ()
   (setf *jquery-file*
-	(case *jquery/source-type*
+	(ccase *jquery/source-type*
           ((:web) (multiple-value-bind (data code hash quri res)
                       (drakma:http-request *jquery/source-url*)
                     (declare (ignore code hash quri res))
