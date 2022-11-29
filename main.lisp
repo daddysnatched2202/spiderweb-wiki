@@ -26,10 +26,7 @@
                     (declare (ignore code hash quri res))
                     data))
 	  ((:local) (uiop:read-file-string *jquery/local-path*))
-	  ((:cdn) nil)
-	  (:otherwise (error "`jquery/source-type` must be `:local`, `:web`, or ~
-                              `:cdn`; it is in fact `~a`"
-                             *jquery/source-type*)))
+	  ((:cdn) nil))
 	*jquery-hash*
 	(if (eq *jquery/source-type* :cdn)
             nil
