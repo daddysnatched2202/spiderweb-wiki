@@ -1,4 +1,4 @@
-;; Copyright 2022 Curtis Klassen
+;; Copyright 2022-2023 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@
 	       (:a :href "/wiki/search" "Search")
                (:a :href "/wiki/licenses" "Licenses")))))
 
+;;; todo: sanitize paths
 (defun note->url (note &key (prefix :render))
   (format nil
           (ccase prefix
