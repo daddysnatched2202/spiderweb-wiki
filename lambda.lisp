@@ -52,6 +52,7 @@
        (ppcre:scan "^_[0-9]*$" (symbol-name sym))))
 
 ;;; TODO: handle advanced args (&rest, &key, &optional)
+;;; TODO: Named lambdas with `labels`
 ;;; Macro to speed up creation of lambdas
 ;;; Automatically binds symbols in the body of the form (_n : n ∈ ℕ)
 ;;; to the nth argument of the lambda
