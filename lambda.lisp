@@ -17,20 +17,20 @@
 (in-package :web)
 
 ;; Modified from alexandria (lists.lisp:356)
-(defun my/flatten (tree)
+(defun lambda/flatten (tree)
   "Traverses the tree in order, collecting non-null leaves into a list."
   (let (list)
     (labels ((traverse (subtree)
-               (when (not (and subtree
-                               (consp subtree)
-                               (eq (car subtree)
-                                   'λ-macro)))
-                 (if (consp subtree)
-                     (progn
-                       (traverse (car subtree))
-                       (traverse (cdr subtree)))
-                     (push subtree list)))))
-      (traverse tree))
+                       (unless (and subtree
+                                    (consp subtree)
+                                    (eq (car subtree)
+                                        'λ-macro))
+                         (if (consp subtree)
+                             (progn
+                               (traverse (car subtree))
+                               (traverse (cdr subtree)))
+                           (push subtree list)))))
+            (traverse tree))
     (nreverse list)))
 
 ;;; matching-symbols makes no guarantees about the order in which symbols are
@@ -38,7 +38,7 @@
 ;;; times it appears in the tree
 (defun matching-symbols (test-fun tree)
   (am:->> tree
-    (my/flatten)
+    (lambda/flatten)
     (remove-if-not (alexandria:conjoin #'symbolp test-fun))
     (remove-duplicates)))
 
