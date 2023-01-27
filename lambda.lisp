@@ -21,16 +21,16 @@
   "Traverses the tree in order, collecting non-null leaves into a list."
   (let (list)
     (labels ((traverse (subtree)
-                       (unless (and subtree
-                                    (consp subtree)
-                                    (eq (car subtree)
-                                        'λ-macro))
-                         (if (consp subtree)
-                             (progn
-                               (traverse (car subtree))
-                               (traverse (cdr subtree)))
-                           (push subtree list)))))
-            (traverse tree))
+               (unless (and subtree
+                            (consp subtree)
+                            (eq (car subtree)
+                                'λ-macro))
+                 (if (consp subtree)
+                     (progn
+                       (traverse (car subtree))
+                       (traverse (cdr subtree)))
+                     (push subtree list)))))
+      (traverse tree))
     (nreverse list)))
 
 ;;; matching-symbols makes no guarantees about the order in which symbols are
