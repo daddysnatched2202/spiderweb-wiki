@@ -76,7 +76,8 @@
                                (declare (ignorable ,@lambda-args))
                                ,@body)))
           (if name
-              `(labels ((,name ,lambda-form)))
+              `(labels ((,name ,@(cdr lambda-form)))
+                 #',name)
               lambda-form))))))
 
 (defun λ-reader (stream subchar arg)
