@@ -56,36 +56,40 @@
 ;;; Macro to speed up creation of lambdas
 ;;; Automatically binds symbols in the body of the form (_n : n ∈ ℕ)
 ;;; to the nth argument of the lambda
-;;; Example : (λ-macro (+ _1 _2)) -> (lambda (_0 _1 _2) (+ _1 _2))
+;;; Example : (λ-macro () (+ _1 _2)) -> (lambda (_0 _1 _2) (+ _1 _2))
 ;;; Even handles discontinuous and null argument lists !
-(defmacro λ-macro (&body body)
-  (labels ((ensure-anon-args (bindings)
-	     (if (> (length bindings) 0)
-		 (am:->> bindings
-		   (mapcar #'anon-arg-number)
-		   (reduce #'max)
-                   (1+)
-                   (alexandria:iota)
-                   (mapcar (lambda (x) (intern (format nil "_~a" x))))))))
-    (am:-<>> body
-      (matching-symbols #'anon-arg?)
-      (ensure-anon-args)
-      (let ((args am:<>))
-	`(lambda ,args
-	   (declare (ignorable ,@args))
-	   ,@body)))))
+(defmacro λ-macro ((&rest args) &body body)
+  (destructuring-bind (&key name) args
+    (labels ((ensure-anon-args (bindings)
+	       (if (> (length bindings) 0)
+		   (am:->> bindings
+		     (mapcar #'anon-arg-number)
+		     (reduce #'max)
+                     (1+)
+                     (alexandria:iota)
+                     (mapcar (lambda (x) (intern (format nil "_~a" x))))))))
+      (am:-<>> body
+        (matching-symbols #'anon-arg?)
+        (ensure-anon-args)
+        (let* ((lambda-args am:<>)
+               (lambda-form `(lambda ,lambda-args
+                               (declare (ignorable ,@lambda-args))
+                               ,@body)))
+          (if name
+              `(labels ((,name ,lambda-form)))
+              lambda-form))))))
 
-;;; If the sexp read by λ-reader is a list whose car is :progn, all subsequent
-;;; statements get passed as the body of λ-macro (it's :progn instead of progn so
-;;; that the macro could be separated into its own package without the symbol needing
-;;; to be interned into other packages, and to avoid rebinding symbols defined by the
-;;; standard, because it's bad style)
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar arg))
-  (let ((form (read stream t nil t)))
-    (if (and (listp form)
-	     (eq :progn (car form)))
-	`(λ-macro ,@(cdr form))
-	`(λ-macro ,form))))
+  (let* ((form (read stream t nil t))
+         (arg-list (if (and (listp form)
+                            (listp (car form))
+                            (eq (caar form) :arg-list))
+                       (cdar form)
+                       nil))
+         (statements (if arg-list
+                         (cdr form)
+                         (list form))))
+    `(λ-macro ,arg-list ,@statements)))
 
 (set-dispatch-macro-character #\# #\λ #'λ-reader)
