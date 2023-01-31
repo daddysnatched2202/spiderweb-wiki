@@ -52,14 +52,13 @@
        (ppcre:scan "^_[0-9]*$" (symbol-name sym))))
 
 ;;; TODO: handle advanced args (&rest, &key, &optional)
-;;; TODO: easy lets
 ;;; Macro to speed up creation of lambdas
 ;;; Automatically binds symbols in the body of the form (_n : n ∈ ℕ)
 ;;; to the nth argument of the lambda
 ;;; Example : (λ-macro () (+ _1 _2)) -> (lambda (_0 _1 _2) (+ _1 _2))
 ;;; Even handles discontinuous and null argument lists !
 (defmacro λ-macro ((&rest args) &body body)
-  (destructuring-bind (&key name) args
+  (destructuring-bind (&key name let) args
     (labels ((ensure-anon-args (bindings)
 	       (if (> (length bindings) 0)
 		   (am:->> bindings
@@ -74,7 +73,10 @@
         (let* ((lambda-args am:<>)
                (lambda-form `(lambda ,lambda-args
                                (declare (ignorable ,@lambda-args))
-                               ,@body)))
+                               ,@(if let
+                                     `((let* ,let
+                                         ,@body))
+                                     body))))
           (if name
               `(labels ((,name ,@(cdr lambda-form)))
                  #',name)
