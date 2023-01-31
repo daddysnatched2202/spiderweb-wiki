@@ -80,6 +80,8 @@
                  #',name)
               lambda-form))))))
 
+;;; If the first element of the list read by λ-reader is a list whose car
+;;; is :arg-list, then its cdr will be passed as the args for λ-macro
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar arg))
   (let* ((form (read stream t nil t))
