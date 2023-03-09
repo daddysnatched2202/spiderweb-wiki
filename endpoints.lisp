@@ -1,4 +1,4 @@
-;; Copyright 2021, 2022 Curtis Klassen
+;; Copyright 2021-2023 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -43,7 +43,11 @@
                                         :class "note-preview-grid")))))
 
 (ningle/route ("/wiki/notes/:path")
-    (:binding-list ((path-text :key :path)))
+    (:binding-list ((path-text :key :path))
+     :fail-clause (note/does-not-exist-error ()
+                                             (ningle/redirect
+                                              (format nil "/wiki/make-note/~a"
+                                                      path-text))))
   (let* ((path (string->path path-text))
          (node (note/with-path path-text)))
     (html/with-page (:title (path->string path))
@@ -82,7 +86,9 @@
             (:div :class "note-dialog-delete"
                   (:p "Are you sure you want to delete this note?")
                   (:br)
-                  (:a :href "#" :class "note-delete-confirm" "Confirm")))
+                  (:a :href "#"
+                      :class "note-delete-confirm"
+                      "Confirm")))
       (:script (:raw (script/note-page (path->string path)))))))
 
 (ningle/route ("/wiki/make-note") ()
