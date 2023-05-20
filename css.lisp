@@ -127,10 +127,6 @@
                   :bottom 35px
                   :padding 15px
                   (ls p :margin 5px))
-   (css/nord-list ".note-body"
-                  :background-color nord3
-                  :padding 1em
-                  :margin-top 1em)
    '(.nodes-container
      :display "grid"
      :grid-template-columns 1fr 1fr 1fr 1fr

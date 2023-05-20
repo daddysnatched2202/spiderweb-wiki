@@ -56,7 +56,7 @@
           (am:-> node
             (note/path)
             (path->string)))
-      (:div :class "note-body"
+      (:div :class "note-preview"
        (:raw (if (eq :text/markdown (note/type node))
                  (with-output-to-string (s)
                    (3bmd:parse-string-and-print-to-stream
