@@ -1,4 +1,4 @@
-;; Copyright 2021, 2022 Curtis Klassen
+;; Copyright 2021-2023 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -35,13 +35,20 @@
 	      (ironclad:byte-array-to-hex-string)))))
 
 (defun run ()
-  (if (eq *storage/type* :local)
-      (db/load-local (make-rel-path "datastore/"))
-      (error "Only local storage is supported for now"))
-  (setf *handler* (clack:clackup *app*))
-  (load-jquery))
+  (labels ((save ()
+             (print "Saving…")
+             (b.d:snapshot)))
+    (if (eq *storage/type* :local)
+        (db/load-local (make-rel-path "datastore/"))
+        (error "Only local storage is supported for now"))
+    (cl-cron:make-cron-job #'save :hash-key :save
+                                          :minute *storage/save-interval*)
+    (cl-cron:start-cron)
+    (setf *handler* (clack:clackup *app*))
+    (load-jquery)))
 
 (defun stop ()
   (b.d:snapshot)
   (b.d:close-store)
+  (cl-cron:stop-cron)
   (clack:stop *handler*))

@@ -1,4 +1,4 @@
-;; Copyright 2021, 2022 Curtis Klassen
+;; Copyright 2021-2023 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -37,7 +37,8 @@
 	       :3bmd
 	       :3bmd-ext-wiki-links
 	       :zs3
-	       :drakma)
+	       :drakma
+               :cl-cron)
   :serial t
   :components ((:file "package")
 	       (:file "lambda")
