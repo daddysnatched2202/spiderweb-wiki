@@ -1,4 +1,4 @@
-;; Copyright 2022 Curtis Klassen
+;; Copyright 2022-2023 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@
 (defun css/std ()
   (lass:compile-and-write
    (css/nord-list footer
-                  :position absolute
+                  :position fixed
 		  :bottom 0px
 		  :left 0px
 		  :height 3em
@@ -127,6 +127,10 @@
                   :bottom 35px
                   :padding 15px
                   (ls p :margin 5px))
+   (css/nord-list ".note-body"
+                  :background-color nord3
+                  :padding 1em
+                  :margin-top 1em)
    '(.nodes-container
      :display "grid"
      :grid-template-columns 1fr 1fr 1fr 1fr
@@ -142,7 +146,7 @@
      :font-size 2em)
    '(.note-button-bar
      :float "right"
-     :position absolute
+     :position fixed
      :bottom 4em
      :right 0px)
    '(.search-paths-button

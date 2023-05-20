@@ -56,14 +56,15 @@
           (am:-> node
             (note/path)
             (path->string)))
-      (:raw (if (eq :text/markdown (note/type node))
-                (with-output-to-string (s)
-                  (3bmd:parse-string-and-print-to-stream
-                   (note/content node)
-                   s))
-                (error "~a is not a markdown note; Only markdown notes are ~
+      (:div :class "note-body"
+       (:raw (if (eq :text/markdown (note/type node))
+                 (with-output-to-string (s)
+                   (3bmd:parse-string-and-print-to-stream
+                    (note/content node)
+                    s))
+                 (error "~a is not a markdown note; Only markdown notes are ~
                        supported right now"
-                       node)))
+                        node))))
       (when (db/links-from path)
         (:h2 "Linked Notes")
         (:div :class "link-box"
