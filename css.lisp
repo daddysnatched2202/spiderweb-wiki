@@ -46,15 +46,14 @@
                (and (symbolp sym)
                     sym
                     (am:->> sym
-                      (symbol-name)
-                      (str:downcase)
-                      (ppcre:scan "^nord[0-9]*$"))))
+                            (symbol-name)
+                            (str:downcase)
+                            (ppcre:scan "^nord[0-9]*$"))))
              (nord-list-dispatch (el)
                (cond ((nord-sym? el)
                       el)
-                     ((null el)
-                      nil)
-                     ((and (listp el)
+                     ((and el
+                           (listp el)
                            (string= "LS" (symbol-name (car el))))
                       (nord-make-list (cdr el)))
                      ((and (symbolp el)
