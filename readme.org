@@ -52,7 +52,7 @@
      standard-conforming implementation
    - But it's developed and tested on CCL and SBCL
 ** Operating Systems
-   - Spiderweb Wiki is written and tested on Ubuntu 22.04; any Linux distribution
+   - Spiderweb Wiki is written and tested on Linux Mint; any Linux distribution
      should be fine
    - Other operating systems are untested
 * Dependencies
