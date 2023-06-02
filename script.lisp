@@ -31,7 +31,9 @@
                       "url-type" type)))))
 
 (defun script/search-page ()
-  (ps:ps* `()))
+  (ps:ps*
+   (script/lib)
+   `()))
 
 (defun script/note-page (note-path)
   (ps:ps*
