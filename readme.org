@@ -89,10 +89,7 @@
 ** Storage
 *** Local Files
     - If you can store the files locally (on the same machine the server is running
-      from), the setup is easy: add the following lines to ~conf.lisp~
-#+begin_src lisp
-(defparameter *base-path* "<path to the folder where the data will be stored>/")
-#+end_src
+      from), then no additional setup is needed.
 *** S3
     - Not implemented yet
 ** Proxy

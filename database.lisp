@@ -413,7 +413,7 @@
 
 (defun db/load-local (path)
   (make-instance 'b.d:mp-store
-                 :directory path
+                 :directory (car (directory path))
                  :subsystems (list (make-instance 'b.d:store-object-subsystem))))
 
 (defun db/store-objects-of-classes (&rest classes)

@@ -27,8 +27,10 @@
 (defvar *storage/type*)
 (defvar *storage/path)
 (defvar *storage/save-interval*)
+(defvar *storage/max-backups*)
 
 (set-unless-bound *jquery/source-type* :web)
 (set-unless-bound *jquery/source-url* "https://code.jquery.com/jquery-3.6.0.min.js")
 (set-unless-bound *storage/type* :local)
 (set-unless-bound *storage/save-interval* 5)
+(set-unless-bound *storage/max-backups* 5)

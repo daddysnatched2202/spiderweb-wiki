@@ -18,6 +18,17 @@
 
 (defvar *handler*)
 
+(defun save-db ()
+  (print "Saving…")
+  (am:-<> (asdf:system-relative-pathname "web" "datastore")
+    (uiop:subdirectories)
+    (sort #'< :key #'file-write-date)
+    (loop for dir in am:<>
+          for i from 1
+          do (if (> i *storage/max-backups*)
+                 (uiop:delete-directory-tree dir :validate t))))
+  (b.d:snapshot))
+
 (defun load-jquery ()
   (setf *jquery-file*
 	(ccase *jquery/source-type*
@@ -35,18 +46,15 @@
 	      (ironclad:byte-array-to-hex-string)))))
 
 (defun run ()
-  (labels ((save ()
-             (print "Saving…")
-             (b.d:snapshot)))
-    (if (eq *storage/type* :local)
-        (db/load-local (make-rel-path "datastore/"))
-        (error "Only local storage is supported for now"))
-    (cl-cron:make-cron-job #'save
-                           :hash-key :save
-                           :minute *storage/save-interval*)
-    (cl-cron:start-cron)
-    (setf *handler* (clack:clackup *app*))
-    (load-jquery)))
+  (if (eq *storage/type* :local)
+      (db/load-local (make-rel-path "datastore"))
+      (error "Only local storage is supported for now"))
+  (cl-cron:make-cron-job #'save-db
+                         :hash-key :save
+                         :minute *storage/save-interval*)
+  (cl-cron:start-cron)
+  (setf *handler* (clack:clackup *app*))
+  (load-jquery))
 
 (defun stop ()
   (b.d:snapshot)
