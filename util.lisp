@@ -16,8 +16,9 @@
 
 (in-package :web)
 
-(defun make-rel-path (str)
-  (concatenate 'string *base-path* str))
+(defun make-rel-path (file)
+  (make-pathname :directory (pathname-directory (car (directory *base-path*)))
+                 :name file))
 
 ;;; Returns the first item in ls for which pred returns a true value
 ;;; If none of the items in ls match, then 'otherwise' will be returned
@@ -33,13 +34,7 @@
 				 (not otherwise))
 			    (ctypecase err
                               (list (apply #'error err))
-                              (function (funcall err))
-                              (t (error "The value of `err` in call to ~
-                                        `first-matching` must be either a ~
-                                        list or a function; ~%it in fact ~
-                                        has the value `~a`, which is of type `~a`"
-					err
-					(type-of err))))
+                              (function (funcall err)))
 			    otherwise))))
 
 (defmacro let-bound ((&rest bindings) &body body)
