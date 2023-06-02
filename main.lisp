@@ -27,7 +27,7 @@
                    am:<>)
     (loop for dir in am:<>
           for i from 1
-          do (if (>= i *storage/max-backups*)
+          do (if (> i *storage/max-backups*)
                  (uiop:delete-directory-tree dir :validate t))))
   (b.d:snapshot))
 
