@@ -23,9 +23,11 @@
   (am:-<> (asdf:system-relative-pathname "web" "datastore")
     (uiop:subdirectories)
     (sort #'< :key #'file-write-date)
+    (remove-if-not #λ(cl-ppcre:scan "\d*T\d*" (car (last (pathname-directory _0))))
+                   am:<>)
     (loop for dir in am:<>
           for i from 1
-          do (if (> i *storage/max-backups*)
+          do (if (>= i *storage/max-backups*)
                  (uiop:delete-directory-tree dir :validate t))))
   (b.d:snapshot))
 

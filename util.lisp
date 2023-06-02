@@ -1,4 +1,4 @@
-;; Copyright 2021, 2022 Curtis Klassen
+;; Copyright 2021-2023 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -16,9 +16,12 @@
 
 (in-package :web)
 
-(defun make-rel-path (file)
-  (make-pathname :directory (pathname-directory (car (directory *base-path*)))
-                 :name file))
+(defun make-rel-path (pathname)
+  (merge-pathnames
+   pathname
+   (make-pathname :directory (pathname-directory (asdf:system-relative-pathname
+                                                  "web"
+                                                  "")))))
 
 ;;; Returns the first item in ls for which pred returns a true value
 ;;; If none of the items in ls match, then 'otherwise' will be returned
