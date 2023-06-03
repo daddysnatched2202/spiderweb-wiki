@@ -35,4 +35,7 @@
 (set-unless-bound *storage/type* :local)
 (set-unless-bound *storage/save-interval* 5)
 (set-unless-bound *storage/max-backups* 5)
-(set-unless-bound *storage/path* (asdf:system-relative-pathname "web" "datastore/"))
+(set-unless-bound *storage/path* (merge-pathnames
+                                  (make-pathname :directory
+                                                 (list :relative "datastore"))
+                                  (asdf:system-relative-pathname "web" "")))
