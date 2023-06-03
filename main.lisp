@@ -20,7 +20,7 @@
 
 (defun save-db ()
   (print "Saving…")
-  (am:-<> (asdf:system-relative-pathname "web" "datastore")
+  (am:-<> *storage/path*
     (uiop:subdirectories)
     (sort #'< :key #'file-write-date)
     (remove-if-not #λ(cl-ppcre:scan "\d*T\d*" (car (last (pathname-directory _0))))
@@ -49,7 +49,7 @@
 
 (defun run ()
   (if (eq *storage/type* :local)
-      (db/load-local (make-rel-path "datastore"))
+      (db/load-local *storage/path*)
       (error "Only local storage is supported for now"))
   (cl-cron:make-cron-job #'save-db
                          :hash-key :save

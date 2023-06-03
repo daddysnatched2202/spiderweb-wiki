@@ -28,9 +28,11 @@
 (defvar *storage/path)
 (defvar *storage/save-interval*)
 (defvar *storage/max-backups*)
+(defvar *storage/path*)
 
 (set-unless-bound *jquery/source-type* :web)
 (set-unless-bound *jquery/source-url* "https://code.jquery.com/jquery-3.6.0.min.js")
 (set-unless-bound *storage/type* :local)
 (set-unless-bound *storage/save-interval* 5)
 (set-unless-bound *storage/max-backups* 5)
+(set-unless-bound *storage/path* (asdf:system-relative-pathname "web" "datastore/"))

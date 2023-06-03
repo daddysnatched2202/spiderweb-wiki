@@ -90,6 +90,11 @@
 *** Local Files
     - If you can store the files locally (on the same machine the server is running
       from), then no additional setup is needed.
+    - By default, files will be stored relative to the wiki's ~asdf~ system, but you
+      can set a custom directory in ~conf.lisp~
+#+begin_src lisp
+(defvar *storage/path* "<path to the directory>")
+#+end_src
 *** S3
     - Not implemented yet
 ** Proxy
