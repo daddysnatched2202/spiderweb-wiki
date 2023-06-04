@@ -89,12 +89,15 @@
 ** Storage
 *** Local Files
     - If you can store the files locally (on the same machine the server is running
-      from), then no additional setup is needed.
+      from), then no additional setup is needed
     - By default, files will be stored relative to the wiki's ~asdf~ system, but you
       can set a custom directory in ~conf.lisp~
 #+begin_src lisp
 (defvar *storage/path* "<path to the directory>")
 #+end_src
+    - Another relevant configuration parameter is ~*jquery/save-interval*~, which
+      determines the time (in minutes) between autosaves of the database (set to
+      ~nil~ to disable autosaving); the default is 5 minutes
 *** S3
     - Not implemented yet
 ** Proxy
@@ -121,8 +124,8 @@ http {
 *** Automatic (Recommended) 
     - Spiderweb-wiki will, by default, automatically download and use the correct
       version of jquery
-    - You can set a custom source for the file in ~conf.lisp~ with the ~jquery-path~
-      variable
+    - You can set a custom URL source for the file in ~conf.lisp~ with the
+      ~jquery/source-url~ variable
 *** Local
     - If you want to serve a local copy, add the following to ~conf.lisp~ :
 #+begin_src lisp

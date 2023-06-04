@@ -51,10 +51,11 @@
   (if (eq *storage/type* :local)
       (db/load-local *storage/path*)
       (error "Only local storage is supported for now"))
-  (cl-cron:make-cron-job #'save-db
-                         :hash-key :save
-                         :minute *storage/save-interval*)
-  (cl-cron:start-cron)
+  (when *storage/save-interval*
+    (cl-cron:make-cron-job #'save-db
+                           :hash-key :save
+                           :minute *storage/save-interval*)
+    (cl-cron:start-cron))
   (setf *handler* (clack:clackup *app*))
   (load-jquery))
 
