@@ -87,6 +87,12 @@
 (in-package :web)
 #+end_src
 ** Storage
+   - The ~storage/max-backups~ parameter configures how many backups will be
+     stored. Once there are more than the max, backups will be automatically deleted
+     whenever the database saves (oldest first)
+   - Another relevant configuration parameter is ~*storage/save-interval*~, which
+     determines the time (in minutes) between autosaves of the database (set to
+     ~nil~ to disable timed autosaving); the default is 5 minutes
 *** Local Files
     - If you can store the files locally (on the same machine the server is running
       from), then no additional setup is needed
@@ -95,9 +101,6 @@
 #+begin_src lisp
 (defvar *storage/path* "<path to the directory>")
 #+end_src
-    - Another relevant configuration parameter is ~*jquery/save-interval*~, which
-      determines the time (in minutes) between autosaves of the database (set to
-      ~nil~ to disable autosaving); the default is 5 minutes
 *** S3
     - Not implemented yet
 ** Proxy
