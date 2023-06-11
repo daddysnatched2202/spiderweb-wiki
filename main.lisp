@@ -22,12 +22,12 @@
   (print "Saving…")
   (am:-<> *storage/path*
     (uiop:subdirectories)
-    (sort #'< :key #'file-write-date)
+    (sort #'> :key #'file-write-date)
     (remove-if-not #λ(cl-ppcre:scan "\d*T\d*" (car (last (pathname-directory _0))))
                    am:<>)
     (loop for dir in am:<>
           for i from 1
-          do (if (> i *storage/max-backups*)
+          do (if (>= i *storage/max-backups*)
                  (uiop:delete-directory-tree dir :validate t))))
   (b.d:snapshot))
 
@@ -60,7 +60,7 @@
   (load-jquery))
 
 (defun stop ()
-  (b.d:snapshot)
+  (save-db)
   (b.d:close-store)
   (cl-cron:stop-cron)
   (clack:stop *handler*))
