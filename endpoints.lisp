@@ -180,11 +180,9 @@
     (:binding-list ((node-text :key :node)))
   (let ((path (string->path node-text)))
     (cond ((> (length path) 1)
-           (html/with-page (:title "Error")
-             (:p (format nil
-                         "Path supplied to `/wiki/node` must have only one path ~
-                          element; its actual value is `~a`"
-                         (path->string path)))))
+           (error "Path supplied to `/node/` must have only one element; it has ~a
+                  elements"
+                  (length (convert-path path))))
           (t (html/with-page (:title node-text)
                (:h1 (format nil "Category Page: ~a" node-text))
                (:br)
