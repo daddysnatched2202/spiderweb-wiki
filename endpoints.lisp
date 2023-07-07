@@ -92,6 +92,11 @@
                       "Confirm")))
       (:script (:raw (script/note-page (path->string path)))))))
 
+(ningle/route ("/wiki/notes/:path" :method :delete)
+    (:binding-list ((path :key :path)))
+  (note/delete path :delete-nodes t)
+  (html/with-page (:title "Success")))
+
 (ningle/route ("/wiki/make-note") ()
   (html/with-page (:title "New Note")
     (:h1 "New Note")
@@ -170,14 +175,6 @@
     (:p (format nil
                 "Note `~a` was edited"
                 (path->string old-path)))))
-
-(ningle/route ("/wiki/delete-note" :method :post)
-    (:binding-list ((path :key "path")))
-  (note/delete path :delete-nodes t)
-  (html/with-page (:title "Success")
-    (:p (format nil
-                "Note `~a` was deleted"
-                (path->string path)))))
 
 (ningle/route ("/wiki/node/:node")
     (:binding-list ((node-text :key :node)))

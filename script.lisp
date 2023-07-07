@@ -32,8 +32,7 @@
 
 (defun script/search-page ()
   (ps:ps*
-   (script/lib)
-   `()))
+   (script/lib)))
 
 (defun script/note-page (note-path)
   (ps:ps*
@@ -45,9 +44,10 @@
              (jquery-single ".note-dialog-delete" (toggle)))
      (jquery (".note-delete-confirm" click) ()
              (ps:chain $
-                       (post "/wiki/delete-note"
-                             (ps:create
-                              "path" ,note-path)
-                             (lambda ()
-                               (ps:chain window location
-                                         (replace "/wiki/notes")))))))))
+                       (ajax (ps:create
+                              "url" ,(note->url note-path)
+                              "type" "DELETE"
+                              "success" (lambda (result)
+                                          (ps:chain window
+                                                    location
+                                                    (replace "/wiki/notes"))))))))))
