@@ -36,8 +36,10 @@
 	(ccase *jquery/source-type*
           ((:web) (multiple-value-bind (data code hash quri res)
                       (drakma:http-request *jquery/source-url*)
-                    (declare (ignore code hash quri res))
-                    data))
+                    (declare (ignore hash quri res))
+                    (if (/= code 200)
+                        (error "Could not load JQuery")
+                        data)))
 	  ((:local) (uiop:read-file-string *jquery/local-path*))
 	  ((:cdn) nil))
 	*jquery-hash*
