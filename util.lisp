@@ -19,7 +19,7 @@
 (defun make-rel-path (pathname)
   (merge-pathnames
    pathname
-   (asdf:system-relative-pathname "web" "")))
+   (asdf:system-source-directory "web")))
 
 ;;; Returns the first item in ls for which pred returns a true value
 ;;; If none of the items in ls match, then 'otherwise' will be returned
