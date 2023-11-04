@@ -1,4 +1,4 @@
-;; Copyright 2021, 2022 Curtis Klassen
+;; Copyright 2021-2023 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -412,6 +412,7 @@
       (error "Trying to load s3 credentials when *storage/type* is not set for s3")))
 
 (defun db/load-local (path)
+  (ensure-directories-exist path)
   (make-instance 'b.d:mp-store
                  :directory (car (directory path))
                  :subsystems (list (make-instance 'b.d:store-object-subsystem))))
