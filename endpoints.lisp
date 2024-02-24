@@ -63,7 +63,7 @@
                     (note/content node)
                     s))
                  (error "~a is not a markdown note; Only markdown notes are ~
-                       supported right now"
+                        supported right now"
                         node))))
       (when (db/links-from path)
         (:h2 "Linked Notes")
