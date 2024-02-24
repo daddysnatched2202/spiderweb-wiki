@@ -1,4 +1,4 @@
-;; Copyright 2022-2023 Curtis Klassen
+;; Copyright 2022-2024 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -111,7 +111,9 @@
    (css/nord-list ".note-preview"
                   :margin-top 1em
                   :margin-bottom 1em)
-   (css/nord-list '(:or ".note-button-edit" ".note-button-delete")
+   (css/nord-list '(:or ".note-button-edit"
+                    ".note-button-delete"
+                    ".note-button-share")
                   :margin 0.5em)
    (css/nord-list ".note-button-edit:hover"
                   :background-color nord14)

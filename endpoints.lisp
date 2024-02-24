@@ -1,4 +1,4 @@
-;; Copyright 2021-2023 Curtis Klassen
+;; Copyright 2021-2024 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -89,7 +89,10 @@
                   (:br)
                   (:a :href "#"
                       :class "note-delete-confirm"
-                      "Confirm")))
+                      "Confirm"))
+            (:a :href (note->url node)
+                :class "note-button-share"
+                "Link to This Note"))
       (:script (:raw (script/note-page (path->string path)))))))
 
 (ningle/route ("/wiki/notes/:path" :method :delete)
