@@ -1,4 +1,4 @@
-;; Copyright 2021-2023 Curtis Klassen
+;; Copyright 2021-2024 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -84,6 +84,7 @@
 
 ;;; If the first element of the list read by λ-reader is a list whose car
 ;;; is :arg-list, then its cdr will be passed as the args for λ-macro
+;;; Example : #λ((:arg-list a b c) (+ _0 _2)) -> (λ-macro (a b c) (+ _0 _2))
 (defun λ-reader (stream subchar arg)
   (declare (ignore subchar arg))
   (let* ((form (read stream t nil t))
