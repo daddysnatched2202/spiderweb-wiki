@@ -1,4 +1,4 @@
-;; Copyright 2022-2023 Curtis Klassen
+;; Copyright 2022-2024 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -78,7 +78,8 @@
                               (path->string)))))
     (labels ((generate-link (target label)
                (format stream
-                       "<a href=\"~a\">~a</a>"
+                       "<a class=\"link-to-note\" ~
+                        href=\"~a\">~a</a>"
                        target
                        label)))
       (cond ((ana:aand (cadr args)

@@ -1,4 +1,4 @@
-;; Copyright 2022 Curtis Klassen
+;; Copyright 2022, 2024 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -44,7 +44,9 @@
         `(labels ((,route-func (params)
                     (declare (ignorable params))
                     (alexandria:if-let ,bindings
-                      (handler-case (progn ,@body)
+                      (handler-case (progn
+                                      (script/lib)
+                                      ,@body)
                         ,(ana:aif fail-clause
                            ana:it
                            '(condition (c)

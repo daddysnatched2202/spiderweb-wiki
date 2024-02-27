@@ -57,25 +57,27 @@
             (note/path)
             (path->string)))
       (:div :class "note-preview"
-       (:raw (if (eq :text/markdown (note/type node))
-                 (with-output-to-string (s)
-                   (3bmd:parse-string-and-print-to-stream
-                    (note/content node)
-                    s))
-                 (error "~a is not a markdown note; Only markdown notes are ~
+            (:raw (if (eq :text/markdown (note/type node))
+                      (with-output-to-string (s)
+                        (3bmd:parse-string-and-print-to-stream
+                         (note/content node)
+                         s))
+                      (error "~a is not a markdown note; Only markdown notes are ~
                         supported right now"
-                        node))))
+                             node))))
       (when (db/links-from path)
         (:h2 "Linked Notes")
         (:div :class "link-box"
               (dolist (l (db/links-from path))
                 (:a :href (note->url (link/to l))
+                    :class "link-to-note"
                     (path->string (link/to l))))))
       (when (db/links-to path)
         (:h2 "Backlinks")
         (:div :class "link-box"
               (dolist (l (db/links-to path))
                 (:a :href (note->url (link/from l))
+                    :class "link-to-note"
                     (path->string (link/from l))))))
       (:div :class "note-button-bar"
             (:a :href (note->url node :prefix :edit)

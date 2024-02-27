@@ -1,4 +1,4 @@
-;; Copyright 2022 Curtis Klassen
+;; Copyright 2022, 2024 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -16,11 +16,11 @@
 
 (in-package :web)
 
-(ps:defpsmacro jquery ((item func) (&rest lambda-list) &body body)
-  `(ps:chain ($ ,item) (,func (lambda ,lambda-list ,@body))))
+(ps:defpsmacro jquery ((item f) (&rest lambda-list) &body body)
+  `(ps:chain ($ ,item) (,f (lambda ,lambda-list ,@body))))
 
-(ps:defpsmacro jquery-single (item function)
-  `(ps:chain ($ ,item) ,function))
+(ps:defpsmacro jquery-single (item f)
+  `(ps:chain ($ ,item) ,f))
 
 (defun script/lib ()
   `(ps:defun make-url (path type)
@@ -31,12 +31,10 @@
                       "url-type" type)))))
 
 (defun script/search-page ()
-  (ps:ps*
-   (script/lib)))
+  (ps:ps*))
 
 (defun script/note-page (note-path)
   (ps:ps*
-   (script/lib)
    `(jquery
      (document ready) ()
      (jquery-single ".note-dialog-delete" (hide))
@@ -51,3 +49,15 @@
                                           (ps:chain window
                                                     location
                                                     (replace "/wiki/notes"))))))))))
+
+(defun script/preview ()
+  (ps:ps
+    (jquery-single ".link-to-note"
+                   (on "mouseenter"
+                       (lambda (eventdata)
+                         (ps:chain
+                          console
+                          (log (jquery-single (ps:chain
+                                               eventdata
+                                               target)
+                                              (children)))))))))
