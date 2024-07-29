@@ -1,4 +1,4 @@
-;; Copyright 2021-2023 Curtis Klassen
+;; Copyright 2021-2024 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -43,7 +43,8 @@
     :initform '((:key content)
                 (:key type)
                 (:key path))
-    :transient t))
+    :transient t
+    :allocation :class))
   (:metaclass b.d:persistent-class))
 
 (defclass node (serializable)
@@ -54,7 +55,8 @@
     :index-reader node/with-name)
    (class-spec
     :initform '((:key name))
-    :transient t))
+    :transient t
+    :allocation :class))
   (:metaclass b.d:persistent-class))
 
 (defclass breakout-node (serializable)
@@ -67,7 +69,8 @@
    (class-spec
     :initform '((:key parent)
                 (:key breakout))
-    :transient t))
+    :transient t
+    :allocation :class))
   (:metaclass b.d:persistent-class))
 
 (defclass link (serializable)
@@ -84,7 +87,8 @@
     :initform '((:key text)
                 (:key from)
                 (:key to))
-    :transient t))
+    :transient t
+    :allocation :class))
   (:metaclass b.d:persistent-class))
 
 (define-condition note/already-exists-error (error)
