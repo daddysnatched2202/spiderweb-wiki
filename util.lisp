@@ -1,4 +1,4 @@
-;; Copyright 2021-2023 Curtis Klassen
+;; Copyright 2021-2024 Curtis Klassen
 ;; This file is part of Spiderweb Wiki.
 
 ;; Spiderweb Wiki is free software: you can redistribute it and/or modify
@@ -57,3 +57,9 @@
        ,@(if conditions
              (mapcar #'make-mask conditions)
              (list (make-mask 'error))))))
+
+(defun byte-array-16-p (thing)
+  (typep thing '(simple-array (unsigned-byte 8) (16))))
+
+(deftype byte-array-16 ()
+  `(satisfies byte-array-16-p))

@@ -44,7 +44,11 @@
                 (:key type)
                 (:key path))
     :transient t
-    :allocation :class))
+    :allocation :class)
+   (id
+    :reader note/id
+    :index-type b.i:slot-index
+    :index-reader note/with-id))
   (:metaclass b.d:persistent-class))
 
 (defclass node (serializable)
@@ -56,7 +60,11 @@
    (class-spec
     :initform '((:key name))
     :transient t
-    :allocation :class))
+    :allocation :class)
+   (id
+    :reader node/id
+    :index-type b.i:slot-index
+    :index-reader node/with-id))
   (:metaclass b.d:persistent-class))
 
 (defclass breakout-node (serializable)
@@ -133,11 +141,11 @@
 
 (defmethod print-object ((n node) stream)
   (print-unreadable-object (n stream)
-    (format stream "node: ~a" (node/name n))))
+    (format stream "node: ~a, id: ~a" (node/name n) (node/id n))))
 
 (defmethod print-object ((n note) stream)
   (print-unreadable-object (n stream)
-    (format stream "note: ~a" (path->string (note/path n)))))
+    (format stream "note: ~a, id: ~a" (path->string (note/path n)) (note/id n))))
 
 (defmethod print-object ((l link) stream)
   (print-unreadable-object (l stream)
@@ -175,8 +183,8 @@
 	   (db/all-links)))
 
 (defun path= (a b)
-  (string= (path->string a)
-	   (path->string b)))
+  (and (every #λ(member _0 b :test #'node=) a)
+       (every #λ(member _0 a :test #'node=) b)))
 
 (defun link= (a b)
   (and (path= (link/from a)
@@ -185,32 +193,28 @@
 	      (link/to b))))
 
 (defun node= (a b)
-  (string= (node/name (convert-node a))
-           (node/name (convert-node b))))
+  (equalp (node/id a) (node/id b)))
 
 (defun convert-node (node)
   (ctypecase node
     (string (string->node node))
     (node node)
+    (byte-array-16 (node/with-id node))
     (t (error "Node `~a` is not valid" node))))
 
 (defun convert-path (path)
   (ctypecase path
-    (list path)
+    (list (mapcar #'convert-node path))
     (string (string->path path))
     (note (note/path path))
     (t (error "Path `~a` is not valid" path))))
 
+(defun path->id (path)
+  (am:-> path
+    (path->string)))
+
 (defun path/has-node? (path node)
   (member (convert-node node) (convert-path path) :test #'node=))
-
-(defun path/update (path old-node new-node)
-  (let ((c-old (convert-node old-node))
-        (c-new (convert-node new-node)))
-    (mapcar #λ(if (node= _0 c-old)
-                  c-new
-                  _0)
-            path)))
 
 (defun note/has-node? (note node)
   (am:-> note
@@ -223,6 +227,13 @@
 
 (defun note/exists? (path)
   (err!=nil () (note/with-path path)))
+
+(defun note/find (id)
+  (typecase id
+    (string (note/with-path id))
+    (list (note/with-path id))
+    (node (note/all-with-node id))
+    (byte-array-16 (note/with-id id))))
 
 (defun note/with-path (path)
   (let ((converted-path (convert-path path)))
@@ -245,7 +256,7 @@
 (defun note/all-with-partial-path (path)
   (labels ((rec (path notes)
              (if path
-                 (remove-if-not (alexandria:rcurry #'note/has-node? (car path))
+                 (remove-if-not #λ(note/has-node? _0 (car path))
                                 (rec (cdr path) notes))
                  notes)))
     (rec (cdr path) (note/all-with-node (car path)))))
@@ -273,6 +284,9 @@
     (sort am:<> #'string<)
     (mapcar #'string->node)))
 
+(let ((state (make-random-state)))
+  (defun generate-id (str)))
+
 (defun path->string (path)
   (ctypecase path
     (list (am:->> path
@@ -291,28 +305,10 @@
         (push (str:split #\| str) links)))
     links))
 
-(defun note/update-links (old-node new-node)
-  (labels ((regen-link (match reg)
-             (declare (ignorable match reg))
-             (let* ((elems (str:split #\| reg))
-                    (text (cadr elems))
-                    (path (car elems)))
-               (generate-link (path/update (convert-path path)
-                                           old-node
-                                           new-node)
-                              text))))
-    (mapcar #λ(note/edit
-               _0
-               :content (cl-ppcre:regex-replace-all *link-regexp*
-                                                    (note/content _0)
-                                                    #'regen-link
-                                                    :simple-calls t))
-            (note/all-with-node old-node))))
-
 (defun generate-link (path &optional text)
   (if text
       (format nil "[[~a|~a]]" (path->string path) text)
-      (format nil "[[~a]]" path)))
+      (format nil "[[~a]]" (path->string path))))
 
 ;;; should this function do something different in case a link already exists between
 ;;; two notes ??
@@ -320,16 +316,19 @@
   (make-instance 'link
                  :from from
                  :to to
-                 :text text))
+                 :text text
+                 :id (generate-id from)))
 
 (defun note/new (path content &key (type :text/markdown))
-  (if (err!=nil ()
-        (note/with-path path))
+  (if (note/exists? path)
       (error 'note/already-exists-error :path path)
-      (let ((n (make-instance 'note
-                              :path (convert-path path)
-                              :type type
-                              :content content)))
+      (let* ((p (convert-path path))
+             (n (make-instance
+                 'note
+                 :path p
+                 :type type
+                 :content content
+                 :id (path->id p))))
         (mapcar #λ(link/new path
                             (string->path (car _0))
                             (ana:aif (cadr _0)
@@ -357,28 +356,15 @@
              (finder ana:it))))
   (b.d:delete-object n))
 
-(defun note/delete (path &key (delete-nodes nil))
-  (let ((conv-path (convert-path path)))
-    (mapcar #'link/delete (db/links-from conv-path))
-    (mapcar #'link/delete (db/links-to conv-path))
-    (b.d:delete-object (note/with-path conv-path))
+(defun note/delete (id &key (delete-nodes nil))
+  (let ((note (note/find id)))
+    (mapcar #'link/delete (db/links-from (note/path note)))
+    (mapcar #'link/delete (db/links-to (note/path note)))
+    (b.d:delete-object note)
     (if delete-nodes
         (db/clean-nodes))))
 
-(defun node/rename (old new)
-  (let ((new-node (convert-node new))
-        (old-node (convert-node old)))
-    (labels ((replace-old-node (current-node)
-               (if (node= current-node old-node)
-                   new-node
-                   current-node)))
-      (note/update-links old new)
-      (mapcar (lambda (note)
-                (note/edit note
-                           :path (mapcar #'replace-old-node (note/path note))
-                           :delete-nodes nil))
-              (note/all-with-node old-node))
-      (node/delete old-node))))
+(defun node/rename (old new))
 
 (defun note/edit (note &key path content type (delete-nodes t))
   (macrolet ((if-set (sym)
